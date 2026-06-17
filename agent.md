@@ -46,6 +46,10 @@ the seed determines
 
 ## Data Generation
 
-Generate the dictionary and letter list in a separate JavaScript file that is imported by the game.
+Generate the dictionary and letter list in a separate JavaScript file, data.js, that is imported by the game.
 
 The AI should provide the lists. the AI should check all words and translations with no mistakes since this is the whole game.
+
+the lists should be explicit and not computed so we can clearly read and check correctness. both word list and letterchoices
+
+the ai must ensure the list of words contain at least 1 instance of each cyrilic character otherwise we are missing out on the training which is the goal of the game

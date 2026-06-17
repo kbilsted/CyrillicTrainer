@@ -85,3 +85,25 @@ The option list consists of:
 * all Latin letters `a` through `z`
 
 For example, `zh` is a letter option because it is used when translating `ж`.
+
+
+
+# gui
+
+```
+corect:  2     wrong: 55    ratio: 0%     seed: 1234
+
+             +------------+
+             |            |
+             |     3      |
+             |            |
+             +------------+
+
+    +---+  +---+  +---+  +---+  +---+   
+    | s |  | k |  | l |  | n |  | p |
+    +---+  +---+  +---+  +---+  +---+ 
+
+              | next |
+```
+
+ 
