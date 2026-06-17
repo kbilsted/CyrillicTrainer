@@ -1,0 +1,88 @@
+(function ($) {
+  "use strict";
+
+  let callbacks = {
+    onAnswer: null,
+    onLetterNext: null,
+    onRoundNext: null
+  };
+
+  function init(nextCallbacks) {
+    callbacks = nextCallbacks;
+
+    $("#answerButtons").on("click", ".answer-button", function () {
+      if (callbacks.onAnswer) {
+        callbacks.onAnswer($(this).data("value"));
+      }
+    });
+
+    $("#letterNextButton").on("click", function () {
+      if (callbacks.onLetterNext) {
+        callbacks.onLetterNext();
+      }
+    });
+
+    $("#roundNextButton").on("click", function () {
+      if (callbacks.onRoundNext) {
+        callbacks.onRoundNext();
+      }
+    });
+  }
+
+  function renderStats(stats, seed) {
+    $("#successCounter").text(stats.successCounter);
+    $("#failCounter").text(stats.failCounter);
+    $("#successRatio").text(stats.successRatio);
+    $("#roundCounter").text(stats.roundCounter);
+    $("#seedValue").text(seed);
+  }
+
+  function showLetterGuess(letter, options) {
+    $("#roundDoneView").addClass("d-none");
+    $("#letterGuessView").removeClass("d-none");
+    $("#letterCard").text(letter);
+    $("#letterNextButton").prop("disabled", true);
+
+    const buttons = options.map((option) => (
+      $("<button>")
+        .attr("type", "button")
+        .addClass("btn btn-outline-dark answer-button")
+        .data("value", option)
+        .text(option)
+    ));
+
+    $("#answerButtons").empty().append(buttons);
+  }
+
+  function showAnswerFeedback(selectedValue, correctValue) {
+    $(".answer-button").each(function () {
+      const button = $(this);
+      const value = button.data("value");
+      button.prop("disabled", true);
+
+      if (value === correctValue) {
+        button.removeClass("btn-outline-dark").addClass("is-correct");
+      } else if (value === selectedValue) {
+        button.removeClass("btn-outline-dark").addClass("is-wrong");
+      }
+    });
+
+    $("#letterNextButton").prop("disabled", false);
+  }
+
+  function showRoundDone(word) {
+    $("#letterGuessView").addClass("d-none");
+    $("#roundDoneView").removeClass("d-none");
+    $("#doneCyrillic").text(word.cyrillic);
+    $("#doneLatin").text(word.latin);
+    $("#doneMeaning").text(word.englishmeaning);
+  }
+
+  window.CyrillicUI = {
+    init,
+    renderStats,
+    showLetterGuess,
+    showAnswerFeedback,
+    showRoundDone
+  };
+}(window.jQuery));
