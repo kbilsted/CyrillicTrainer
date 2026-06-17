@@ -5,6 +5,7 @@
   const random = window.CyrillicRandom;
   const storage = window.CyrillicStorage;
   const ui = window.CyrillicUI;
+  const CORRECT_ANSWER_AUTO_NEXT_DELAY_MS = 900;
 
   let seed = null;
   let nextRandom = null;
@@ -13,6 +14,14 @@
   let currentLetterIndex = 0;
   let currentCorrectAnswer = null;
   let hasAnswered = false;
+  let autoNextTimer = null;
+
+  function clearAutoNextTimer() {
+    if (autoNextTimer !== null) {
+      window.clearTimeout(autoNextTimer);
+      autoNextTimer = null;
+    }
+  }
 
   function getLatinForLetter(cyrillicLetter) {
     const match = data.letterTransliterations.find((letter) => letter.cyrillic === cyrillicLetter);
@@ -35,6 +44,7 @@
   }
 
   function showCurrentLetter() {
+    clearAutoNextTimer();
     const currentLetter = currentLetters[currentLetterIndex];
     currentCorrectAnswer = getLatinForLetter(currentLetter);
     hasAnswered = false;
@@ -43,6 +53,7 @@
   }
 
   function startRound() {
+    clearAutoNextTimer();
     storage.incrementRound();
     currentWord = random.choose(nextRandom, data.wordSource);
     currentLetters = Array.from(currentWord.cyrillic);
@@ -59,6 +70,10 @@
 
     if (selectedAnswer === currentCorrectAnswer) {
       storage.incrementSuccess();
+      autoNextTimer = window.setTimeout(() => {
+        autoNextTimer = null;
+        handleLetterNext();
+      }, CORRECT_ANSWER_AUTO_NEXT_DELAY_MS);
     } else {
       storage.incrementFail();
     }
@@ -72,6 +87,7 @@
       return;
     }
 
+    clearAutoNextTimer();
     currentLetterIndex += 1;
 
     if (currentLetterIndex >= currentLetters.length) {
