@@ -7,6 +7,8 @@
     onRoundNext: null
   };
 
+  let hiddenLatinValue = "";
+
   function init(nextCallbacks) {
     callbacks = nextCallbacks;
 
@@ -26,6 +28,11 @@
       if (callbacks.onRoundNext) {
         callbacks.onRoundNext();
       }
+    });
+
+    $("#showLatinButton").on("click", function () {
+      $("#doneLatin").text(hiddenLatinValue).removeClass("d-none");
+      $("#showLatinButton").addClass("d-none");
     });
   }
 
@@ -74,7 +81,9 @@
     $("#letterGuessView").addClass("d-none");
     $("#roundDoneView").removeClass("d-none");
     $("#doneCyrillic").text(word.cyrillic);
-    $("#doneLatin").text(word.latin);
+    hiddenLatinValue = word.latin;
+    $("#doneLatin").text("").addClass("d-none");
+    $("#showLatinButton").removeClass("d-none");
     $("#doneMeaning").text(word.englishmeaning);
   }
 

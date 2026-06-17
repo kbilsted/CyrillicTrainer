@@ -47,16 +47,16 @@ For each Cyrillic letter in the word:
 * if the user selects a wrong answer, show the correct choice so the player learns
 * if the user selects the correct answer, show that it was correct
 * the color of the button is red or green. red if wrong. green if correct. if the button turns red, then also make the correct choice green.
-* add an "next" button for the next letter to guess the translation for
+* add an "next" button for the next letter to guess the translation for. the button is automatically clicked after 2 seconds in case user answered correctly.
 
 When all letters in a word have been processed:
 
 * show the whole word in Cyrillic
 * show the Latin spelling
 * show the English translation
-* show a continue button
+* show a next button
 
-When the continue button is pressed:
+When the next  button is pressed:
 
 * start a new round
 
@@ -92,6 +92,8 @@ For example, `zh` is a letter option because it is used when translating `ж`.
 
 # gui
 
+## gui for letter guess 
+
 ```
  correct:  2     wrong: 55    ratio: 0.4%    
  
@@ -112,4 +114,44 @@ For example, `zh` is a letter option because it is used when translating `ж`.
 
 ```
 
+## gui for round done 1
+
+```
+ correct:  2     wrong: 55    ratio: 0.4%    
  
+ 
+        ROUND DONE
+        
+     WORD: xxxxxx
+     In Latin: | show |    
+     Meaning: zz zz zz 
+         
+             
+          | next |
+ 
+ 
+ round: 22     seed: 1234
+
+```
+
+| show | er en knap man kan trykke på op når der trykkes vises ordet
+
+### gui for round done - click done
+
+```
+ correct:  2     wrong: 55    ratio: 0.4%    
+ 
+ 
+        ROUND DONE
+        
+     WORD: xxxxxx
+     In Latin: yyyyyy    
+     Meaning: zz zz zz 
+         
+             
+          | next |
+ 
+ 
+ round: 22     seed: 1234
+
+```
