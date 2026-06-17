@@ -13,6 +13,8 @@ The options are Latin letters or letter combinations that correspond to Cyrillic
 
 the ui language is english
 
+letters are lowercase for now. perhaps later we expand
+
 ## Scoring
 
 If the user selects the correct answer:
@@ -25,7 +27,7 @@ If the user selects a wrong answer:
 
 After each answer:
 
-* calculate the success ratio
+* calculate the success ratio using % and 1 digit after the comma precision
 * display `successCounter`, `failCounter`, success ratio, and round counter at the top
 * persist scores in `localStorage`
 * round counter is incremented with the start of new words, so first round is 1
@@ -91,8 +93,8 @@ For example, `zh` is a letter option because it is used when translating `ж`.
 # gui
 
 ```
-corect:  2     wrong: 55    ratio: 0%     seed: 1234
-
+ corect:  2     wrong: 55    ratio: 0.4%    
+ 
              +------------+
              |            |
              |     3      |
@@ -104,6 +106,10 @@ corect:  2     wrong: 55    ratio: 0%     seed: 1234
     +---+  +---+  +---+  +---+  +---+ 
 
               | next |
+ 
+ 
+ round: 22     seed: 1234
+
 ```
 
  

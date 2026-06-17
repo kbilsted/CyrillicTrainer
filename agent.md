@@ -52,4 +52,4 @@ The AI should provide the lists. the AI should check all words and translations 
 
 the lists should be explicit and not computed so we can clearly read and check correctness. both word list and letterchoices
 
-the ai must ensure the list of words contain at least 1 instance of each cyrilic character otherwise we are missing out on the training which is the goal of the game
+the ai must ensure the list of words contain at least 1 instance of each cyrilic character otherwise we are missing out on the training which is the goal of the game. if we are missing letters, replace the last words (most infrequent) with words such that all letters are represented. 
