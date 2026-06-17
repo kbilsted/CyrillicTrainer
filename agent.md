@@ -50,6 +50,6 @@ Generate the dictionary and letter list in a separate JavaScript file, data.js, 
 
 The AI should provide the lists. the AI should check all words and translations with no mistakes since this is the whole game.
 
-the lists should be explicit and not computed so we can clearly read and check correctness. both word list and letterchoices
+the list WORD_SOURCE should be explicit with fields "cyrillic", "latin", "englishmeaning". so we clearly see the translation for each word from cyrilic to latin. 
 
 the ai must ensure the list of words contain at least 1 instance of each cyrilic character otherwise we are missing out on the training which is the goal of the game. if we are missing letters, replace the last words (most infrequent) with words such that all letters are represented. 

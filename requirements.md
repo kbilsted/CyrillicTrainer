@@ -27,7 +27,7 @@ If the user selects a wrong answer:
 
 After each answer:
 
-* calculate the success ratio using % and 1 digit after the comma precision
+* calculate the success ratio using % and 1 digit after the dot (precision)
 * display `successCounter`, `failCounter`, success ratio, and round counter at the top
 * persist scores in `localStorage`
 * round counter is incremented with the start of new words, so first round is 1
@@ -93,11 +93,11 @@ For example, `zh` is a letter option because it is used when translating `ж`.
 # gui
 
 ```
- corect:  2     wrong: 55    ratio: 0.4%    
+ correct:  2     wrong: 55    ratio: 0.4%    
  
              +------------+
              |            |
-             |     3      |
+             |     з      |
              |            |
              +------------+
 
