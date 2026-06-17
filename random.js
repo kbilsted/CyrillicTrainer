@@ -10,18 +10,40 @@
     return Number.isFinite(parsed) ? String(Math.abs(parsed)) : createSeed();
   }
 
-  function ensureSeed() {
+  function ensureUrlSettings(defaultDataSetId, validDataSetIds) {
     const url = new URL(window.location.href);
     const existingSeed = url.searchParams.get("seed");
+    const existingDataSetId = url.searchParams.get("data");
+    const validIds = new Set(validDataSetIds);
+    let changed = false;
+    let seed = existingSeed ? normalizeSeed(existingSeed) : createSeed();
+    let dataSetId = validIds.has(existingDataSetId) ? existingDataSetId : defaultDataSetId;
 
-    if (existingSeed) {
-      return normalizeSeed(existingSeed);
+    if (seed !== existingSeed) {
+      url.searchParams.set("seed", seed);
+      changed = true;
     }
 
-    const seed = createSeed();
-    url.searchParams.set("seed", seed);
-    window.location.replace(url.toString());
-    return seed;
+    if (dataSetId !== existingDataSetId) {
+      url.searchParams.set("data", dataSetId);
+      changed = true;
+    }
+
+    if (changed) {
+      window.location.replace(url.toString());
+    }
+
+    return { seed, dataSetId };
+  }
+
+  function ensureSeed() {
+    return ensureUrlSettings("1", ["1"]).seed;
+  }
+
+  function switchDataSet(dataSetId) {
+    const url = new URL(window.location.href);
+    url.searchParams.set("data", dataSetId);
+    window.location.assign(url.toString());
   }
 
   function hashSeed(seed) {
@@ -77,7 +99,9 @@
   }
 
   window.CyrillicRandom = {
+    ensureUrlSettings,
     ensureSeed,
+    switchDataSet,
     createSeededRandom,
     choose,
     shuffleSeeded,

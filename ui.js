@@ -4,7 +4,8 @@
   let callbacks = {
     onAnswer: null,
     onLetterNext: null,
-    onRoundNext: null
+    onRoundNext: null,
+    onDataSetChange: null
   };
 
   let hiddenLatinValue = "";
@@ -34,6 +35,12 @@
       $("#doneLatin").text(hiddenLatinValue).removeClass("d-none");
       $("#showLatinButton").addClass("d-none");
     });
+
+    $("#datasetSelect").on("change", function () {
+      if (callbacks.onDataSetChange) {
+        callbacks.onDataSetChange($(this).val());
+      }
+    });
   }
 
   function renderStats(stats, seed) {
@@ -42,6 +49,16 @@
     $("#successRatio").text(stats.successRatio);
     $("#roundCounter").text(stats.roundCounter);
     $("#seedValue").text(seed);
+  }
+
+  function renderDataSetSwitcher(datasets, activeDataSetId) {
+    const options = datasets.map((dataset) => (
+      $("<option>")
+        .attr("value", dataset.id)
+        .text(dataset.label)
+    ));
+
+    $("#datasetSelect").empty().append(options).val(activeDataSetId);
   }
 
   function showLetterGuess(letter, options) {
@@ -90,6 +107,7 @@
   window.CyrillicUI = {
     init,
     renderStats,
+    renderDataSetSwitcher,
     showLetterGuess,
     showAnswerFeedback,
     showRoundDone

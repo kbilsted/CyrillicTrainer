@@ -323,13 +323,87 @@
     { rank: 250, cyrillic: "шофьор", latin: "shofyor", englishmeaning: "driver" }
   ];
 
+  const HIKING_WORD_SOURCE = [
+    { rank: 1, cyrillic: "влак", latin: "vlak", englishmeaning: "train" },
+    { rank: 2, cyrillic: "автобус", latin: "avtobus", englishmeaning: "bus" },
+    { rank: 3, cyrillic: "закъснение", latin: "zakasnenie", englishmeaning: "delay" },
+    { rank: 4, cyrillic: "спешен случай", latin: "speshen sluchay", englishmeaning: "emergency" },
+    { rank: 5, cyrillic: "гръм", latin: "gram", englishmeaning: "thunder" },
+    { rank: 6, cyrillic: "лошо време", latin: "losho vreme", englishmeaning: "bad weather" },
+    { rank: 7, cyrillic: "крака", latin: "kraka", englishmeaning: "feet" },
+    { rank: 8, cyrillic: "уморен", latin: "umoren", englishmeaning: "tired" },
+    { rank: 9, cyrillic: "отпочинал", latin: "otpochinal", englishmeaning: "well rested" },
+    { rank: 10, cyrillic: "свеж", latin: "svezh", englishmeaning: "fresh" },
+    { rank: 11, cyrillic: "вода", latin: "voda", englishmeaning: "water" },
+    { rank: 12, cyrillic: "планина", latin: "planina", englishmeaning: "mountain" },
+    { rank: 13, cyrillic: "пътека", latin: "pateka", englishmeaning: "trail" },
+    { rank: 14, cyrillic: "змия", latin: "zmiya", englishmeaning: "snake" },
+    { rank: 15, cyrillic: "овчарско куче", latin: "ovcharsko kuche", englishmeaning: "sheep dog" },
+    { rank: 16, cyrillic: "кон", latin: "kon", englishmeaning: "horse" },
+    { rank: 17, cyrillic: "връх", latin: "vrah", englishmeaning: "mountain peak" },
+    { rank: 18, cyrillic: "хижа бобиком", latin: "hizha bobikom", englishmeaning: "bobikom hut" },
+    { rank: 19, cyrillic: "хижа ком нова", latin: "hizha kom nova", englishmeaning: "kom hut new" },
+    { rank: 20, cyrillic: "хижа ком стара", latin: "hizha kom stara", englishmeaning: "kom hut old" },
+    { rank: 21, cyrillic: "петрохан", latin: "petrohan", englishmeaning: "petrohan creative house" },
+    { rank: 22, cyrillic: "хижа пробойница", latin: "hizha proboynitsa", englishmeaning: "proboynitsa hut" },
+    { rank: 23, cyrillic: "хижа тръстеная", latin: "hizha trastenaya", englishmeaning: "trastenaya hut" },
+    { rank: 24, cyrillic: "хижа лескова", latin: "hizha leskova", englishmeaning: "leskova hut" },
+    { rank: 25, cyrillic: "хижа мургаш", latin: "hizha murgash", englishmeaning: "murgash hut" },
+    { rank: 26, cyrillic: "хижа чавдар", latin: "hizha chavdar", englishmeaning: "chavdar hut" },
+    { rank: 27, cyrillic: "хижа мургана", latin: "hizha murgana", englishmeaning: "murgana hut" },
+    { rank: 28, cyrillic: "хижа кашана", latin: "hizha kashana", englishmeaning: "kashana hut" },
+    { rank: 29, cyrillic: "хижа свищиплаз", latin: "hizha svishtiplaz", englishmeaning: "svishtiplaz hut" },
+    { rank: 30, cyrillic: "хижа момина поляна", latin: "hizha momina polyana", englishmeaning: "momina polyana hut" },
+    { rank: 31, cyrillic: "хижа иванина поляна", latin: "hizha ivanina polyana", englishmeaning: "ivanina polyana hut" },
+    { rank: 32, cyrillic: "хижа бенковски", latin: "hizha benkovski", englishmeaning: "benkovski hut" },
+    { rank: 33, cyrillic: "хижа вежен", latin: "hizha vezhen", englishmeaning: "vezhen hut" },
+    { rank: 34, cyrillic: "хижа ехо", latin: "hizha eho", englishmeaning: "echo hut" },
+    { rank: 35, cyrillic: "хижа козята стена", latin: "hizha kozyata stena", englishmeaning: "kozya stena hut" },
+    { rank: 36, cyrillic: "заслон орлово гнездо", latin: "zaslon orlovo gnezdo", englishmeaning: "orlovo gnezdo shelter" },
+    { rank: 37, cyrillic: "хижа пешова мъка", latin: "hizha peshova maka", englishmeaning: "peshova muka hut" },
+    { rank: 38, cyrillic: "хижа дерменка", latin: "hizha dermenka", englishmeaning: "dermenka hut" },
+    { rank: 39, cyrillic: "хижа добрила", latin: "hizha dobrila", englishmeaning: "dobrila hut" },
+    { rank: 40, cyrillic: "заслон амбарица", latin: "zaslon ambaritsa", englishmeaning: "ambaritsa shelter" },
+    { rank: 41, cyrillic: "хижа васил левски", latin: "hizha vasil levski", englishmeaning: "vasil levski hut" },
+    { rank: 42, cyrillic: "заслон ботев", latin: "zaslon botev", englishmeaning: "botev shelter" },
+    { rank: 43, cyrillic: "заслон маринка", latin: "zaslon marinka", englishmeaning: "marinka shelter" },
+    { rank: 44, cyrillic: "заслон михайлов", latin: "zaslon mihaylov", englishmeaning: "mihaylov shelter" },
+    { rank: 45, cyrillic: "хижа тъжа", latin: "hizha tazha", englishmeaning: "tazha hut" },
+    { rank: 46, cyrillic: "хижа мандрата", latin: "hizha mandrata", englishmeaning: "mandrata hut" },
+    { rank: 47, cyrillic: "хижа мазалат", latin: "hizha mazalat", englishmeaning: "mazalat hut" },
+    { rank: 48, cyrillic: "хижа партизанска песен", latin: "hizha partizanska pesen", englishmeaning: "partizanska pesen hut" },
+    { rank: 49, cyrillic: "хижа узана", latin: "hizha uzana", englishmeaning: "uzana hut" },
+    { rank: 50, cyrillic: "хижа бузлуджа стара", latin: "hizha buzludzha stara", englishmeaning: "buzludzha hut old" },
+    { rank: 51, cyrillic: "хижа бузлуджа нова", latin: "hizha buzludzha nova", englishmeaning: "buzludzha hut new" },
+    { rank: 52, cyrillic: "хижа българка", latin: "hizha balgarka", englishmeaning: "balgarka hut" },
+    { rank: 53, cyrillic: "хижа планинец", latin: "hizha planinets", englishmeaning: "planinets hut" },
+    { rank: 54, cyrillic: "хижа кръстец", latin: "hizha krastets", englishmeaning: "krastets hut" },
+    { rank: 55, cyrillic: "хижа грамадлива", latin: "hizha gramadliva", englishmeaning: "gramadliva hut" },
+    { rank: 56, cyrillic: "хижа химик", latin: "hizha himik", englishmeaning: "himik hut" },
+    { rank: 57, cyrillic: "хижа предела", latin: "hizha predela", englishmeaning: "predela hut" },
+    { rank: 58, cyrillic: "заслон караиваново хорище", latin: "zaslon karaivanovo horishte", englishmeaning: "karaivanovo horishte shelter" },
+    { rank: 59, cyrillic: "хижа буковец", latin: "hizha bukovets", englishmeaning: "bukovets hut" },
+    { rank: 60, cyrillic: "хижа чумерна", latin: "hizha chumerna", englishmeaning: "chumerna hut" },
+    { rank: 61, cyrillic: "заслон вратник", latin: "zaslon vratnik", englishmeaning: "vratnik shelter" },
+    { rank: 62, cyrillic: "върбишки проход", latin: "varbishki prohod", englishmeaning: "varbishki pass hut" },
+    { rank: 63, cyrillic: "заслон хазим горския", latin: "zaslon hazim gorskiya", englishmeaning: "hazim gorskiya shelter" },
+    { rank: 64, cyrillic: "хижа топчийско", latin: "hizha topchiysko", englishmeaning: "topchiysko hut" },
+    { rank: 65, cyrillic: "козичино", latin: "kozichino", englishmeaning: "kozichino tourist dormitory" },
+    { rank: 66, cyrillic: "емона", latin: "emona", englishmeaning: "emona area near cape emine" }
+  ];
+
   window.CYRILLIC_TRAINER_DATA = {
     source: {
       wordFrequency: "https://github.com/hermitdave/FrequencyWords/blob/master/content/2018/bg/bg_50k.txt",
-      note: "Ranks 247-250 replace less frequent source words to cover all lowercase Bulgarian Cyrillic letters."
+      hikingHuts: "https://kom-emine.bg/huts-all-en/?lang=en",
+      note: "Common ranks 247-250 replace less frequent source words to cover all lowercase Bulgarian Cyrillic letters."
     },
     letterTransliterations: LETTER_TRANSLITERATIONS,
     letterOptions: LETTER_OPTIONS,
-    wordSource: WORD_SOURCE
+    wordSource: WORD_SOURCE,
+    datasets: [
+      { id: "1", label: "top 250 words", wordSource: WORD_SOURCE },
+      { id: "2", label: "hiking words", wordSource: HIKING_WORD_SOURCE }
+    ]
   };
 }());

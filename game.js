@@ -5,9 +5,11 @@
   const random = window.CyrillicRandom;
   const storage = window.CyrillicStorage;
   const ui = window.CyrillicUI;
-  const CORRECT_ANSWER_AUTO_NEXT_DELAY_MS = 900;
+  const CORRECT_ANSWER_AUTO_NEXT_DELAY_MS = 500;
 
   let seed = null;
+  let dataSetId = null;
+  let currentDataSet = null;
   let nextRandom = null;
   let currentWord = null;
   let currentLetters = [];
@@ -33,6 +35,14 @@
     return match.latin;
   }
 
+  function isTrainableLetter(letter) {
+    return data.letterTransliterations.some((item) => item.cyrillic === letter);
+  }
+
+  function getTrainableLetters(word) {
+    return Array.from(word.cyrillic).filter(isTrainableLetter);
+  }
+
   function chooseOptions(correctAnswer) {
     const wrongChoices = data.letterOptions.filter((option) => option !== correctAnswer);
     const shuffledWrongChoices = random.shuffleSeeded(nextRandom, wrongChoices);
@@ -55,8 +65,8 @@
   function startRound() {
     clearAutoNextTimer();
     storage.incrementRound();
-    currentWord = random.choose(nextRandom, data.wordSource);
-    currentLetters = Array.from(currentWord.cyrillic);
+    currentWord = random.choose(nextRandom, currentDataSet.wordSource);
+    currentLetters = getTrainableLetters(currentWord);
     currentLetterIndex = 0;
     showCurrentLetter();
   }
@@ -100,15 +110,24 @@
   }
 
   function init() {
-    seed = random.ensureSeed();
+    const settings = random.ensureUrlSettings(
+      data.datasets[0].id,
+      data.datasets.map((dataset) => dataset.id)
+    );
+
+    seed = settings.seed;
+    dataSetId = settings.dataSetId;
+    currentDataSet = data.datasets.find((dataset) => dataset.id === dataSetId);
     nextRandom = random.createSeededRandom(seed);
 
     ui.init({
       onAnswer: handleAnswer,
       onLetterNext: handleLetterNext,
-      onRoundNext: startRound
+      onRoundNext: startRound,
+      onDataSetChange: random.switchDataSet
     });
 
+    ui.renderDataSetSwitcher(data.datasets, dataSetId);
     startRound();
   }
 

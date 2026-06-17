@@ -45,8 +45,6 @@ Design mobile first.
 
 Assume a narrow viewport width by default.
 
-Avoid dropdowns.
-
 ## Randomness
 
 The game must be repeatable but also changing.
@@ -70,7 +68,7 @@ the seed determines
 * the position of the correct choice for a letter translation is  not  repeatable from the seed 
 
 
-## Data Generation
+## Dataset 1. top 250 words
 
 Generate the dictionary and letter list in a separate JavaScript file, data.js, that is imported by the game.
 
@@ -79,3 +77,13 @@ The AI should provide the lists. the AI should check all words and translations 
 the list WORD_SOURCE should be explicit with fields "cyrillic", "latin", "englishmeaning". so we clearly see the translation for each word from cyrilic to latin. 
 
 the ai must ensure the list of words contain at least 1 instance of each cyrilic character otherwise we are missing out on the training which is the goal of the game. if we are missing letters, replace the last words (most infrequent) with words such that all letters are represented. 
+
+
+### dataset 2. Hiking words 
+we want a separate dataset for hiking relevant stuff. Words in this list are
+
+* "train", "bus", "delay", "emergency", "thunder", "bad weather", "feet", "tired", "well rested", "fresh", "water", "mountain", "trail", "snake", "sheep dog", "horse", "mountain peak"
+* all tje hut names on kom-emine e3, e.g. vezhen hut, eho hut, ... (ai must generate this list from online)
+
+the datasets can be changed using the url ?data=1 or ?data=2 and if not found redirect the url so it contains the ?data also the ui should have a dropdown at the bottom next to the seed, 
+the dropdown has options "top 250 words" and "hiking words"

@@ -62,7 +62,7 @@ When the next  button is pressed:
 
 ## Data Model
 
-The game uses a dictionary of the top 250 most common Bulgarian words.
+The game has two datasets.
 
 Each dictionary entry contains:
 
@@ -74,6 +74,40 @@ Examples:
 
 * `ж` has the Latin spelling `zh`
 * `щ` has the Latin spelling `sht`
+
+### Dataset 1: top 250 words
+
+Dataset 1 contains the top 250 most common Bulgarian words.
+
+Use this dataset when the URL contains:
+
+```text
+?data=1
+```
+
+### Dataset 2: hiking words
+
+Dataset 2 contains hiking-relevant Bulgarian words.
+
+It includes:
+
+* words such as train, bus, delay, emergency, thunder, bad weather, feet, tired, well rested, fresh, water, mountain, trail, snake, sheep dog, horse, and mountain peak
+* hut names on Kom-Emine E3, such as Vezhen hut, Eho hut, and the rest of the route huts
+
+Use this dataset when the URL contains:
+
+```text
+?data=2
+```
+
+If `data` is missing from the URL, redirect to the same page with `data=1`.
+
+The UI must have a dataset dropdown at the bottom next to the seed.
+
+The dropdown options are:
+
+* `top 250 words`
+* `hiking words`
 
 ## Option Selection
 
@@ -110,7 +144,7 @@ For example, `zh` is a letter option because it is used when translating `ж`.
               | next |
  
  
- round: 22     seed: 1234
+ round: 22     seed: 1234     data: [top 250 words v]
 
 ```
 
@@ -130,7 +164,7 @@ For example, `zh` is a letter option because it is used when translating `ж`.
           | next |
  
  
- round: 22     seed: 1234
+ round: 22     seed: 1234     data: [top 250 words v]
 
 ```
 
@@ -152,6 +186,6 @@ For example, `zh` is a letter option because it is used when translating `ж`.
           | next |
  
  
- round: 22     seed: 1234
+ round: 22     seed: 1234     data: [top 250 words v]
 
 ```
