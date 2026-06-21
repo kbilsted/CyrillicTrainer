@@ -6,6 +6,7 @@
   const storage = window.CyrillicStorage;
   const ui = window.CyrillicUI;
   const CORRECT_ANSWER_AUTO_NEXT_DELAY_MS = 500;
+  const WRONG_ANSWER_OPTION_COUNT = 5;
   const RECENT_CORRECT_LETTER_LIMIT = 10;
 
   let seed = null;
@@ -27,22 +28,60 @@
     }
   }
 
-  function getLatinForLetter(cyrillicLetter) {
+  function getTransliterationForLetter(cyrillicLetter) {
     const match = data.letterTransliterations.find((letter) => letter.cyrillic === cyrillicLetter);
 
     if (!match) {
       throw new Error(`Missing transliteration for ${cyrillicLetter}`);
     }
 
-    return match.latin;
+    return match;
   }
 
   function isTrainableLetter(letter) {
     return data.letterTransliterations.some((item) => item.cyrillic === letter);
   }
 
-  function getTrainableLetters(word) {
+  function getQuestionLetterVariants(letter) {
+    const lowerLetter = letter.toLowerCase();
+    const upperLetter = letter.toUpperCase();
+
+    return [lowerLetter, upperLetter].filter((variant, index, variants) => (
+      isTrainableLetter(variant)
+      && variants.indexOf(variant) === index
+    ));
+  }
+
+  function getWordLetters(word) {
     return Array.from(word.cyrillic).filter(isTrainableLetter);
+  }
+
+  function getAvailableQuestionLetters(word) {
+    if (currentDataSet.id === "3") {
+      return getWordLetters(word);
+    }
+
+    return getWordLetters(word).flatMap(getQuestionLetterVariants);
+  }
+
+  function chooseQuestionLetter(letter) {
+    const variants = getQuestionLetterVariants(letter);
+    const availableVariants = variants.filter((variant) => !wasRecentlyCorrect(variant));
+
+    return random.choose(
+      nextRandom,
+      availableVariants.length > 0 ? availableVariants : variants
+    );
+  }
+
+  function getRoundLetters(word) {
+    const wordLetters = Array.from(word.cyrillic).filter(isTrainableLetter);
+
+    if (currentDataSet.id === "3") {
+      return wordLetters;
+    }
+
+    return wordLetters.map(chooseQuestionLetter);
   }
 
   function wasRecentlyCorrect(letter) {
@@ -61,7 +100,7 @@
 
   function chooseRoundWord() {
     const availableWords = currentDataSet.wordSource.filter((word) => (
-      getTrainableLetters(word).some((letter) => !wasRecentlyCorrect(letter))
+      getAvailableQuestionLetters(word).some((letter) => !wasRecentlyCorrect(letter))
     ));
 
     return random.choose(
@@ -70,10 +109,27 @@
     );
   }
 
-  function chooseOptions(correctAnswer) {
-    const wrongChoices = data.letterOptions.filter((option) => option !== correctAnswer);
-    const shuffledWrongChoices = random.shuffleSeeded(nextRandom, wrongChoices);
-    return random.insertAtUnseeded(shuffledWrongChoices.slice(0, 4), correctAnswer);
+  function chooseOptions(letterTransliteration) {
+    const correctAnswer = letterTransliteration.latin;
+    const isUppercaseLetter = letterTransliteration.cyrillic === letterTransliteration.cyrillic.toUpperCase();
+    const letterOptions = data.letterOptions.map((option) => (
+      isUppercaseLetter ? option.toUpperCase() : option
+    ));
+    const mustAskChoices = (letterTransliteration.mustAsk || [])
+      .filter((option, index, options) => (
+        option !== correctAnswer
+        && letterOptions.includes(option)
+        && options.indexOf(option) === index
+      ))
+      .slice(0, 4);
+    const wrongChoices = letterOptions.filter((option) => option !== correctAnswer);
+    const extraWrongChoices = wrongChoices.filter((option) => !mustAskChoices.includes(option));
+    const shuffledExtraWrongChoices = random.shuffleSeeded(nextRandom, extraWrongChoices);
+    const selectedWrongChoices = mustAskChoices
+      .concat(shuffledExtraWrongChoices)
+      .slice(0, WRONG_ANSWER_OPTION_COUNT);
+
+    return random.insertAtUnseeded(selectedWrongChoices, correctAnswer);
   }
 
   function renderStats() {
@@ -105,9 +161,10 @@
     }
 
     const currentLetter = currentLetters[currentLetterIndex];
-    currentCorrectAnswer = getLatinForLetter(currentLetter);
+    const letterTransliteration = getTransliterationForLetter(currentLetter);
+    currentCorrectAnswer = letterTransliteration.latin;
     hasAnswered = false;
-    ui.showLetterGuess(currentLetter, chooseOptions(currentCorrectAnswer));
+    ui.showLetterGuess(currentLetter, chooseOptions(letterTransliteration));
     renderStats();
   }
 
@@ -115,7 +172,7 @@
     clearAutoNextTimer();
     storage.incrementRound();
     currentWord = chooseRoundWord();
-    currentLetters = getTrainableLetters(currentWord);
+    currentLetters = getRoundLetters(currentWord);
     currentLetterIndex = 0;
     showCurrentLetter();
   }

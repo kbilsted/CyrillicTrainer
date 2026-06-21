@@ -8,6 +8,12 @@
   --wrong: #bb2d3b;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 html,
 body {
   min-height: 100%;
@@ -68,12 +74,16 @@ body {
 
 .answer-buttons {
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
   display: grid;
-  grid-template-columns: repeat(5, minmax(44px, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 8px;
 }
 
 .answer-button {
+  min-width: 0;
   min-height: 48px;
   padding: 8px 4px;
   font-size: 1.05rem;

@@ -7,16 +7,17 @@ Do not duplicate dataset requirements in `agent.md` or other files.
 
 Build a game that trains Cyrillic letters for people who only know the Latin alphabet.
 
-The game presents one Cyrillic letter at a time with five Latin options:
+The game presents one Cyrillic letter at a time with six Latin options:
 
 * one correct option
-* four wrong options
+* five wrong options
 
 The options are Latin letters or letter combinations that correspond to Cyrillic letters.
 
 the ui language is english
 
-letters are lowercase for now. perhaps later we expand
+letters can be lowercase or uppercase Cyrillic.
+When the shown Cyrillic letter is uppercase, all Latin answer options are uppercase too.
 
 ## Scoring
 
@@ -46,11 +47,15 @@ At the start of each round:
 For each Cyrillic letter in the word:
 
 * ask the user what the Cyrillic letter is in Latin
-* show five clickable option buttons with values of latin letter/letters
+* show six clickable option buttons with values of latin letter/letters
 * if the user selects a wrong answer, show the correct choice so the player learns
 * if the user selects the correct answer, show that it was correct
 * the color of the button is red or green. red if wrong. green if correct. if the button turns red, then also make the correct choice green.
 * add an "next" button for the next letter to guess the translation for. the button is automatically clicked after 2 seconds in case user answered correctly.
+
+For datasets 1 and 2, each trainable Cyrillic letter in a word creates one question, using either the lowercase or uppercase variant.
+For example, the word letter `г` creates a question for either `г` or `Г`, not both.
+Dataset 3 uses each alphabet entry as-is and does not duplicate the letter casing.
 
 The game stores the last 10 Cyrillic letters that were answered correctly in `localStorage`.
 If the next Cyrillic letter has already been answered correctly within the last 10 remembered letters, skip it and go to the next Cyrillic letter.
@@ -87,6 +92,85 @@ Each dictionary entry in JavaScript uses explicit fields:
 * `latin`
 * `englishmeaning`
 
+Each letter transliteration entry in JavaScript uses explicit fields:
+
+* `cyrillic`
+* `latin`
+* `mustAsk`
+
+The letter transliteration list in `data.js` must be named `LETTER_TRANSLITERATIONS`.
+
+`mustAsk` is a list of up to four Latin answer options that must be shown as wrong choices when they are not the correct answer.
+Use `mustAsk` for answer options that visually or phonetically resemble the Cyrillic letter.
+For uppercase Cyrillic letters, `latin` and `mustAsk` values are uppercase Latin strings.
+Uppercase Cyrillic letters have their own `mustAsk` choices when their visual shape differs from the lowercase Cyrillic letter.
+
+The `mustAsk` values are fixed training requirements.
+They must not be changed, removed, reordered, or regenerated unless this requirements file is explicitly updated.
+
+| Cyrillic | Latin | mustAsk |
+|---|---|---|
+| а | a | o, e, u |
+| б | b | v, d, g |
+| в | v | b, w, f |
+| г | g | r, h, k |
+| д | d | g, a, t, l |
+| е | e | i, y, a |
+| ж | zh | sh, ch, z, j |
+| з | z | s, e, zh |
+| и | i | n, u, y |
+| й | y | i, u, j |
+| к | k | x, h, q |
+| л | l | r, m, n |
+| м | m | n, h, l |
+| н | n | h, m, u |
+| о | o | a, e, u |
+| п | p | n, u, r, b |
+| р | r | p, b, l |
+| с | s | c, z, k |
+| т | t | m, d, n |
+| у | u | y, v, w |
+| ф | f | o, p, v |
+| х | h | x, k, ch |
+| ц | ts | c, s, ch |
+| ч | ch | sh, ts, c |
+| ш | sh | ch, sht, s |
+| щ | sht | sh, ch, ts |
+| ъ | a | u, y, o |
+| ь | y | b, i, u |
+| ю | yu | u, ya, y |
+| я | ya | r, a, yu |
+| А | A | O, E, U |
+| Б | B | V, D, G |
+| В | V | B, W, F |
+| Г | G | L, T, K |
+| Д | D | A, L, G, T |
+| Е | E | I, Y, A |
+| Ж | ZH | SH, CH, Z, J |
+| З | Z | S, E, ZH |
+| И | I | N, U, Y |
+| Й | Y | I, N, U |
+| К | K | X, H, Q |
+| Л | L | A, M, N |
+| М | M | N, H, L |
+| Н | N | H, M, U |
+| О | O | A, E, U |
+| П | P | N, U, R, B |
+| Р | R | P, B, L |
+| С | S | C, Z, K |
+| Т | T | M, D, N |
+| У | U | Y, V, W |
+| Ф | F | O, P, V |
+| Х | H | X, K, CH |
+| Ц | TS | C, S, CH, U |
+| Ч | CH | SH, TS, C |
+| Ш | SH | W, CH, SHT, S |
+| Щ | SHT | W, SH, CH, TS |
+| Ъ | A | B, U, Y, O |
+| Ь | Y | B, I, U |
+| Ю | YU | U, YA, Y, O |
+| Я | YA | R, A, YU |
+
 Examples:
 
 * `ж` has the Latin spelling `zh`
@@ -104,7 +188,7 @@ Use this dataset when the URL contains:
 ?data=1
 ```
 
-### Dataset 2: hiking words
+### Dataset 2: Hiking E3 Kom-Emine words
 
 Dataset 2 contains hiking-relevant Bulgarian words.
 
@@ -123,7 +207,7 @@ Use this dataset when the URL contains:
 
 ### Dataset 3: alphabet letters
 
-Dataset 3 contains all lowercase Bulgarian Cyrillic alphabet letters.
+Dataset 3 contains all lowercase and uppercase Bulgarian Cyrillic alphabet letters.
 
 Each dictionary entry is one Cyrillic letter with its Latin spelling.
 
@@ -140,7 +224,7 @@ The UI must have a dataset dropdown at the bottom next to the seed.
 The dropdown options are:
 
 * `top 250 words`
-* `hiking words`
+* `Hiking E3 Kom-Emine words`
 * `alphabet letters`
 
 ## Option Selection
@@ -148,6 +232,7 @@ The dropdown options are:
 If a Cyrillic letter translates to several Latin letters, that letter combination is one available option.
 
 Wrong choices are selected randomly from a list of letters and letter combinations.
+If the current Cyrillic letter has `mustAsk` options, those wrong choices are included before random wrong choices are added.
 
 The option list consists of:
 
@@ -155,6 +240,12 @@ The option list consists of:
 * all Latin letters `a` through `z`
 
 For example, `zh` is a letter option because it is used when translating `ж`.
+
+Examples:
+
+* `г` has `r` in `mustAsk` because it visually resembles Latin `r`
+* `ж` has `sh` and `ch` in `mustAsk` because they are phonetically close
+* `н` has `h` in `mustAsk` because it visually resembles Latin `h`
 
 
 
@@ -171,9 +262,9 @@ For example, `zh` is a letter option because it is used when translating `ж`.
              |            |
              +------------+
 
-    +---+  +---+  +---+  +---+  +---+   
-    | s |  | k |  | l |  | n |  | p |
-    +---+  +---+  +---+  +---+  +---+ 
+    +---+  +---+  +---+  +---+  +---+  +---+   
+    | s |  | k |  | l |  | n |  | p |  | r |
+    +---+  +---+  +---+  +---+  +---+  +---+ 
 
               | next |
  
