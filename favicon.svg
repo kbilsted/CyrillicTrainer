@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Cyrillic Trainer">
+  <rect width="64" height="64" rx="12" fill="#1d232a"/>
+  <text x="32" y="43" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" font-weight="700" fill="#ffffff">Д</text>
+  <path d="M12 54h40" stroke="#157347" stroke-width="4" stroke-linecap="round"/>
+</svg>
