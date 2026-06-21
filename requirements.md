@@ -51,7 +51,7 @@ For each Cyrillic letter in the word:
 * if the user selects a wrong answer, show the correct choice so the player learns
 * if the user selects the correct answer, show that it was correct
 * the color of the button is red or green. red if wrong. green if correct. if the button turns red, then also make the correct choice green.
-* add an "next" button for the next letter to guess the translation for. the button is automatically clicked after 2 seconds in case user answered correctly.
+* add an "next" button for the next letter to guess the translation for. the button is automatically clicked after 500 ms in case user answered correctly.
 
 For each dataset, each trainable Cyrillic letter in a word creates one question, using either the lowercase or uppercase variant.
 For example, the word letter `г` creates a question for either `г` or `Г`, not both.
@@ -203,7 +203,7 @@ It includes:
 * hiking-relevant coverage words such as flashlight, thermal underwear, southern slope, cave, overnight stay, water filter, sun protection, canyon, southern wind, driver, kettle, southern route, southeastern slope, emergency thermal blanket, fleece jacket, canyoning, mountain guide, water source, and I want a place to sleep
 * all hut and shelter names on Kom-Emine E3, such as Vezhen hut, Eho hut, and the rest of the route huts
 
-For hut entries, omit the generic Bulgarian `хижа` / Latin `hizha` prefix from roughly 95% of hut entries to avoid overtraining the same letters from repeated prefixes.
+For hut entries, omit the generic Bulgarian `хижа` / Latin `hizha` prefix from roughly 89% of hut entries to avoid overtraining the same letters from repeated prefixes.
 
 Dataset 2 must contain at least one instance of every lowercase Bulgarian Cyrillic character used by the trainer.
 
