@@ -6,6 +6,7 @@
   const storage = window.CyrillicStorage;
   const ui = window.CyrillicUI;
   const CORRECT_ANSWER_AUTO_NEXT_DELAY_MS = 500;
+  const RECENT_CORRECT_LETTER_LIMIT = 10;
 
   let seed = null;
   let dataSetId = null;
@@ -17,6 +18,7 @@
   let currentCorrectAnswer = null;
   let hasAnswered = false;
   let autoNextTimer = null;
+  let recentCorrectLetters = [];
 
   function clearAutoNextTimer() {
     if (autoNextTimer !== null) {
@@ -43,6 +45,31 @@
     return Array.from(word.cyrillic).filter(isTrainableLetter);
   }
 
+  function wasRecentlyCorrect(letter) {
+    return recentCorrectLetters.includes(letter);
+  }
+
+  function rememberCorrectLetter(letter) {
+    recentCorrectLetters.push(letter);
+
+    if (recentCorrectLetters.length > RECENT_CORRECT_LETTER_LIMIT) {
+      recentCorrectLetters = recentCorrectLetters.slice(-RECENT_CORRECT_LETTER_LIMIT);
+    }
+
+    storage.setRecentCorrectLetters(recentCorrectLetters);
+  }
+
+  function chooseRoundWord() {
+    const availableWords = currentDataSet.wordSource.filter((word) => (
+      getTrainableLetters(word).some((letter) => !wasRecentlyCorrect(letter))
+    ));
+
+    return random.choose(
+      nextRandom,
+      availableWords.length > 0 ? availableWords : currentDataSet.wordSource
+    );
+  }
+
   function chooseOptions(correctAnswer) {
     const wrongChoices = data.letterOptions.filter((option) => option !== correctAnswer);
     const shuffledWrongChoices = random.shuffleSeeded(nextRandom, wrongChoices);
@@ -53,8 +80,30 @@
     ui.renderStats(storage.getStats(), seed);
   }
 
+  function showRoundDone() {
+    ui.showRoundDone(currentWord);
+    renderStats();
+  }
+
+  function moveToNextAvailableLetter() {
+    while (
+      currentLetterIndex < currentLetters.length
+      && wasRecentlyCorrect(currentLetters[currentLetterIndex])
+    ) {
+      currentLetterIndex += 1;
+    }
+
+    return currentLetterIndex < currentLetters.length;
+  }
+
   function showCurrentLetter() {
     clearAutoNextTimer();
+
+    if (!moveToNextAvailableLetter()) {
+      showRoundDone();
+      return;
+    }
+
     const currentLetter = currentLetters[currentLetterIndex];
     currentCorrectAnswer = getLatinForLetter(currentLetter);
     hasAnswered = false;
@@ -65,7 +114,7 @@
   function startRound() {
     clearAutoNextTimer();
     storage.incrementRound();
-    currentWord = random.choose(nextRandom, currentDataSet.wordSource);
+    currentWord = chooseRoundWord();
     currentLetters = getTrainableLetters(currentWord);
     currentLetterIndex = 0;
     showCurrentLetter();
@@ -79,6 +128,7 @@
     hasAnswered = true;
 
     if (selectedAnswer === currentCorrectAnswer) {
+      rememberCorrectLetter(currentLetters[currentLetterIndex]);
       storage.incrementSuccess();
       autoNextTimer = window.setTimeout(() => {
         autoNextTimer = null;
@@ -99,13 +149,6 @@
 
     clearAutoNextTimer();
     currentLetterIndex += 1;
-
-    if (currentLetterIndex >= currentLetters.length) {
-      ui.showRoundDone(currentWord);
-      renderStats();
-      return;
-    }
-
     showCurrentLetter();
   }
 
@@ -119,6 +162,7 @@
     dataSetId = settings.dataSetId;
     currentDataSet = data.datasets.find((dataset) => dataset.id === dataSetId);
     nextRandom = random.createSeededRandom(seed);
+    recentCorrectLetters = storage.getRecentCorrectLetters().slice(-RECENT_CORRECT_LETTER_LIMIT);
 
     ui.init({
       onAnswer: handleAnswer,

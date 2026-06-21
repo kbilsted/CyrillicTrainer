@@ -2,6 +2,7 @@
   "use strict";
 
   const STORAGE_KEY = "cyrillicTrainerScores";
+  const RECENT_CORRECT_LETTERS_KEY = "cyrillicTrainerRecentCorrectLetters";
   const DEFAULT_SCORE = {
     successCounter: 0,
     failCounter: 0,
@@ -23,10 +24,26 @@
     }
   }
 
+  function loadRecentCorrectLetters() {
+    try {
+      const raw = window.localStorage.getItem(RECENT_CORRECT_LETTERS_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+
+      return Array.isArray(parsed) ? parsed.filter((letter) => typeof letter === "string") : [];
+    } catch (error) {
+      return [];
+    }
+  }
+
   let score = load();
+  let recentCorrectLetters = loadRecentCorrectLetters();
 
   function save() {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(score));
+  }
+
+  function saveRecentCorrectLetters() {
+    window.localStorage.setItem(RECENT_CORRECT_LETTERS_KEY, JSON.stringify(recentCorrectLetters));
   }
 
   function getStats() {
@@ -59,10 +76,21 @@
     return getStats();
   }
 
+  function getRecentCorrectLetters() {
+    return recentCorrectLetters.slice();
+  }
+
+  function setRecentCorrectLetters(letters) {
+    recentCorrectLetters = letters.filter((letter) => typeof letter === "string");
+    saveRecentCorrectLetters();
+  }
+
   window.CyrillicStorage = {
     getStats,
     incrementSuccess,
     incrementFail,
-    incrementRound
+    incrementRound,
+    getRecentCorrectLetters,
+    setRecentCorrectLetters
   };
 }());

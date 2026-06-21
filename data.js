@@ -392,6 +392,13 @@
     { rank: 66, cyrillic: "емона", latin: "emona", englishmeaning: "emona area near cape emine" }
   ];
 
+  const ALPHABET_WORD_SOURCE = LETTER_TRANSLITERATIONS.map((letter, index) => ({
+    rank: index + 1,
+    cyrillic: letter.cyrillic,
+    latin: letter.latin,
+    englishmeaning: `Cyrillic letter ${letter.cyrillic}`
+  }));
+
   window.CYRILLIC_TRAINER_DATA = {
     source: {
       wordFrequency: "https://github.com/hermitdave/FrequencyWords/blob/master/content/2018/bg/bg_50k.txt",
@@ -403,7 +410,8 @@
     wordSource: WORD_SOURCE,
     datasets: [
       { id: "1", label: "top 250 words", wordSource: WORD_SOURCE },
-      { id: "2", label: "hiking words", wordSource: HIKING_WORD_SOURCE }
+      { id: "2", label: "hiking words", wordSource: HIKING_WORD_SOURCE },
+      { id: "3", label: "alphabet letters", wordSource: ALPHABET_WORD_SOURCE }
     ]
   };
 }());

@@ -52,6 +52,10 @@ For each Cyrillic letter in the word:
 * the color of the button is red or green. red if wrong. green if correct. if the button turns red, then also make the correct choice green.
 * add an "next" button for the next letter to guess the translation for. the button is automatically clicked after 2 seconds in case user answered correctly.
 
+The game stores the last 10 Cyrillic letters that were answered correctly in `localStorage`.
+If the next Cyrillic letter has already been answered correctly within the last 10 remembered letters, skip it and go to the next Cyrillic letter.
+Letters answered incorrectly are not remembered for this skip rule.
+
 When all letters in a word have been processed:
 
 * show the whole word in Cyrillic
@@ -65,7 +69,7 @@ When the next  button is pressed:
 
 ## Data Model
 
-The game has two datasets.
+The game has three datasets.
 
 The dictionary and letter lists must be generated in `data.js`, which is imported by the game.
 
@@ -117,6 +121,18 @@ Use this dataset when the URL contains:
 ?data=2
 ```
 
+### Dataset 3: alphabet letters
+
+Dataset 3 contains all lowercase Bulgarian Cyrillic alphabet letters.
+
+Each dictionary entry is one Cyrillic letter with its Latin spelling.
+
+Use this dataset when the URL contains:
+
+```text
+?data=3
+```
+
 If `data` is missing from the URL, redirect to the same page with `data=1`.
 
 The UI must have a dataset dropdown at the bottom next to the seed.
@@ -125,6 +141,7 @@ The dropdown options are:
 
 * `top 250 words`
 * `hiking words`
+* `alphabet letters`
 
 ## Option Selection
 
