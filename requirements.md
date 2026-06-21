@@ -203,6 +203,8 @@ It includes:
 * hiking-relevant coverage words such as flashlight, thermal underwear, southern slope, cave, overnight stay, water filter, sun protection, canyon, southern wind, driver, kettle, southern route, southeastern slope, emergency thermal blanket, fleece jacket, canyoning, and mountain guide
 * all hut and shelter names on Kom-Emine E3, such as Vezhen hut, Eho hut, and the rest of the route huts
 
+For hut entries, omit the generic Bulgarian `хижа` / Latin `hizha` prefix from roughly 95% of hut entries to avoid overtraining the same letters from repeated prefixes.
+
 Dataset 2 must contain at least one instance of every lowercase Bulgarian Cyrillic character used by the trainer.
 
 The AI must generate the Kom-Emine E3 hut and shelter list from online sources.
