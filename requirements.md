@@ -53,9 +53,8 @@ For each Cyrillic letter in the word:
 * the color of the button is red or green. red if wrong. green if correct. if the button turns red, then also make the correct choice green.
 * add an "next" button for the next letter to guess the translation for. the button is automatically clicked after 2 seconds in case user answered correctly.
 
-For datasets 1 and 2, each trainable Cyrillic letter in a word creates one question, using either the lowercase or uppercase variant.
+For each dataset, each trainable Cyrillic letter in a word creates one question, using either the lowercase or uppercase variant.
 For example, the word letter `г` creates a question for either `г` or `Г`, not both.
-Dataset 3 uses each alphabet entry as-is and does not duplicate the letter casing.
 
 The game stores the last 10 Cyrillic letters that were answered correctly in `localStorage`.
 If the next Cyrillic letter has already been answered correctly within the last 10 remembered letters, skip it and go to the next Cyrillic letter.
@@ -91,6 +90,12 @@ Each dictionary entry in JavaScript uses explicit fields:
 * `cyrillic`
 * `latin`
 * `englishmeaning`
+
+Each dataset entry in JavaScript uses explicit fields:
+
+* `id`
+* `label`
+* `wordSource`
 
 Each letter transliteration entry in JavaScript uses explicit fields:
 
@@ -195,7 +200,10 @@ Dataset 2 contains hiking-relevant Bulgarian words.
 It includes:
 
 * words such as train, bus, delay, emergency, thunder, bad weather, feet, tired, well rested, fresh, water, mountain, trail, snake, sheep dog, horse, and mountain peak
+* hiking-relevant coverage words such as flashlight, thermal underwear, southern slope, cave, overnight stay, water filter, sun protection, canyon, southern wind, driver, kettle, southern route, southeastern slope, emergency thermal blanket, fleece jacket, canyoning, and mountain guide
 * all hut and shelter names on Kom-Emine E3, such as Vezhen hut, Eho hut, and the rest of the route huts
+
+Dataset 2 must contain at least one instance of every lowercase Bulgarian Cyrillic character used by the trainer.
 
 The AI must generate the Kom-Emine E3 hut and shelter list from online sources.
 
@@ -207,9 +215,11 @@ Use this dataset when the URL contains:
 
 ### Dataset 3: alphabet letters
 
-Dataset 3 contains all lowercase and uppercase Bulgarian Cyrillic alphabet letters.
+Dataset 3 contains all lowercase Bulgarian Cyrillic alphabet letters.
 
 Each dictionary entry is one Cyrillic letter with its Latin spelling.
+Dataset 3 must be an explicit `ALPHABET_WORD_SOURCE` array in `data.js`, not generated from `LETTER_TRANSLITERATIONS`.
+The game asks either the lowercase or uppercase variant using the same casing selection logic as the other datasets.
 
 Use this dataset when the URL contains:
 

@@ -419,15 +419,58 @@
     { rank: 63, cyrillic: "заслон хазим горския", latin: "zaslon hazim gorskiya", englishmeaning: "hazim gorskiya shelter" },
     { rank: 64, cyrillic: "хижа топчийско", latin: "hizha topchiysko", englishmeaning: "topchiysko hut" },
     { rank: 65, cyrillic: "козичино", latin: "kozichino", englishmeaning: "kozichino tourist dormitory" },
-    { rank: 66, cyrillic: "емона", latin: "emona", englishmeaning: "emona area near cape emine" }
+    { rank: 66, cyrillic: "емона", latin: "emona", englishmeaning: "emona area near cape emine" },
+    { rank: 67, cyrillic: "фенерче", latin: "fenerche", englishmeaning: "flashlight" },
+    { rank: 68, cyrillic: "термобельо", latin: "termobelyo", englishmeaning: "thermal underwear" },
+    { rank: 69, cyrillic: "южен склон", latin: "yuzhen sklon", englishmeaning: "southern slope" },
+    { rank: 70, cyrillic: "пещера", latin: "peshtera", englishmeaning: "cave" },
+    { rank: 71, cyrillic: "нощувка", latin: "noshtuvka", englishmeaning: "overnight stay" },
+    { rank: 72, cyrillic: "филтър за вода", latin: "filtar za voda", englishmeaning: "water filter" },
+    { rank: 73, cyrillic: "слънцезащита", latin: "slantsezashtita", englishmeaning: "sun protection" },
+    { rank: 74, cyrillic: "каньон", latin: "kanyon", englishmeaning: "canyon" },
+    { rank: 75, cyrillic: "южен вятър", latin: "yuzhen vyatar", englishmeaning: "southern wind" },
+    { rank: 76, cyrillic: "шофьор", latin: "shofyor", englishmeaning: "driver" },
+    { rank: 77, cyrillic: "чайник", latin: "chaynik", englishmeaning: "kettle" },
+    { rank: 78, cyrillic: "южен маршрут", latin: "yuzhen marshrut", englishmeaning: "southern route" },
+    { rank: 79, cyrillic: "югоизточен склон", latin: "yugoiztochen sklon", englishmeaning: "southeastern slope" },
+    { rank: 80, cyrillic: "термофолио", latin: "termofolio", englishmeaning: "emergency thermal blanket" },
+    { rank: 81, cyrillic: "флисово яке", latin: "flisovo yake", englishmeaning: "fleece jacket" },
+    { rank: 82, cyrillic: "каньонинг", latin: "kanyoning", englishmeaning: "canyoning" },
+    { rank: 83, cyrillic: "планински водач", latin: "planinski vodach", englishmeaning: "mountain guide" }
   ];
 
-  const ALPHABET_WORD_SOURCE = LETTER_TRANSLITERATIONS.map((letter, index) => ({
-    rank: index + 1,
-    cyrillic: letter.cyrillic,
-    latin: letter.latin,
-    englishmeaning: `Cyrillic letter ${letter.cyrillic}`
-  }));
+  const ALPHABET_WORD_SOURCE = [
+    { rank: 1, cyrillic: "а", latin: "a", englishmeaning: "Cyrillic letter а" },
+    { rank: 2, cyrillic: "б", latin: "b", englishmeaning: "Cyrillic letter б" },
+    { rank: 3, cyrillic: "в", latin: "v", englishmeaning: "Cyrillic letter в" },
+    { rank: 4, cyrillic: "г", latin: "g", englishmeaning: "Cyrillic letter г" },
+    { rank: 5, cyrillic: "д", latin: "d", englishmeaning: "Cyrillic letter д" },
+    { rank: 6, cyrillic: "е", latin: "e", englishmeaning: "Cyrillic letter е" },
+    { rank: 7, cyrillic: "ж", latin: "zh", englishmeaning: "Cyrillic letter ж" },
+    { rank: 8, cyrillic: "з", latin: "z", englishmeaning: "Cyrillic letter з" },
+    { rank: 9, cyrillic: "и", latin: "i", englishmeaning: "Cyrillic letter и" },
+    { rank: 10, cyrillic: "й", latin: "y", englishmeaning: "Cyrillic letter й" },
+    { rank: 11, cyrillic: "к", latin: "k", englishmeaning: "Cyrillic letter к" },
+    { rank: 12, cyrillic: "л", latin: "l", englishmeaning: "Cyrillic letter л" },
+    { rank: 13, cyrillic: "м", latin: "m", englishmeaning: "Cyrillic letter м" },
+    { rank: 14, cyrillic: "н", latin: "n", englishmeaning: "Cyrillic letter н" },
+    { rank: 15, cyrillic: "о", latin: "o", englishmeaning: "Cyrillic letter о" },
+    { rank: 16, cyrillic: "п", latin: "p", englishmeaning: "Cyrillic letter п" },
+    { rank: 17, cyrillic: "р", latin: "r", englishmeaning: "Cyrillic letter р" },
+    { rank: 18, cyrillic: "с", latin: "s", englishmeaning: "Cyrillic letter с" },
+    { rank: 19, cyrillic: "т", latin: "t", englishmeaning: "Cyrillic letter т" },
+    { rank: 20, cyrillic: "у", latin: "u", englishmeaning: "Cyrillic letter у" },
+    { rank: 21, cyrillic: "ф", latin: "f", englishmeaning: "Cyrillic letter ф" },
+    { rank: 22, cyrillic: "х", latin: "h", englishmeaning: "Cyrillic letter х" },
+    { rank: 23, cyrillic: "ц", latin: "ts", englishmeaning: "Cyrillic letter ц" },
+    { rank: 24, cyrillic: "ч", latin: "ch", englishmeaning: "Cyrillic letter ч" },
+    { rank: 25, cyrillic: "ш", latin: "sh", englishmeaning: "Cyrillic letter ш" },
+    { rank: 26, cyrillic: "щ", latin: "sht", englishmeaning: "Cyrillic letter щ" },
+    { rank: 27, cyrillic: "ъ", latin: "a", englishmeaning: "Cyrillic letter ъ" },
+    { rank: 28, cyrillic: "ь", latin: "y", englishmeaning: "Cyrillic letter ь" },
+    { rank: 29, cyrillic: "ю", latin: "yu", englishmeaning: "Cyrillic letter ю" },
+    { rank: 30, cyrillic: "я", latin: "ya", englishmeaning: "Cyrillic letter я" }
+  ];
 
   window.CYRILLIC_TRAINER_DATA = {
     source: {

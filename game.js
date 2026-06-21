@@ -57,10 +57,6 @@
   }
 
   function getAvailableQuestionLetters(word) {
-    if (currentDataSet.id === "3") {
-      return getWordLetters(word);
-    }
-
     return getWordLetters(word).flatMap(getQuestionLetterVariants);
   }
 
@@ -75,13 +71,7 @@
   }
 
   function getRoundLetters(word) {
-    const wordLetters = Array.from(word.cyrillic).filter(isTrainableLetter);
-
-    if (currentDataSet.id === "3") {
-      return wordLetters;
-    }
-
-    return wordLetters.map(chooseQuestionLetter);
+    return getWordLetters(word).map(chooseQuestionLetter);
   }
 
   function wasRecentlyCorrect(letter) {
