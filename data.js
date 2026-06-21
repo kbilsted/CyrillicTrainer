@@ -436,7 +436,9 @@
     { rank: 80, cyrillic: "термофолио", latin: "termofolio", englishmeaning: "emergency thermal blanket" },
     { rank: 81, cyrillic: "флисово яке", latin: "flisovo yake", englishmeaning: "fleece jacket" },
     { rank: 82, cyrillic: "каньонинг", latin: "kanyoning", englishmeaning: "canyoning" },
-    { rank: 83, cyrillic: "планински водач", latin: "planinski vodach", englishmeaning: "mountain guide" }
+    { rank: 83, cyrillic: "планински водач", latin: "planinski vodach", englishmeaning: "mountain guide" },
+    { rank: 84, cyrillic: "чешма", latin: "cheshma", englishmeaning: "water source" },
+    { rank: 85, cyrillic: "искам нощувка", latin: "iskam noshtuvka", englishmeaning: "I want a place to sleep" }
   ];
 
   const ALPHABET_WORD_SOURCE = [
