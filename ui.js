@@ -9,6 +9,7 @@
   };
 
   let hiddenLatinValue = "";
+  let hiddenMeaningValue = "";
 
   function init(nextCallbacks) {
     callbacks = nextCallbacks;
@@ -31,9 +32,8 @@
       }
     });
 
-    $("#showLatinButton").on("click", function () {
-      $("#doneLatin").text(hiddenLatinValue).removeClass("d-none");
-      $("#showLatinButton").addClass("d-none");
+    $(".reveal-word-button").on("click", function () {
+      revealRoundDoneDetails();
     });
 
     $("#datasetSelect").on("change", function () {
@@ -59,6 +59,12 @@
     ));
 
     $("#datasetSelect").empty().append(options).val(activeDataSetId);
+  }
+
+  function revealRoundDoneDetails() {
+    $("#doneLatin").text(hiddenLatinValue).removeClass("d-none");
+    $("#doneMeaning").text(hiddenMeaningValue).removeClass("d-none");
+    $(".reveal-word-button").addClass("d-none");
   }
 
   function showLetterGuess(letter, options) {
@@ -99,9 +105,10 @@
     $("#roundDoneView").removeClass("d-none");
     $("#doneCyrillic").text(word.cyrillic);
     hiddenLatinValue = word.latin;
+    hiddenMeaningValue = word.englishmeaning;
     $("#doneLatin").text("").addClass("d-none");
-    $("#showLatinButton").removeClass("d-none");
-    $("#doneMeaning").text(word.englishmeaning);
+    $("#doneMeaning").text("").addClass("d-none");
+    $(".reveal-word-button").removeClass("d-none");
   }
 
   window.CyrillicUI = {

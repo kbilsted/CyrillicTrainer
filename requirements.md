@@ -1,5 +1,8 @@
 # Product requirements
 
+This is the single authoritative file for product and dataset requirements.
+Do not duplicate dataset requirements in `agent.md` or other files.
+
 ## Goal
 
 Build a game that trains Cyrillic letters for people who only know the Latin alphabet.
@@ -64,11 +67,21 @@ When the next  button is pressed:
 
 The game has two datasets.
 
+The dictionary and letter lists must be generated in `data.js`, which is imported by the game.
+
+The AI must provide the lists and verify the Bulgarian words, Latin spellings, and English meanings carefully because the dataset is core to the game.
+
 Each dictionary entry contains:
 
 * Cyrillic spelling
 * Latin spelling
 * English translation
+
+Each dictionary entry in JavaScript uses explicit fields:
+
+* `cyrillic`
+* `latin`
+* `englishmeaning`
 
 Examples:
 
@@ -78,6 +91,8 @@ Examples:
 ### Dataset 1: top 250 words
 
 Dataset 1 contains the top 250 most common Bulgarian words.
+
+Dataset 1 must contain at least one instance of every lowercase Bulgarian Cyrillic character used by the trainer. If the top 250 source words do not cover every character, replace the last and least frequent words with words that add the missing characters.
 
 Use this dataset when the URL contains:
 
@@ -92,7 +107,9 @@ Dataset 2 contains hiking-relevant Bulgarian words.
 It includes:
 
 * words such as train, bus, delay, emergency, thunder, bad weather, feet, tired, well rested, fresh, water, mountain, trail, snake, sheep dog, horse, and mountain peak
-* hut names on Kom-Emine E3, such as Vezhen hut, Eho hut, and the rest of the route huts
+* all hut and shelter names on Kom-Emine E3, such as Vezhen hut, Eho hut, and the rest of the route huts
+
+The AI must generate the Kom-Emine E3 hut and shelter list from online sources.
 
 Use this dataset when the URL contains:
 
@@ -158,7 +175,7 @@ For example, `zh` is a letter option because it is used when translating `ж`.
         
      WORD: xxxxxx
      In Latin: | show |    
-     Meaning: zz zz zz 
+     Meaning: | show | 
          
              
           | next |
@@ -168,7 +185,7 @@ For example, `zh` is a letter option because it is used when translating `ж`.
 
 ```
 
-| show | er en knap man kan trykke på op når der trykkes vises ordet
+Both `show` buttons reveal both hidden fields: the Latin spelling and the English meaning.
 
 ### gui for round done - click done
 
