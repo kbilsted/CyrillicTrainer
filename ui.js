@@ -5,7 +5,8 @@
     onAnswer: null,
     onLetterNext: null,
     onRoundNext: null,
-    onDataSetChange: null
+    onDataSetChange: null,
+    onReset: null
   };
 
   let hiddenLatinValue = "";
@@ -39,6 +40,12 @@
     $("#datasetSelect").on("change", function () {
       if (callbacks.onDataSetChange) {
         callbacks.onDataSetChange($(this).val());
+      }
+    });
+
+    $("#resetButton").on("click", function () {
+      if (callbacks.onReset) {
+        callbacks.onReset();
       }
     });
   }

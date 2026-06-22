@@ -36,6 +36,10 @@ After each answer:
 * persist scores in `localStorage`
 * round counter is incremented with the start of new words, so first round is 1
 
+The UI has a reset button.
+When pressed, it clears `successCounter`, `failCounter`, `roundCounter`, and the last 10 correctly answered Cyrillic letters from `localStorage`.
+After reset, the game starts a fresh round.
+
 ## Rounds
 
 The game consists of rounds.

@@ -85,12 +85,21 @@
     saveRecentCorrectLetters();
   }
 
+  function resetProgress() {
+    score = { ...DEFAULT_SCORE };
+    recentCorrectLetters = [];
+    save();
+    saveRecentCorrectLetters();
+    return getStats();
+  }
+
   window.CyrillicStorage = {
     getStats,
     incrementSuccess,
     incrementFail,
     incrementRound,
     getRecentCorrectLetters,
-    setRecentCorrectLetters
+    setRecentCorrectLetters,
+    resetProgress
   };
 }());

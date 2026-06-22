@@ -168,6 +168,14 @@ body {
   font-size: 0.85rem;
 }
 
+.reset-button {
+  min-width: 64px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  font-size: 0.85rem;
+  text-transform: lowercase;
+}
+
 @media (max-width: 380px) {
   .score-line,
   .bottom-line {

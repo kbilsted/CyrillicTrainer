@@ -167,6 +167,13 @@
     showCurrentLetter();
   }
 
+  function handleReset() {
+    clearAutoNextTimer();
+    storage.resetProgress();
+    recentCorrectLetters = [];
+    startRound();
+  }
+
   function handleAnswer(selectedAnswer) {
     if (hasAnswered) {
       return;
@@ -215,7 +222,8 @@
       onAnswer: handleAnswer,
       onLetterNext: handleLetterNext,
       onRoundNext: startRound,
-      onDataSetChange: random.switchDataSet
+      onDataSetChange: random.switchDataSet,
+      onReset: handleReset
     });
 
     ui.renderDataSetSwitcher(data.datasets, dataSetId);
