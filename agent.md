@@ -17,6 +17,10 @@ Do not introduce a build step unless the user explicitly asks for one.
 
 Keep the static app split into small files. Do not put the whole game in one large file.
 
+Keep functions at a practical size. Do not extract tiny one-line or one-use helper functions unless the name captures an important domain rule or the extraction makes a complex block easier to read. Prefer direct code for simple local checks.
+
+In all JavaScript files, use comments sparingly. Comments should explain non-obvious rules or tradeoffs, not restate function names or list the single call site of a function.
+
 Use this file layout:
 
 * `index.html`: HTML structure only. Contains the score line, letter card, answer buttons, round-done view, and bottom line. Loads Bootstrap, jQuery, and local JavaScript files.
