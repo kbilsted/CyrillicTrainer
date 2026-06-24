@@ -1,3 +1,5 @@
+// Module wrapper that publishes the trainer datasets and transliteration tables.
+// Called immediately by the browser when data.js is loaded.
 (function () {
   "use strict";
 

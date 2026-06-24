@@ -47,9 +47,13 @@ The game consists of rounds.
 At the start of each round:
 
 * choose a random word from the dictionary
+* prefer words that contain at least one Cyrillic letter variant that is not in the last 10 correctly answered letters
+* do not exclude a word just because it also contains one or more letters from the last 10 correctly answered letters
+* if every word would be fully skipped by the last-10 rule, choose from the full dictionary instead
 
 For each Cyrillic letter in the word:
 
+* if the Cyrillic letter is in the last 10 correctly answered letters, skip it and go to the next Cyrillic letter
 * ask the user what the Cyrillic letter is in Latin
 * show six clickable option buttons with values of latin letter/letters
 * if the user selects a wrong answer, show the correct choice so the player learns
@@ -61,8 +65,18 @@ For each dataset, each trainable Cyrillic letter in a word creates one question,
 For example, the word letter `г` creates a question for either `г` or `Г`, not both.
 
 The game stores the last 10 Cyrillic letters that were answered correctly in `localStorage`.
-If the next Cyrillic letter has already been answered correctly within the last 10 remembered letters, skip it and go to the next Cyrillic letter.
 Letters answered incorrectly are not remembered for this skip rule.
+
+The game keeps a runtime-only `lastWrongAnswer` value.
+When the user answers incorrectly, set `lastWrongAnswer` to the exact Cyrillic character that was asked, including uppercase/lowercase.
+When a round ends and `lastWrongAnswer` has a value, the next round must use it for word selection:
+
+* choose a random word from the current round candidate words that contains the same Cyrillic letter, using case-insensitive matching
+* if no candidate word contains that letter, choose a random word from the current round candidate words
+* do not force a specific matching letter position or casing in that word
+* set `lastWrongAnswer` to `null` after the next word has been selected
+
+When `lastWrongAnswer` is `null`, choose a random word from the current round candidate words.
 
 When all letters in a word have been processed:
 
@@ -74,6 +88,30 @@ When all letters in a word have been processed:
 When the next  button is pressed:
 
 * start a new round
+
+## Randomness
+
+The game must be repeatable from a URL seed.
+
+Use a seed from the URL:
+
+```text
+?seed=1234
+```
+
+If no seed is found in the URL:
+
+* randomize a seed
+* redirect to the same page with the seed added to the URL
+
+After a valid URL seed exists, use the seed for all game random number operations.
+
+The seed determines:
+
+* the order in which words are chosen for rounds
+* lowercase/uppercase question variant choices
+* wrong-answer choices
+* the displayed order of answer options, including the position of the correct answer
 
 ## Data Model
 
@@ -249,6 +287,7 @@ If a Cyrillic letter translates to several Latin letters, that letter combinatio
 
 Wrong choices are selected randomly from a list of letters and letter combinations.
 If the current Cyrillic letter has `mustAsk` options, those wrong choices are included before random wrong choices are added.
+After the six answer options have been selected, shuffle the full option list.
 
 The option list consists of:
 
