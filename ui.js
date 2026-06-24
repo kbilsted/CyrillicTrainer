@@ -6,6 +6,7 @@
     onLetterNext: null,
     onRoundNext: null,
     onDataSetChange: null,
+    onSeedChange: null,
     onReset: null
   };
 
@@ -43,6 +44,14 @@
       }
     });
 
+    $("#gameForm").on("submit", function (event) {
+      event.preventDefault();
+
+      if (callbacks.onSeedChange) {
+        callbacks.onSeedChange($("#gameInput").val());
+      }
+    });
+
     $("#resetButton").on("click", function () {
       if (callbacks.onReset) {
         callbacks.onReset();
@@ -55,7 +64,10 @@
     $("#failCounter").text(stats.failCounter);
     $("#successRatio").text(stats.successRatio);
     $("#roundCounter").text(stats.roundCounter);
-    $("#seedValue").text(seed);
+
+    if (!$("#gameInput").is(":focus")) {
+      $("#gameInput").val(seed);
+    }
   }
 
   function renderDataSetSwitcher(datasets, activeDataSetId) {

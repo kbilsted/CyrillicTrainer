@@ -41,6 +41,7 @@ body {
 .bottom-line {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 12px;
   font-size: 0.95rem;
   white-space: nowrap;
@@ -158,6 +159,31 @@ body {
   align-items: center;
   gap: 6px;
   min-width: 0;
+}
+
+.game-form {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.game-input-label {
+  color: var(--muted-text);
+}
+
+.game-input {
+  width: 86px;
+  min-width: 0;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  font-size: 0.85rem;
+}
+
+.game-ok-button {
+  min-width: 40px;
+  padding: 2px 8px;
+  font-size: 0.85rem;
 }
 
 .dataset-select {

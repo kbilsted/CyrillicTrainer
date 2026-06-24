@@ -231,6 +231,7 @@
       onLetterNext: handleLetterNext,
       onRoundNext: startRound,
       onDataSetChange: random.switchDataSet,
+      onSeedChange: random.switchSeed,
       onReset: handleReset
     });
 

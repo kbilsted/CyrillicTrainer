@@ -47,9 +47,13 @@
       <button id="roundNextButton" class="btn btn-dark next-button" type="button">next</button>
     </section>
 
-    <section class="bottom-line" aria-label="Round and seed">
+    <section class="bottom-line" aria-label="Round and game">
       <div><span>round:</span> <strong id="roundCounter">0</strong></div>
-      <div><span>seed:</span> <strong id="seedValue">0</strong></div>
+      <form id="gameForm" class="game-form">
+        <label class="game-input-label" for="gameInput">game:</label>
+        <input id="gameInput" class="form-control form-control-sm game-input" type="text" inputmode="numeric" autocomplete="off">
+        <button id="gameOkButton" class="btn btn-outline-dark btn-sm game-ok-button" type="submit">OK</button>
+      </form>
       <label class="dataset-select-label" for="datasetSelect">
         <span>data:</span>
         <select id="datasetSelect" class="form-select form-select-sm dataset-select" aria-label="Dataset"></select>

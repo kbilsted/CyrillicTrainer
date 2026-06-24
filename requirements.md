@@ -91,22 +91,23 @@ When the next  button is pressed:
 
 ## Randomness
 
-The game must be repeatable from a URL seed.
+The game must be repeatable from a URL game value.
 
-Use a seed from the URL:
+Use a game value from the URL:
 
 ```text
-?seed=1234
+?game=1234
 ```
 
-If no seed is found in the URL:
+If no game value is found in the URL:
 
-* randomize a seed
-* redirect to the same page with the seed added to the URL
+* randomize a game value
+* redirect to the same page with the game value added to the URL
 
-After a valid URL seed exists, use the seed for all game random number operations.
+In code, this value may be named `seed`.
+After a valid URL game value exists, use it for all game random number operations.
 
-The seed determines:
+The game value determines:
 
 * the order in which words are chosen for rounds
 * lowercase/uppercase question variant choices
@@ -273,7 +274,10 @@ Use this dataset when the URL contains:
 
 If `data` is missing from the URL, redirect to the same page with `data=1`.
 
-The UI must have a dataset dropdown at the bottom next to the seed.
+The UI must have a game input field with an OK button at the bottom.
+When the OK button is pressed, update the URL `game` value and reload using that game value.
+
+The UI must have a dataset dropdown at the bottom next to the game input.
 
 The dropdown options are:
 
@@ -324,7 +328,7 @@ Examples:
               | next |
  
  
- round: 22     seed: 1234     data: [top 250 words v]
+ round: 22     game: [1234] [OK]     data: [top 250 words v]
 
 ```
 
@@ -344,7 +348,7 @@ Examples:
           | next |
  
  
- round: 22     seed: 1234     data: [top 250 words v]
+ round: 22     game: [1234] [OK]     data: [top 250 words v]
 
 ```
 
@@ -366,6 +370,6 @@ Both `show` buttons reveal both hidden fields: the Latin spelling and the Englis
           | next |
  
  
- round: 22     seed: 1234     data: [top 250 words v]
+ round: 22     game: [1234] [OK]     data: [top 250 words v]
 
 ```

@@ -1,6 +1,9 @@
 (function () {
   "use strict";
 
+  const GAME_PARAM = "game";
+  const LEGACY_SEED_PARAM = "seed";
+
   function createSeed() {
     return String(Math.floor(Math.random() * 900000000) + 100000000);
   }
@@ -12,15 +15,21 @@
 
   function ensureUrlSettings(defaultDataSetId, validDataSetIds) {
     const url = new URL(window.location.href);
-    const existingSeed = url.searchParams.get("seed");
+    const existingGame = url.searchParams.get(GAME_PARAM);
+    const legacySeed = url.searchParams.get(LEGACY_SEED_PARAM);
     const existingDataSetId = url.searchParams.get("data");
     const validIds = new Set(validDataSetIds);
     let changed = false;
-    let seed = existingSeed ? normalizeSeed(existingSeed) : createSeed();
+    let seed = existingGame || legacySeed ? normalizeSeed(existingGame || legacySeed) : createSeed();
     let dataSetId = validIds.has(existingDataSetId) ? existingDataSetId : defaultDataSetId;
 
-    if (seed !== existingSeed) {
-      url.searchParams.set("seed", seed);
+    if (seed !== existingGame) {
+      url.searchParams.set(GAME_PARAM, seed);
+      changed = true;
+    }
+
+    if (legacySeed !== null) {
+      url.searchParams.delete(LEGACY_SEED_PARAM);
       changed = true;
     }
 
@@ -43,6 +52,13 @@
   function switchDataSet(dataSetId) {
     const url = new URL(window.location.href);
     url.searchParams.set("data", dataSetId);
+    window.location.assign(url.toString());
+  }
+
+  function switchSeed(seedValue) {
+    const url = new URL(window.location.href);
+    url.searchParams.set(GAME_PARAM, normalizeSeed(seedValue));
+    url.searchParams.delete(LEGACY_SEED_PARAM);
     window.location.assign(url.toString());
   }
 
@@ -95,6 +111,7 @@
     ensureUrlSettings,
     ensureSeed,
     switchDataSet,
+    switchSeed,
     createSeededRandom,
     choose,
     shuffleSeeded
