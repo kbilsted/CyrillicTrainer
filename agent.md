@@ -45,6 +45,24 @@ Design mobile first.
 
 Assume a narrow viewport width by default.
 
+## Typography
+
+Use fonts where lowercase `l` and `i` are easy to read, and uppercase `I` is easy to distinguish from lowercase `l`.
+Avoid fonts where lowercase `l` renders as a plain vertical line.
+
+Prefer this font stack unless there is a strong reason to change it:
+
+```css
+"Cascadia Mono", Consolas, "Lucida Console", monospace
+```
+
+Do not use these font stacks:
+
+```css
+system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif
+Verdana, Tahoma, Geneva, sans-serif
+```
+
 ## Requirements Source
 
 Requirement details live only in `requirements.md`.
