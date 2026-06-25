@@ -23,7 +23,7 @@
   let currentLetters = [];
   let currentLetterIndex = 0;
   let currentCorrectAnswer = null;
-  let hasAnswered = false;
+  let isCurrentQuestionAnswered = false;
   let recentCorrectLetters = [];
   let lastWrongAnswer = null;
 
@@ -200,7 +200,7 @@
     const currentLetter = currentLetters[currentLetterIndex];
     const letterTransliteration = getTransliterationForLetter(currentLetter);
     currentCorrectAnswer = getCorrectAnswer(letterTransliteration);
-    hasAnswered = false;
+    isCurrentQuestionAnswered = false;
     ui.showLetterGuess(
       GAME_MODES.find((mode) => mode.id === gameModeId).title,
       getQuestionPrompt(letterTransliteration),
@@ -231,11 +231,11 @@
   }
 
   function handleAnswer(selectedAnswer) {
-    if (hasAnswered) {
+    if (isCurrentQuestionAnswered) {
       return;
     }
 
-    hasAnswered = true;
+    isCurrentQuestionAnswered = true;
 
     if (selectedAnswer === currentCorrectAnswer) {
       rememberCorrectLetter(currentLetters[currentLetterIndex]);
@@ -254,7 +254,7 @@
   }
 
   function handleLetterNext() {
-    if (!hasAnswered) {
+    if (!isCurrentQuestionAnswered) {
       return;
     }
 
