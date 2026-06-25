@@ -5,7 +5,6 @@
   const random = window.CyrillicRandom;
   const storage = window.CyrillicStorage;
   const ui = window.CyrillicUI;
-  const CORRECT_ANSWER_AUTO_NEXT_DELAY_MS = 500;
   const WRONG_ANSWER_OPTION_COUNT = 5;
   const RECENT_CORRECT_LETTER_LIMIT = 10;
   const GAME_MODES = [
@@ -25,16 +24,8 @@
   let currentLetterIndex = 0;
   let currentCorrectAnswer = null;
   let hasAnswered = false;
-  let autoNextTimer = null;
   let recentCorrectLetters = [];
   let lastWrongAnswer = null;
-
-  function clearAutoNextTimer() {
-    if (autoNextTimer !== null) {
-      window.clearTimeout(autoNextTimer);
-      autoNextTimer = null;
-    }
-  }
 
   function getTransliterationForLetter(cyrillicLetter) {
     const match = data.letterTransliterations.find((letter) => letter.cyrillic === cyrillicLetter);
@@ -200,8 +191,6 @@
   }
 
   function showCurrentLetter() {
-    clearAutoNextTimer();
-
     if (!moveToNextAvailableLetter()) {
       ui.showRoundDone(currentWord);
       ui.renderStats(storage.getStats(), seed);
@@ -221,7 +210,6 @@
   }
 
   function startRound() {
-    clearAutoNextTimer();
     storage.incrementRound();
     const preferredLetter = lastWrongAnswer;
     currentWord = chooseRoundWord(preferredLetter);
@@ -232,7 +220,6 @@
   }
 
   function handleReset() {
-    clearAutoNextTimer();
     storage.resetProgress();
     recentCorrectLetters = [];
     lastWrongAnswer = null;
@@ -253,17 +240,16 @@
     if (selectedAnswer === currentCorrectAnswer) {
       rememberCorrectLetter(currentLetters[currentLetterIndex]);
       storage.incrementSuccess();
-      autoNextTimer = window.setTimeout(() => {
-        autoNextTimer = null;
-        handleLetterNext();
-      }, CORRECT_ANSWER_AUTO_NEXT_DELAY_MS);
     } else {
       lastWrongAnswer = currentLetters[currentLetterIndex];
       storage.incrementFail();
       storage.incrementLetterError(currentLetters[currentLetterIndex]);
     }
 
-    ui.showAnswerFeedback(selectedAnswer, currentCorrectAnswer);
+    ui.showAnswerFeedback(selectedAnswer, currentCorrectAnswer, {
+      autoNext: selectedAnswer === currentCorrectAnswer,
+      onAutoNext: handleLetterNext
+    });
     ui.renderStats(storage.getStats(), seed);
   }
 
@@ -272,7 +258,6 @@
       return;
     }
 
-    clearAutoNextTimer();
     currentLetterIndex += 1;
     showCurrentLetter();
   }

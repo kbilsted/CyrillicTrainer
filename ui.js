@@ -12,8 +12,18 @@
     onReset: null
   };
 
+  const CORRECT_ANSWER_AUTO_NEXT_DELAY_MS = 500;
+
   let hiddenLatinValue = "";
   let hiddenMeaningValue = "";
+  let autoNextTimer = null;
+
+  function clearAutoNextTimer() {
+    if (autoNextTimer !== null) {
+      window.clearTimeout(autoNextTimer);
+      autoNextTimer = null;
+    }
+  }
 
   function init(nextCallbacks) {
     callbacks = nextCallbacks;
@@ -117,6 +127,7 @@
   }
 
   function showLetterGuess(title, prompt, options) {
+    clearAutoNextTimer();
     $("#roundDoneView").addClass("d-none");
     $("#letterGuessView").removeClass("d-none");
     $("#questionTitle").text(title);
@@ -134,7 +145,9 @@
     $("#answerButtons").empty().append(buttons);
   }
 
-  function showAnswerFeedback(selectedValue, correctValue) {
+  function showAnswerFeedback(selectedValue, correctValue, options) {
+    clearAutoNextTimer();
+
     $(".answer-button").each(function () {
       const button = $(this);
       const value = button.data("value");
@@ -148,6 +161,13 @@
     });
 
     $("#letterNextButton").prop("disabled", false);
+
+    if (options.autoNext) {
+      autoNextTimer = window.setTimeout(() => {
+        autoNextTimer = null;
+        options.onAutoNext();
+      }, CORRECT_ANSWER_AUTO_NEXT_DELAY_MS);
+    }
   }
 
   function showProgress(letterErrorCounts) {
@@ -183,6 +203,7 @@
   }
 
   function showRoundDone(word) {
+    clearAutoNextTimer();
     $("#letterGuessView").addClass("d-none");
     $("#roundDoneView").removeClass("d-none");
     $("#doneCyrillic").text(word.cyrillic);
