@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const RECENT_CORRECT_LETTER_LIMIT = 10;
+  const RECENT_CORRECT_LETTER_LIMIT = 20;
 
   class UserProgressStats {
     constructor(values) {
@@ -33,7 +33,8 @@
 
     recordCorrectLetter(cyrillicLetter) {
       this.successCounter += 1;
-      this.recentCorrectLetters.push(cyrillicLetter);
+      this.recentCorrectLetters.push(cyrillicLetter.toLowerCase());
+      this.recentCorrectLetters.push(cyrillicLetter.toUpperCase());
 
       if (this.recentCorrectLetters.length > RECENT_CORRECT_LETTER_LIMIT) {
         this.recentCorrectLetters = this.recentCorrectLetters.slice(-RECENT_CORRECT_LETTER_LIMIT);

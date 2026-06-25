@@ -10,6 +10,7 @@ Do not put implementation stack, file layout, script order, or coding style here
 
 Build a game that trains Cyrillic letters for people who only know the Latin alphabet.
 
+## Game modes
 The game has two game modes:
 
 * `Cyrilic → Latin`
@@ -46,7 +47,7 @@ Use these names consistently for the core entities:
 * `UserProgressStats`: the JavaScript class that owns the user's learning progress fields and derived stats
 * `GameState`: the JavaScript class that owns persisted game-flow fields and the runtime seeded word order
 * `CurrentWordState`: the JavaScript class that owns runtime progress inside the active word round
-* `recentCorrectLetters`: the last 10 correctly answered exact Cyrillic characters
+* `recentCorrectLetters`: a flat list of up to 20 recently correct Cyrillic character variants. 
 * `letterErrorCounts`: the persisted dictionary of exact Cyrillic character error counts
 * `wordCursor`: the persisted index of the next word to consider in the seeded word order
 * `currentWordIndex`: the persisted index of the word currently being asked
@@ -134,6 +135,10 @@ The storage format does not need to be backward compatible with older versions.
 `roundCounter` is not part of `UserProgressStats`.
 `roundCounter` is part of `GameState` because it describes game flow, not the user's answer progress.
 
+`recentCorrectLetters` stores both case variants for each correctly answered Cyrillic character.
+For example, if `а` was answered correctly, add both `а` and `А` to `recentCorrectLetters`.
+After each correct answer, trim `recentCorrectLetters` to the newest 20 entries.
+
 If the user selects the correct answer:
 
 * call `recordCorrectLetter(cyrillicLetter)`, which increments `successCounter` and updates `recentCorrectLetters`
@@ -174,16 +179,16 @@ At the start of each round:
 
 * create one seeded shuffled order of all words in the current dataset
 * use `wordCursor` to walk through that seeded word order
-* choose the next word in the seeded order that contains at least one Cyrillic letter variant that is not in the last 10 correctly answered letters
+* choose the next word in the seeded order that contains at least one Cyrillic letter variant that is not in `recentCorrectLetters`
 * do not exclude a word just because it also contains one or more letters from the last 10 correctly answered letters
-* if a word has no askable letters because all its letter variants are in the last 10 correctly answered letters, skip that word permanently for the current game and increment `wordCursor`
+* if a word has no askable letters because all its letter variants are in `recentCorrectLetters`, skip that word permanently for the current game and increment `wordCursor`
 * if the previous round for the current word had one or more wrong answers, repeat the same word instead of advancing `wordCursor`
 * repeat the same word until the user completes a round for that word without wrong answers
 * if `wordCursor` reaches the end of the seeded word order and there is no repeated word, the game is over
 
 For each Cyrillic letter in the word:
 
-* if the Cyrillic letter is in the last 10 correctly answered letters, skip it and go to the next Cyrillic letter
+* if the Cyrillic letter is in `recentCorrectLetters`, skip it and go to the next Cyrillic letter
 * in `Cyrilic → Latin` mode, ask the user what the Cyrillic letter is in Latin
 * in `Latin → Cyrilic` mode, show the Latin transliteration and ask the user which Cyrillic letter it represents
 * show the active game mode title above the large question card
@@ -197,7 +202,7 @@ For each Cyrillic letter in the word:
 For each dataset, each trainable Cyrillic letter in a word creates one question, using either the lowercase or uppercase variant.
 For example, the word letter `г` creates a question for either `г` or `Г`, not both.
 
-The game stores the last 10 Cyrillic letters that were answered correctly in `localStorage`.
+The game stores up to 20 recently correct Cyrillic character variants in `localStorage`.
 Letters answered incorrectly are not remembered for this skip rule.
 Wrong answers only affect word selection by causing the current word to repeat until a later round for the same word has no wrong answers.
 
@@ -239,9 +244,9 @@ When the `new game` button is pressed:
 * if confirmed, clear persisted progress and navigate to the front page URL with no query parameters
 * if canceled, do not clear progress and stay in the game-over view
 
-## Randomness
+## game-number and explicit seed randomness
 
-The game must be repeatable from a URL game value.
+The game must be repeatable from a URL game value. we use a seed for the random function which will be used when generating random numbers.
 
 Use a game value from the URL:
 
@@ -281,8 +286,10 @@ for `Cyrilic → Latin`.
 
 for `Latin → Cyrilic`.
 
-If `gameMode` is missing or invalid on a game URL, URL normalization inserts `gameMode=1`.
-The front page lets the user choose the game mode before starting the game.
+The front page lets the user choose the game mode before starting the game. 
+the start  mode on the front page is cyrilic->latin
+
+
 The active game mode title is shown above the large question card during the game.
 
 ## URL Normalization
@@ -297,16 +304,8 @@ A `game.html` URL must contain valid values for:
 * `data`
 * `gameMode`
 
-If `game` is missing or invalid:
+if any value is missing redirect to the front page
 
-* randomize a game value
-* insert it as `game`
-
-If `data` is missing or invalid, insert `data=1`.
-If `gameMode` is missing or invalid, insert `gameMode=1`.
-
-If more than one URL value is missing or invalid on a `game.html` URL, update all missing or invalid values before redirecting.
-URL normalization must perform at most one redirect for one game page load.
 
 ## Data Model
 
