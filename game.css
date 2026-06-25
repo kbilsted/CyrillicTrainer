@@ -13,8 +13,7 @@
   flex-wrap: wrap;
 }
 
-.score-line span,
-.bottom-line span {
+.score-label {
   color: var(--muted-text);
 }
 

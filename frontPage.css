@@ -39,7 +39,9 @@
   width: 100%;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
   max-width: 100%;
+  background: var(--border);
   border: 1px solid var(--border);
   border-radius: 8px;
   overflow: hidden;
@@ -54,10 +56,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.game-mode-button + .game-mode-button {
-  border-left: 1px solid var(--border);
 }
 
 .game-number-controls {
