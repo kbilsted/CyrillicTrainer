@@ -37,10 +37,65 @@ body {
   gap: 16px;
 }
 
+.front-page {
+  min-height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 28px;
+}
+
+.brand-lockup {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+
+.brand-logo {
+  width: min(100%, 540px);
+  max-height: 460px;
+  object-fit: contain;
+}
+
+.start-game-form {
+  display: grid;
+  gap: 16px;
+}
+
+.front-field {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+}
+
+.front-field > span:first-child {
+  color: var(--muted-text);
+  font-size: 0.95rem;
+}
+
+.game-number-controls {
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+}
+
+.random-game-button {
+  width: 44px;
+  min-width: 44px;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.start-game-button {
+  min-height: 48px;
+  text-transform: lowercase;
+}
+
 .score-line,
 .bottom-line {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   gap: 12px;
   font-size: 0.95rem;
@@ -261,38 +316,10 @@ body {
   color: var(--muted-text);
 }
 
-.dataset-select-label {
-  display: flex;
-  flex: 1 1 220px;
-  align-items: center;
-  gap: 6px;
-  min-width: 0;
-}
-
-.game-form {
-  display: flex;
-  flex: 0 0 auto;
-  align-items: center;
-  gap: 4px;
-  min-width: 0;
-}
-
-.game-input-label {
-  color: var(--muted-text);
-}
-
 .game-input {
-  width: 86px;
+  width: 100%;
   min-width: 0;
-  padding-top: 2px;
-  padding-bottom: 2px;
-  font-size: 0.85rem;
-}
-
-.game-ok-button {
-  min-width: 40px;
-  padding: 2px 8px;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
 }
 
 .dataset-select {
@@ -304,7 +331,7 @@ body {
   font-size: 0.85rem;
 }
 
-.reset-button {
+.game-new-button {
   min-width: 64px;
   padding-top: 2px;
   padding-bottom: 2px;

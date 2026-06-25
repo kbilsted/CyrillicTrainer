@@ -14,6 +14,7 @@
   ];
   const CYRILIC_TO_LATIN_MODE_ID = "1";
   const LATIN_TO_CYRILIC_MODE_ID = "2";
+  const DEFAULT_FRONT_PAGE_DATA_SET_ID = "2";
 
   // Game context is the URL-selected setup for this page load; it is recreated on navigation and not persisted.
   let gameContext = null;
@@ -171,13 +172,17 @@
       : letterTransliteration.latin;
   }
 
-  function showCurrentLetter() {
-    if (!currentWordState.moveToNextAvailableLetter(userProgressStats)) {
+  function continueCurrentWordRound() {
+    if (!currentWordState.skipRecentlyCorrectLetters(userProgressStats)) {
       ui.showRoundDone(currentWordState.word, { retryWord: gameState.currentWordHadWrongAnswer });
       ui.renderStats(getStats(), gameContext.seed);
       return;
     }
 
+    showCurrentQuestion();
+  }
+
+  function showCurrentQuestion() {
     const currentLetter = currentWordState.getCurrentLetter();
     const letterTransliteration = getTransliterationForLetter(currentLetter);
     currentWordState.startQuestion(getCorrectAnswer(letterTransliteration));
@@ -217,38 +222,17 @@
     gameState.currentWordHadWrongAnswer = false;
     currentWordState = new CurrentWordState(word, getWordLetters(word).map(chooseQuestionLetter));
     saveAppState();
-    showCurrentLetter();
+    continueCurrentWordRound();
   }
 
-  function handleReset() {
-    resetGameFlow();
-    startRound();
+  function clearProgressAndGoToFrontPage() {
+    storage.clear();
+    urlSettings.goToFrontPage();
   }
 
-  function handleGameModeChange(nextGameModeId) {
-    resetGameFlow();
-    urlSettings.switchGameMode(nextGameModeId);
-  }
-
-  function resetGameFlow() {
-    userProgressStats.reset();
-    gameState.reset(createWordOrder());
-    saveAppState();
-  }
-
-  function handleDataSetChange(nextDataSetId) {
-    resetGameFlow();
-    urlSettings.switchDataSet(nextDataSetId);
-  }
-
-  function handleSeedChange(nextSeed) {
-    resetGameFlow();
-    urlSettings.switchSeed(nextSeed);
-  }
-
-  function handleNewGame() {
-    resetGameFlow();
-    urlSettings.startNewGame();
+  function handleHomeStart(settings) {
+    storage.clear();
+    urlSettings.startGame(settings);
   }
 
   function handleRoundNext() {
@@ -301,10 +285,34 @@
     }
 
     currentWordState.advanceLetter();
-    showCurrentLetter();
+    continueCurrentWordRound();
   }
 
   function init() {
+    ui.init({
+      onAnswer: handleAnswer,
+      onLetterNext: handleLetterNext,
+      onRoundNext: handleRoundNext,
+      onHomeStart: handleHomeStart,
+      onHomeRandomGame: urlSettings.createSeed,
+      onShowProgress: () => ui.showProgress(userProgressStats.getLetterErrorCounts()),
+      onNewGame: clearProgressAndGoToFrontPage
+    });
+
+    if (urlSettings.isFrontPage()) {
+      const defaultFrontPageDataSet = data.datasets.some((dataset) => dataset.id === DEFAULT_FRONT_PAGE_DATA_SET_ID)
+        ? DEFAULT_FRONT_PAGE_DATA_SET_ID
+        : data.datasets[0].id;
+
+      ui.renderHome(data.datasets, GAME_MODES, {
+        seed: urlSettings.createSeed(),
+        dataSetId: defaultFrontPageDataSet,
+        gameModeId: CYRILIC_TO_LATIN_MODE_ID
+      });
+      ui.showFrontPage();
+      return;
+    }
+
     const settings = urlSettings.ensureUrlSettings(
       data.datasets[0].id,
       data.datasets.map((dataset) => dataset.id),
@@ -323,21 +331,7 @@
     gameState = persistedState.gameState;
     gameState.setWordOrder(createWordOrder(), gameContext.selectedDataSet.wordSource.length);
     saveAppState();
-
-    ui.init({
-      onAnswer: handleAnswer,
-      onLetterNext: handleLetterNext,
-      onRoundNext: handleRoundNext,
-      onDataSetChange: handleDataSetChange,
-      onSeedChange: handleSeedChange,
-      onGameModeChange: handleGameModeChange,
-      onShowProgress: () => ui.showProgress(userProgressStats.getLetterErrorCounts()),
-      onReset: handleReset,
-      onNewGame: handleNewGame
-    });
-
-    ui.renderDataSetSwitcher(data.datasets, gameContext.dataSetId);
-    ui.renderGameModeSwitcher(GAME_MODES, gameContext.gameModeId);
+    ui.showGameShell();
     startRound();
   }
 

@@ -31,8 +31,13 @@
     }));
   }
 
+  function clear() {
+    window.localStorage.removeItem(APP_STATE_KEY);
+  }
+
   window.CyrillicStorage = {
     load,
-    save
+    save,
+    clear
   };
 }());

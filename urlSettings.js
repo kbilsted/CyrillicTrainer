@@ -55,37 +55,30 @@
     return { seed, dataSetId, gameModeId };
   }
 
-  function switchDataSet(dataSetId) {
-    const url = new URL(window.location.href);
-    url.searchParams.set(DATA_PARAM, dataSetId);
-    window.location.assign(url.toString());
+  function isFrontPage() {
+    return new URL(window.location.href).search === "";
   }
 
-  function switchSeed(seedValue) {
+  function startGame(settings) {
     const url = new URL(window.location.href);
-    url.searchParams.set(GAME_PARAM, normalizeSeed(seedValue));
+    url.searchParams.set(GAME_PARAM, normalizeSeed(settings.seed));
+    url.searchParams.set(DATA_PARAM, settings.dataSetId);
+    url.searchParams.set(GAME_MODE_PARAM, settings.gameModeId);
     url.searchParams.delete(LEGACY_SEED_PARAM);
     window.location.assign(url.toString());
   }
 
-  function switchGameMode(gameModeId) {
+  function goToFrontPage() {
     const url = new URL(window.location.href);
-    url.searchParams.set(GAME_MODE_PARAM, gameModeId);
-    window.location.assign(url.toString());
-  }
-
-  function startNewGame() {
-    const url = new URL(window.location.href);
-    url.searchParams.set(GAME_PARAM, createSeed());
-    url.searchParams.delete(LEGACY_SEED_PARAM);
+    url.search = "";
     window.location.assign(url.toString());
   }
 
   window.CyrillicUrlSettings = {
+    createSeed,
     ensureUrlSettings,
-    switchDataSet,
-    switchSeed,
-    switchGameMode,
-    startNewGame
+    isFrontPage,
+    startGame,
+    goToFrontPage
   };
 }());

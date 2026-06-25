@@ -35,7 +35,7 @@ Use a plain `gameContext` object in `game.js` for URL-selected page-load context
 
 Use this file layout:
 
-* `index.html`: HTML structure only. Contains the score line with round counter, letter card, answer buttons, round-done view, game-over view, bottom settings line, and credit footer. Loads Bootstrap, jQuery, and local JavaScript files.
+* `index.html`: HTML structure only. Contains the front page, score line with round counter, letter card, answer buttons, round-done view, game-over view, bottom new-game line, and credit footer. Loads Bootstrap, jQuery, and local JavaScript files.
 * `styles.css`: mobile-first layout and visual styling for the top line, centered letter card, button row, feedback states, and round-done view.
 * `data.js`: data only. The exact data requirements are defined in `requirements.md`.
 * `random.js`: deterministic random helper functions used by the game. Contains seeded random, choose, and seeded shuffle logic only.
@@ -45,7 +45,7 @@ Use this file layout:
 * `currentWordState.js`: active word-round runtime state class. The exact class requirements are defined in `requirements.md`.
 * `storage.js`: `localStorage` load/save handling only. It loads and saves `UserProgressStats` and `GameState`; the exact persistence requirements are defined in `requirements.md`.
 * `game.js`: game rules and runtime question state. Starts rounds, chooses words, moves through letters, chooses answer options, handles answers, and handles next.
-* `ui.js`: DOM rendering and DOM event binding. Renders score, letter guess view, button colors, bottom line, and round-done view.
+* `ui.js`: DOM rendering and DOM event binding. Renders the front page, score, letter guess view, button colors, bottom line, and round-done view.
 * `app.js`: small bootstrap file that initializes the modules in the correct order.
 
 Load local scripts in this order:

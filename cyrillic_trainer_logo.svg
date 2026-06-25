@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="870" viewBox="80 185 1000 870" role="img" aria-labelledby="title desc">
+  <title id="title">Cyrillic trainer logo</title>
+  <desc id="desc">A minimalist educational logo with crossed gold flagpoles, Bulgarian and British flags, a wise owl wearing a graduation cap, and the text Cyrillic trainer.</desc>
+
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff0a8"/>
+      <stop offset="0.18" stop-color="#d79a1f"/>
+      <stop offset="0.48" stop-color="#a96909"/>
+      <stop offset="0.72" stop-color="#f6ca58"/>
+      <stop offset="1" stop-color="#8b5408"/>
+    </linearGradient>
+
+    <linearGradient id="goldSoft" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe79b"/>
+      <stop offset="0.5" stop-color="#c88717"/>
+      <stop offset="1" stop-color="#805009"/>
+    </linearGradient>
+
+    <linearGradient id="owlBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8a5b35"/>
+      <stop offset="1" stop-color="#5e3c26"/>
+    </linearGradient>
+
+    <linearGradient id="cream" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff6de"/>
+      <stop offset="1" stop-color="#e4d2ad"/>
+    </linearGradient>
+
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#000" flood-opacity="0.22"/>
+    </filter>
+
+    <filter id="smallShadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="7" stdDeviation="6" flood-color="#000" flood-opacity="0.20"/>
+    </filter>
+
+    <clipPath id="bulgariaClip" clipPathUnits="userSpaceOnUse">
+      <path d="M125 430 C195 375 293 346 412 342 L505 555 C385 545 256 584 160 650 Z"/>
+    </clipPath>
+
+    <clipPath id="ukClip" clipPathUnits="userSpaceOnUse">
+      <path d="M695 348 C812 343 918 377 1040 430 L1010 650 C900 585 785 553 675 560 Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- Transparent background. Uncomment the next line if a white background is needed. -->
+  <!-- <rect width="1200" height="1200" fill="#ffffff"/> -->
+
+  <!-- Flags -->
+  <g filter="url(#shadow)">
+    <!-- Bulgarian flag -->
+    <g clip-path="url(#bulgariaClip)">
+      <path d="M125 430 C195 375 293 346 412 342 L505 555 C385 545 256 584 160 650 Z" fill="#ffffff"/>
+      <path d="M115 502 C208 460 315 430 445 426 L505 555 C390 548 270 580 160 650 Z" fill="#00966E"/>
+      <path d="M130 578 C232 545 363 522 505 555 L505 700 L160 700 Z" fill="#D62612"/>
+      <path d="M125 430 C195 375 293 346 412 342 L505 555 C385 545 256 584 160 650 Z" fill="none" stroke="#b8b8b8" stroke-width="4"/>
+      <path d="M165 435 C245 395 342 372 424 374" fill="none" stroke="#e9e9e9" stroke-width="9" opacity="0.6"/>
+    </g>
+
+    <!-- Union Jack flag -->
+    <g clip-path="url(#ukClip)">
+      <path d="M695 348 C812 343 918 377 1040 430 L1010 650 C900 585 785 553 675 560 Z" fill="#012169"/>
+
+      <!-- white diagonals -->
+      <path d="M655 334 L713 323 L1055 625 L1044 674 Z" fill="#ffffff"/>
+      <path d="M1048 337 L1080 370 L705 675 L650 665 Z" fill="#ffffff"/>
+      <!-- red diagonals -->
+      <path d="M664 342 L694 336 L1044 646 L1036 666 Z" fill="#C8102E"/>
+      <path d="M1056 356 L1070 372 L696 670 L672 666 Z" fill="#C8102E"/>
+
+      <!-- white central cross -->
+      <path d="M820 330 L895 344 L863 662 L790 645 Z" fill="#ffffff"/>
+      <path d="M676 445 L1042 493 L1034 570 L674 522 Z" fill="#ffffff"/>
+      <!-- red central cross -->
+      <path d="M842 333 L874 340 L842 655 L812 648 Z" fill="#C8102E"/>
+      <path d="M675 472 L1039 519 L1035 548 L674 501 Z" fill="#C8102E"/>
+
+      <path d="M695 348 C812 343 918 377 1040 430 L1010 650 C900 585 785 553 675 560 Z" fill="none" stroke="#b8b8b8" stroke-width="4"/>
+      <path d="M730 360 C825 363 920 395 1013 439" fill="none" stroke="#ffffff" stroke-width="8" opacity="0.25"/>
+    </g>
+  </g>
+
+  <!-- Crossed gold flagpoles -->
+  <g filter="url(#smallShadow)">
+    <line x1="310" y1="330" x2="735" y2="770" stroke="url(#gold)" stroke-width="28" stroke-linecap="round"/>
+    <line x1="890" y1="330" x2="465" y2="770" stroke="url(#gold)" stroke-width="28" stroke-linecap="round"/>
+    <line x1="310" y1="330" x2="735" y2="770" stroke="#fff2b0" stroke-width="5" stroke-linecap="round" opacity="0.65"/>
+    <line x1="890" y1="330" x2="465" y2="770" stroke="#fff2b0" stroke-width="5" stroke-linecap="round" opacity="0.65"/>
+
+    <circle cx="310" cy="330" r="28" fill="url(#goldSoft)" stroke="#8b5408" stroke-width="4"/>
+    <circle cx="890" cy="330" r="28" fill="url(#goldSoft)" stroke="#8b5408" stroke-width="4"/>
+    <circle cx="735" cy="770" r="22" fill="url(#goldSoft)" stroke="#8b5408" stroke-width="4"/>
+    <circle cx="465" cy="770" r="22" fill="url(#goldSoft)" stroke="#8b5408" stroke-width="4"/>
+  </g>
+
+  <!-- Owl mascot -->
+  <g filter="url(#smallShadow)">
+    <!-- body -->
+    <ellipse cx="600" cy="435" rx="100" ry="142" fill="url(#owlBody)"/>
+    <path d="M510 390 C532 510 557 600 600 632 C643 600 668 510 690 390 C663 462 636 510 600 525 C564 510 537 462 510 390 Z" fill="#6d452b" opacity="0.85"/>
+    <path d="M540 380 C555 475 575 545 600 580 C625 545 645 475 660 380 C635 422 617 444 600 451 C583 444 565 422 540 380 Z" fill="url(#cream)"/>
+
+    <!-- face disks -->
+    <path d="M600 302 C550 300 509 330 492 380 C518 371 551 373 580 399 C590 408 596 421 600 438 C604 421 610 408 620 399 C649 373 682 371 708 380 C691 330 650 300 600 302 Z" fill="#7a4b2e"/>
+    <path d="M510 367 C520 326 556 310 594 331 C584 379 553 412 510 421 C492 406 493 383 510 367 Z" fill="url(#cream)"/>
+    <path d="M690 367 C680 326 644 310 606 331 C616 379 647 412 690 421 C708 406 707 383 690 367 Z" fill="url(#cream)"/>
+
+    <!-- eyes -->
+    <circle cx="558" cy="370" r="25" fill="#1a1a1a"/>
+    <circle cx="642" cy="370" r="25" fill="#1a1a1a"/>
+    <circle cx="558" cy="370" r="17" fill="#f6b83c"/>
+    <circle cx="642" cy="370" r="17" fill="#f6b83c"/>
+    <circle cx="564" cy="363" r="6" fill="#ffffff"/>
+    <circle cx="648" cy="363" r="6" fill="#ffffff"/>
+
+    <!-- brows -->
+    <path d="M522 336 C545 318 573 318 595 334" fill="none" stroke="#4b2d1d" stroke-width="8" stroke-linecap="round"/>
+    <path d="M678 336 C655 318 627 318 605 334" fill="none" stroke="#4b2d1d" stroke-width="8" stroke-linecap="round"/>
+
+    <!-- beak -->
+    <path d="M600 394 L582 428 L600 448 L618 428 Z" fill="url(#goldSoft)" stroke="#8b5408" stroke-width="2"/>
+
+    <!-- chest feathers -->
+    <g fill="#9b6b3e" opacity="0.82">
+      <path d="M560 475 q12 20 24 0 q-12 8 -24 0Z"/>
+      <path d="M588 475 q12 20 24 0 q-12 8 -24 0Z"/>
+      <path d="M616 475 q12 20 24 0 q-12 8 -24 0Z"/>
+      <path d="M575 515 q12 20 24 0 q-12 8 -24 0Z"/>
+      <path d="M604 515 q12 20 24 0 q-12 8 -24 0Z"/>
+      <path d="M590 555 q12 20 24 0 q-12 8 -24 0Z"/>
+    </g>
+
+    <!-- talons -->
+    <g fill="url(#goldSoft)" stroke="#8b5408" stroke-width="2">
+      <ellipse cx="560" cy="592" rx="12" ry="20"/>
+      <ellipse cx="582" cy="594" rx="12" ry="20"/>
+      <ellipse cx="620" cy="594" rx="12" ry="20"/>
+      <ellipse cx="642" cy="592" rx="12" ry="20"/>
+    </g>
+
+    <!-- graduation cap -->
+    <g>
+      <path d="M485 268 L600 220 L715 268 L600 316 Z" fill="#070b12"/>
+      <path d="M538 291 C570 312 630 312 662 291 L662 348 C635 368 565 368 538 348 Z" fill="#151a24"/>
+      <path d="M485 268 L600 220 L715 268" fill="none" stroke="#303848" stroke-width="3" opacity="0.65"/>
+      <line x1="695" y1="270" x2="695" y2="345" stroke="#D71920" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="695" cy="348" r="8" fill="#c8972d"/>
+      <path d="M695 354 C682 378 680 402 695 426 C710 402 708 378 695 354 Z" fill="#D71920"/>
+      <path d="M683 405 L707 405" stroke="#9b0f18" stroke-width="4"/>
+    </g>
+  </g>
+
+  <!-- Wordmark -->
+  <g filter="url(#smallShadow)">
+    <text x="600" y="930" text-anchor="middle"
+          font-family="Georgia, 'Times New Roman', serif" font-size="100" letter-spacing="2"
+          fill="#07101e">Cyrillic trainer</text>
+  </g>
+
+  <!-- Ornament -->
+  <g fill="url(#goldSoft)" opacity="0.95">
+    <rect x="315" y="982" width="240" height="5" rx="2.5"/>
+    <rect x="645" y="982" width="240" height="5" rx="2.5"/>
+    <path d="M600 958 L624 984 L600 1010 L576 984 Z"/>
+    <path d="M552 984 L572 974 L568 984 L572 994 Z"/>
+    <path d="M648 984 L628 974 L632 984 L628 994 Z"/>
+  </g>
+</svg>

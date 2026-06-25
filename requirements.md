@@ -88,7 +88,7 @@ Active word-round state must be represented by a `CurrentWordState` class.
 
 `CurrentWordState` owns these methods:
 
-* `moveToNextAvailableLetter(userProgressStats)`
+* `skipRecentlyCorrectLetters(userProgressStats)`
 * `hasCurrentLetter()`
 * `getCurrentLetter()`
 * `startQuestion(correctAnswer)`
@@ -148,11 +148,10 @@ After each answer:
 * display `successCounter`, `failCounter`, success ratio, and round counter at the top
 * persist scores in `localStorage`
 
-The UI has a red reset button.
-When pressed, show a confirmation alert asking whether the user wants to reset all data.
-If the user confirms, call `UserProgressStats.reset()`, call `GameState.reset()`, and save the reset state.
-If the user cancels, do not reset anything.
-After reset, the game starts a fresh round.
+The game screen has a centered red `new game` button at the bottom.
+When pressed, show a confirmation dialog warning that scores, recent correct letters, and error progress will be cleared.
+If the user confirms, clear persisted progress and navigate to the front page URL with no query parameters.
+If the user cancels, do not clear progress and stay in the game.
 
 The game stores a persisted dictionary of Cyrillic letter error counts in `localStorage`.
 The dictionary maps each exact Cyrillic character to the number of wrong answers for that character:
@@ -235,10 +234,9 @@ When the game is over:
 
 When the `new game` button is pressed:
 
-* call `UserProgressStats.reset()`
-* call `GameState.reset()`
-* save the reset state
-* generate a new URL `game` value and reload with that new game value
+* show a confirmation dialog warning that scores, recent correct letters, and error progress will be cleared
+* if confirmed, clear persisted progress and navigate to the front page URL with no query parameters
+* if canceled, do not clear progress and stay in the game-over view
 
 ## Randomness
 
@@ -260,10 +258,9 @@ The game value determines:
 * wrong-answer choices
 * the displayed order of answer options, including the position of the correct answer
 
-If the user changes the `game` value through the UI input, reset all persisted progress and flow state before loading the new game value.
-Changing the `game` value manually starts a new deterministic game.
-
-If the user changes the dataset through the UI, reset all persisted progress and flow state before loading the new dataset.
+The `game` value is chosen on the front page before starting the game.
+The front page has a retry-arrow button next to the `game` input that generates a new random game value.
+Starting a game from the front page clears persisted progress and navigates to a URL containing the chosen `game`, `data`, and `gameMode` values.
 
 ## Game Mode
 
@@ -283,18 +280,15 @@ for `Cyrilic → Latin`.
 
 for `Latin → Cyrilic`.
 
-If `gameMode` is missing or invalid, URL normalization inserts `gameMode=1`.
-
-The UI must have a compact game mode switcher near the question area, above the large question card.
-Use a Google Translate-style direction selector: two visible mode buttons, with the active mode visually selected.
-Clicking the active game mode does nothing.
-Clicking a different game mode shows a confirmation dialog warning that all progress will be reset.
-If the user cancels, do not reset progress and do not change game mode.
-If the user confirms, call `UserProgressStats.reset()`, call `GameState.reset()`, save the reset state, update the URL `gameMode` value, and reload using that game mode.
+If `gameMode` is missing or invalid on a game URL, URL normalization inserts `gameMode=1`.
+The front page lets the user choose the game mode before starting the game.
+The active game mode title is shown above the large question card during the game.
 
 ## URL Normalization
 
-The URL must contain valid values for:
+A URL with no query parameters is the front page and must not redirect.
+
+A game URL must contain valid values for:
 
 * `game`
 * `data`
@@ -308,9 +302,8 @@ If `game` is missing or invalid:
 If `data` is missing or invalid, insert `data=1`.
 If `gameMode` is missing or invalid, insert `gameMode=1`.
 
-If more than one URL value is missing or invalid, update all missing or invalid values before redirecting.
-URL normalization must perform at most one redirect for one page load.
-For example, a URL with no query string redirects once to a URL containing `game`, `data=1`, and `gameMode=1`.
+If more than one URL value is missing or invalid on a game URL, update all missing or invalid values before redirecting.
+URL normalization must perform at most one redirect for one game page load.
 
 ## Data Model
 
@@ -536,12 +529,25 @@ Use this dataset when the URL contains:
 ?data=3
 ```
 
-The UI must have a game input field with an OK button at the bottom.
-When the OK button is pressed, update the URL `game` value and reload using that game value.
+The front page is shown when the URL has no query parameters.
+The front page must show the game logo.
+The front page logo uses `cyrillic_trainer_logo.svg`.
+The logo already contains the text `Cyrillic trainer`, so do not render a separate text title next to or below it.
+The logo should be very large on mobile, up to the available mobile width, but capped so it does not fill the full width on larger screens.
+The front page must let the user choose:
 
-The round counter must be shown in the top score line.
-The UI must have a dataset dropdown at the bottom next to the game input.
-The dataset dropdown should be wide enough to show the full selected dataset label when viewport space allows.
+* dataset
+* game mode direction
+* `game`
+
+The front page uses the visible label `word list:` for dataset selection.
+The front page defaults to the `Hiking E3 Kom-Emine words` dataset.
+The `game` field has a retry-arrow button next to it that generates a new random game value.
+The front page has a `start game` button.
+When pressed, it clears persisted progress and redirects to the same path with `game`, `data`, and `gameMode` query parameters.
+
+The round counter must be shown in the top score line during the game.
+The game screen bottom line must have a `new game` button that navigates to the front page URL with no query parameters.
 The UI must show `A game by Kasper B. Graversen` as a small line at the bottom below the controls.
 
 The dropdown options are:
@@ -579,13 +585,27 @@ Examples:
 
 # gui
 
+## gui for front page
+
+```
+          [logo]
+
+ word list: [Hiking E3 Kom-Emine words v]
+
+ direction: [Cyrilic → Latin] [Latin → Cyrilic]
+
+ game:      [123456789] [↻]
+
+        | start game |
+
+      A game by Kasper B. Graversen
+```
+
 ## gui for letter guess 
 
 ```
  correct:  2     wrong: 55    ratio: 0.4%    round: 22
  
-      [Cyrilic → Latin] [Latin → Cyrilic]
-      
              Cyrilic → Latin
  
              +------------+
@@ -601,7 +621,7 @@ Examples:
               | next |
  
  
- game: [1234] [OK]     data: [top 250 words v]
+              | new game |
           A game by Kasper B. Graversen
 
 ```
@@ -611,8 +631,6 @@ Examples:
 ```
  correct:  2     wrong: 55    ratio: 0.4%    round: 22
  
-      [Cyrilic → Latin] [Latin → Cyrilic]
-      
              Latin → Cyrilic
  
              +------------+
@@ -628,7 +646,7 @@ Examples:
               | next |
  
  
- game: [1234] [OK]     data: [top 250 words v]
+              | new game |
           A game by Kasper B. Graversen
 
 ```
@@ -651,7 +669,7 @@ Examples:
     | show progress |    | next |
  
  
- game: [1234] [OK]     data: [top 250 words v]
+              | new game |
           A game by Kasper B. Graversen
 
 ```
@@ -677,7 +695,7 @@ If the round had one or more wrong answers, the `next` button label is `retry wo
     | show progress |    | next |
  
  
- game: [1234] [OK]     data: [top 250 words v]
+              | new game |
           A game by Kasper B. Graversen
 
 ```
@@ -697,9 +715,7 @@ If the round had one or more wrong answers, the `next` button label is `retry wo
      [error histogram]
              
               | new game |
- 
- 
- game: [1234] [OK]     data: [top 250 words v]
+
           A game by Kasper B. Graversen
 
 ```

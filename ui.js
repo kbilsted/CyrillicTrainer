@@ -5,11 +5,9 @@
     onAnswer: null,
     onLetterNext: null,
     onRoundNext: null,
-    onDataSetChange: null,
-    onSeedChange: null,
-    onGameModeChange: null,
+    onHomeStart: null,
+    onHomeRandomGame: null,
     onShowProgress: null,
-    onReset: null,
     onNewGame: null
   };
 
@@ -58,73 +56,95 @@
       }
     });
 
-    $("#datasetSelect").on("change", function () {
-      if (callbacks.onDataSetChange) {
-        callbacks.onDataSetChange($(this).val());
+    $("#homeGameModeSwitcher").on("click", ".game-mode-button", function () {
+      const selectedValue = $(this).data("value");
+
+      $("#homeGameModeSwitcher .game-mode-button").each(function () {
+        const button = $(this);
+        const isActive = button.data("value") === selectedValue;
+
+        button
+          .toggleClass("btn-dark", isActive)
+          .toggleClass("btn-outline-dark", !isActive)
+          .attr("aria-pressed", isActive ? "true" : "false");
+      });
+    });
+
+    $("#homeRandomGameButton").on("click", function () {
+      if (callbacks.onHomeRandomGame) {
+        $("#homeGameInput").val(callbacks.onHomeRandomGame());
       }
     });
 
-    $("#gameModeSwitcher").on("click", ".game-mode-button", function () {
-      const button = $(this);
-
-      if (button.attr("aria-pressed") === "true") {
-        return;
-      }
-
-      if (
-        callbacks.onGameModeChange
-        && window.confirm("Changing game mode resets all progress. Continue?")
-      ) {
-        callbacks.onGameModeChange(button.data("value"));
-      }
-    });
-
-    $("#gameForm").on("submit", function (event) {
+    $("#startGameForm").on("submit", function (event) {
       event.preventDefault();
 
-      if (callbacks.onSeedChange) {
-        callbacks.onSeedChange($("#gameInput").val());
+      const selectedModeButton = $("#homeGameModeSwitcher .game-mode-button[aria-pressed='true']");
+
+      if (callbacks.onHomeStart) {
+        callbacks.onHomeStart({
+          seed: $("#homeGameInput").val(),
+          dataSetId: $("#homeDatasetSelect").val(),
+          gameModeId: selectedModeButton.data("value")
+        });
       }
     });
 
-    $("#resetButton").on("click", function () {
+    $("#gameNewGameButton").on("click", function () {
       if (
-        callbacks.onReset
-        && window.confirm("Reset all data? This clears scores, recent correct letters, and error progress.")
+        callbacks.onNewGame
+        && window.confirm("Start a new game? This clears scores, recent correct letters, and error progress.")
       ) {
-        callbacks.onReset();
+        callbacks.onNewGame();
       }
     });
 
     $("#newGameButton").on("click", function () {
-      if (callbacks.onNewGame) {
+      if (
+        callbacks.onNewGame
+        && window.confirm("Start a new game? This clears scores, recent correct letters, and error progress.")
+      ) {
         callbacks.onNewGame();
       }
     });
   }
 
-  function renderStats(stats, seed) {
+  function showFrontPage() {
+    clearAutoNextTimer();
+    $("#frontPageView").removeClass("d-none");
+    $(".score-line").addClass("d-none");
+    $(".bottom-line").addClass("d-none");
+    $("#letterGuessView").addClass("d-none");
+    $("#roundDoneView").addClass("d-none");
+    $("#gameOverView").addClass("d-none");
+  }
+
+  function showGameShell() {
+    $("#frontPageView").addClass("d-none");
+    $(".score-line").removeClass("d-none");
+    $(".bottom-line").removeClass("d-none");
+  }
+
+  function renderStats(stats) {
     $("#successCounter").text(stats.successCounter);
     $("#failCounter").text(stats.failCounter);
     $("#successRatio").text(stats.successRatio);
     $("#roundCounter").text(stats.roundCounter);
-
-    if (!$("#gameInput").is(":focus")) {
-      $("#gameInput").val(seed);
-    }
   }
 
-  function renderDataSetSwitcher(datasets, activeDataSetId) {
+  function renderHome(datasets, gameModes, settings) {
     const options = datasets.map((dataset) => (
       $("<option>")
         .attr("value", dataset.id)
         .text(dataset.label)
     ));
 
-    $("#datasetSelect").empty().append(options).val(activeDataSetId);
+    $("#homeDatasetSelect").empty().append(options).val(settings.dataSetId);
+    $("#homeGameInput").val(settings.seed);
+    renderGameModeButtons($("#homeGameModeSwitcher"), gameModes, settings.gameModeId);
   }
 
-  function renderGameModeSwitcher(gameModes, activeGameModeId) {
+  function renderGameModeButtons(container, gameModes, activeGameModeId) {
     const buttons = gameModes.map((mode) => (
       $("<button>")
         .attr("type", "button")
@@ -134,7 +154,7 @@
         .text(mode.title)
     ));
 
-    $("#gameModeSwitcher").empty().append(buttons);
+    container.empty().append(buttons);
   }
 
   function revealRoundDoneDetails() {
@@ -254,9 +274,10 @@
 
   window.CyrillicUI = {
     init,
+    showFrontPage,
+    showGameShell,
     renderStats,
-    renderDataSetSwitcher,
-    renderGameModeSwitcher,
+    renderHome,
     showLetterGuess,
     showAnswerFeedback,
     showProgress,

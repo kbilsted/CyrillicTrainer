@@ -10,15 +10,38 @@
 </head>
 <body>
   <main class="app-shell">
-    <section class="score-line" aria-label="Score">
+    <section id="frontPageView" class="front-page" aria-label="Start game">
+      <div class="brand-lockup">
+        <img class="brand-logo" src="cyrillic_trainer_logo.svg" alt="">
+      </div>
+      <form id="startGameForm" class="start-game-form">
+        <label class="front-field" for="homeDatasetSelect">
+          <span>word list:</span>
+          <select id="homeDatasetSelect" class="form-select dataset-select" aria-label="Dataset"></select>
+        </label>
+        <div class="front-field">
+          <span>direction:</span>
+          <div id="homeGameModeSwitcher" class="game-mode-switcher" role="group" aria-label="Game mode"></div>
+        </div>
+        <label class="front-field game-number-field" for="homeGameInput">
+          <span>game:</span>
+          <span class="game-number-controls">
+            <input id="homeGameInput" class="form-control game-input" type="text" inputmode="numeric" autocomplete="off">
+            <button id="homeRandomGameButton" class="btn btn-outline-dark random-game-button" type="button" aria-label="Random game number">↻</button>
+          </span>
+        </label>
+        <button class="btn btn-dark start-game-button" type="submit">start game</button>
+      </form>
+    </section>
+
+    <section class="score-line d-none" aria-label="Score">
       <div><span>correct:</span> <strong id="successCounter">0</strong></div>
       <div><span>wrong:</span> <strong id="failCounter">0</strong></div>
       <div><span>ratio:</span> <strong id="successRatio">0.0%</strong></div>
       <div><span>round:</span> <strong id="roundCounter">0</strong></div>
     </section>
 
-    <section id="letterGuessView" class="game-view" aria-label="Letter guess">
-      <div id="gameModeSwitcher" class="game-mode-switcher" role="group" aria-label="Game mode"></div>
+    <section id="letterGuessView" class="game-view d-none" aria-label="Letter guess">
       <h2 id="questionTitle" class="question-title">Cyrilic → Latin</h2>
       <div id="letterCard" class="letter-card" aria-live="polite">з</div>
       <div id="answerButtons" class="answer-buttons" aria-label="Answer choices"></div>
@@ -82,17 +105,8 @@
       <button id="newGameButton" class="btn btn-dark next-button" type="button">new game</button>
     </section>
 
-    <section class="bottom-line" aria-label="Game settings">
-      <form id="gameForm" class="game-form">
-        <label class="game-input-label" for="gameInput">game:</label>
-        <input id="gameInput" class="form-control form-control-sm game-input" type="text" inputmode="numeric" autocomplete="off">
-        <button id="gameOkButton" class="btn btn-outline-dark btn-sm game-ok-button" type="submit">OK</button>
-      </form>
-      <label class="dataset-select-label" for="datasetSelect">
-        <span>data:</span>
-        <select id="datasetSelect" class="form-select form-select-sm dataset-select" aria-label="Dataset"></select>
-      </label>
-      <button id="resetButton" class="btn btn-danger btn-sm reset-button" type="button">reset</button>
+    <section class="bottom-line d-none" aria-label="Game settings">
+      <button id="gameNewGameButton" class="btn btn-danger btn-sm game-new-button" type="button">new game</button>
     </section>
     <footer class="credit-line">A game by Kasper B. Graversen</footer>
   </main>

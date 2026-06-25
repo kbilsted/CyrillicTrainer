@@ -11,7 +11,7 @@
       this.isQuestionAnswered = false;
     }
 
-    moveToNextAvailableLetter(userProgressStats) {
+    skipRecentlyCorrectLetters(userProgressStats) {
       while (
         this.hasCurrentLetter()
         && userProgressStats.wasRecentlyCorrect(this.getCurrentLetter())
