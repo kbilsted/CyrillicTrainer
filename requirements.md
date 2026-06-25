@@ -28,6 +28,7 @@ If the user selects the correct answer:
 If the user selects a wrong answer:
 
 * increment `failCounter`
+* increment the error count for the exact Cyrillic character that was asked
 
 After each answer:
 
@@ -37,8 +38,17 @@ After each answer:
 * round counter is incremented with the start of new words, so first round is 1
 
 The UI has a reset button.
-When pressed, it clears `successCounter`, `failCounter`, `roundCounter`, and the last 10 correctly answered Cyrillic letters from `localStorage`.
+When pressed, it clears `successCounter`, `failCounter`, `roundCounter`, the last 10 correctly answered Cyrillic letters, and the Cyrillic letter error counts from `localStorage`.
 After reset, the game starts a fresh round.
+
+The game stores a persisted dictionary of Cyrillic letter error counts in `localStorage`.
+The dictionary maps each exact Cyrillic character to the number of wrong answers for that character:
+
+* key: Cyrillic character
+* value: `errorCount`
+
+The error-count dictionary is case-sensitive.
+Lowercase and uppercase Cyrillic characters are tracked separately.
 
 ## Rounds
 
@@ -83,7 +93,16 @@ When all letters in a word have been processed:
 * show the whole word in Cyrillic
 * show the Latin spelling
 * show the English translation
+* show a `show progress` button
 * show a next button
+
+When the `show progress` button is pressed:
+
+* show a histogram of all Cyrillic letters that have at least one error
+* each histogram bar shows the Cyrillic letter and its `errorCount`
+* sort bars left to right by highest `errorCount` first
+* keep the histogram mobile-friendly when many letters have errors by allowing horizontal scrolling instead of shrinking bars until labels become unreadable
+* if there are no errors, show an empty progress message
 
 When the next  button is pressed:
 
@@ -345,7 +364,7 @@ Examples:
      Meaning: | show | 
          
              
-          | next |
+    | show progress |    | next |
  
  
  round: 22     game: [1234] [OK]     data: [top 250 words v]
@@ -367,7 +386,7 @@ Both `show` buttons reveal both hidden fields: the Latin spelling and the Englis
      Meaning: zz zz zz 
          
              
-          | next |
+    | show progress |    | next |
  
  
  round: 22     game: [1234] [OK]     data: [top 250 words v]

@@ -3,6 +3,7 @@
 
   const STORAGE_KEY = "cyrillicTrainerScores";
   const RECENT_CORRECT_LETTERS_KEY = "cyrillicTrainerRecentCorrectLetters";
+  const LETTER_ERROR_COUNTS_KEY = "cyrillicTrainerLetterErrorCounts";
   const DEFAULT_SCORE = {
     successCounter: 0,
     failCounter: 0,
@@ -35,8 +36,28 @@
     }
   }
 
+  function loadLetterErrorCounts() {
+    try {
+      const raw = window.localStorage.getItem(LETTER_ERROR_COUNTS_KEY);
+      const parsed = raw ? JSON.parse(raw) : {};
+
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+        return {};
+      }
+
+      return Object.fromEntries(
+        Object.entries(parsed)
+          .filter(([letter, count]) => typeof letter === "string" && Number(count) > 0)
+          .map(([letter, count]) => [letter, Math.floor(Number(count))])
+      );
+    } catch (error) {
+      return {};
+    }
+  }
+
   let score = load();
   let recentCorrectLetters = loadRecentCorrectLetters();
+  let letterErrorCounts = loadLetterErrorCounts();
 
   function save() {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(score));
@@ -44,6 +65,10 @@
 
   function saveRecentCorrectLetters() {
     window.localStorage.setItem(RECENT_CORRECT_LETTERS_KEY, JSON.stringify(recentCorrectLetters));
+  }
+
+  function saveLetterErrorCounts() {
+    window.localStorage.setItem(LETTER_ERROR_COUNTS_KEY, JSON.stringify(letterErrorCounts));
   }
 
   function getStats() {
@@ -70,6 +95,12 @@
     return getStats();
   }
 
+  function incrementLetterError(letter) {
+    letterErrorCounts[letter] = (letterErrorCounts[letter] || 0) + 1;
+    saveLetterErrorCounts();
+    return { ...letterErrorCounts };
+  }
+
   function incrementRound() {
     score.roundCounter += 1;
     save();
@@ -80,6 +111,10 @@
     return recentCorrectLetters.slice();
   }
 
+  function getLetterErrorCounts() {
+    return { ...letterErrorCounts };
+  }
+
   function setRecentCorrectLetters(letters) {
     recentCorrectLetters = letters.filter((letter) => typeof letter === "string");
     saveRecentCorrectLetters();
@@ -88,8 +123,10 @@
   function resetProgress() {
     score = { ...DEFAULT_SCORE };
     recentCorrectLetters = [];
+    letterErrorCounts = {};
     save();
     saveRecentCorrectLetters();
+    saveLetterErrorCounts();
     return getStats();
   }
 
@@ -97,8 +134,10 @@
     getStats,
     incrementSuccess,
     incrementFail,
+    incrementLetterError,
     incrementRound,
     getRecentCorrectLetters,
+    getLetterErrorCounts,
     setRecentCorrectLetters,
     resetProgress
   };

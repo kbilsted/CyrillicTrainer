@@ -11,6 +11,8 @@ Use a simple JavaScript stack with:
 * Bootstrap
 * jQuery
 
+For simple progress histograms, use HTML and CSS. Do not add Chart.js or another charting package unless the requirements explicitly ask for richer chart interactions.
+
 Do not introduce a build step unless the user explicitly asks for one.
 
 ## Code Organization

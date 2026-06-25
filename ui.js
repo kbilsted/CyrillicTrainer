@@ -7,6 +7,7 @@
     onRoundNext: null,
     onDataSetChange: null,
     onSeedChange: null,
+    onShowProgress: null,
     onReset: null
   };
 
@@ -36,6 +37,12 @@
 
     $(".reveal-word-button").on("click", function () {
       revealRoundDoneDetails();
+    });
+
+    $("#showProgressButton").on("click", function () {
+      if (callbacks.onShowProgress) {
+        callbacks.onShowProgress();
+      }
     });
 
     $("#datasetSelect").on("change", function () {
@@ -119,6 +126,38 @@
     $("#letterNextButton").prop("disabled", false);
   }
 
+  function showProgress(letterErrorCounts) {
+    const entries = Object.entries(letterErrorCounts)
+      .filter(([, count]) => count > 0)
+      .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]));
+
+    if (entries.length === 0) {
+      $("#progressPanel")
+        .removeClass("d-none")
+        .empty()
+        .append($("<p>").addClass("progress-empty").text("No errors yet."));
+      return;
+    }
+
+    const maxCount = entries[0][1];
+    const bars = entries.map(([letter, count]) => (
+      $("<div>")
+        .addClass("error-bar-item")
+        .append(
+          $("<div>").addClass("error-count").text(count),
+          $("<div>")
+            .addClass("error-bar")
+            .css("height", `${Math.max(12, Math.round((count / maxCount) * 120))}px`),
+          $("<div>").addClass("error-letter").text(letter)
+        )
+    ));
+
+    $("#progressPanel")
+      .removeClass("d-none")
+      .empty()
+      .append($("<div>").addClass("error-histogram").append(bars));
+  }
+
   function showRoundDone(word) {
     $("#letterGuessView").addClass("d-none");
     $("#roundDoneView").removeClass("d-none");
@@ -127,6 +166,7 @@
     hiddenMeaningValue = word.englishmeaning;
     $("#doneLatin").text("").addClass("d-none");
     $("#doneMeaning").text("").addClass("d-none");
+    $("#progressPanel").addClass("d-none").empty();
     $(".reveal-word-button").removeClass("d-none");
   }
 
@@ -136,6 +176,7 @@
     renderDataSetSwitcher,
     showLetterGuess,
     showAnswerFeedback,
+    showProgress,
     showRoundDone
   };
 }(window.jQuery));

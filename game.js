@@ -181,6 +181,10 @@
     startRound();
   }
 
+  function handleShowProgress() {
+    ui.showProgress(storage.getLetterErrorCounts());
+  }
+
   function handleAnswer(selectedAnswer) {
     if (hasAnswered) {
       return;
@@ -198,6 +202,7 @@
     } else {
       lastWrongAnswer = currentLetters[currentLetterIndex];
       storage.incrementFail();
+      storage.incrementLetterError(currentLetters[currentLetterIndex]);
     }
 
     ui.showAnswerFeedback(selectedAnswer, currentCorrectAnswer);
@@ -232,6 +237,7 @@
       onRoundNext: startRound,
       onDataSetChange: random.switchDataSet,
       onSeedChange: random.switchSeed,
+      onShowProgress: handleShowProgress,
       onReset: handleReset
     });
 

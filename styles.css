@@ -110,6 +110,19 @@ body {
   text-transform: lowercase;
 }
 
+.round-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.progress-button {
+  min-width: 148px;
+  min-height: 44px;
+  text-transform: lowercase;
+}
+
 .show-button {
   min-width: 72px;
   min-height: 36px;
@@ -152,6 +165,51 @@ body {
 .word-summary dd {
   margin: 0;
   overflow-wrap: anywhere;
+}
+
+.progress-panel {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.error-histogram {
+  min-height: 176px;
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.error-bar-item {
+  width: 34px;
+  flex: 0 0 34px;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+}
+
+.error-count {
+  font-size: 0.8rem;
+  color: var(--muted-text);
+}
+
+.error-bar {
+  width: 100%;
+  min-height: 12px;
+  background: var(--wrong);
+  border-radius: 4px 4px 0 0;
+}
+
+.error-letter {
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.progress-empty {
+  margin: 0;
+  color: var(--muted-text);
 }
 
 .dataset-select-label {
