@@ -91,12 +91,12 @@ Active word-round state must be represented by a `CurrentWordState` class.
 * `skipRecentlyCorrectLetters(userProgressStats)`
 * `hasCurrentLetter()`
 * `getCurrentLetter()`
-* `startQuestion(correctAnswer)`
+* `setCurrentQuestionAnswer(correctAnswer)`
 * `markQuestionAnswered()`
 * `hasAnsweredQuestion()`
 * `getCorrectAnswer()`
 * `isAnswerCorrect(answer)`
-* `advanceLetter()`
+* `advanceToNextLetter()`
 
 `CurrentWordState` is runtime-only.
 It is recreated for each started word and must not be persisted.
@@ -125,7 +125,7 @@ The storage format does not need to be backward compatible with older versions.
 * `recordCorrectLetter(cyrillicLetter)`
 * `recordWrongLetter(cyrillicLetter)`
 * `wasRecentlyCorrect(cyrillicLetter)`
-* `getStats()`
+* `getDisplayStats()`
 * `getLetterErrorCounts()`
 * `reset()`
 * `toJSON()`

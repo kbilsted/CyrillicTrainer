@@ -15,7 +15,7 @@
     return Number.isFinite(parsed) ? String(Math.abs(parsed)) : createSeed();
   }
 
-  function ensureUrlSettings(defaultDataSetId, validDataSetIds, defaultGameModeId, validGameModeIds) {
+  function normalizeGameUrlSettings(defaultDataSetId, validDataSetIds, defaultGameModeId, validGameModeIds) {
     const url = new URL(window.location.href);
     const existingGame = url.searchParams.get(GAME_PARAM);
     const legacySeed = url.searchParams.get(LEGACY_SEED_PARAM);
@@ -76,7 +76,7 @@
 
   window.CyrillicUrlSettings = {
     createSeed,
-    ensureUrlSettings,
+    normalizeGameUrlSettings,
     isFrontPage,
     startGame,
     goToFrontPage

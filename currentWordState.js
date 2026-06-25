@@ -16,7 +16,7 @@
         this.hasCurrentLetter()
         && userProgressStats.wasRecentlyCorrect(this.getCurrentLetter())
       ) {
-        this.advanceLetter();
+        this.advanceToNextLetter();
       }
 
       return this.hasCurrentLetter();
@@ -30,7 +30,7 @@
       return this.letters[this.letterIndex] || null;
     }
 
-    startQuestion(correctAnswer) {
+    setCurrentQuestionAnswer(correctAnswer) {
       this.correctAnswer = correctAnswer;
       this.isQuestionAnswered = false;
     }
@@ -51,7 +51,7 @@
       return answer === this.correctAnswer;
     }
 
-    advanceLetter() {
+    advanceToNextLetter() {
       this.letterIndex += 1;
     }
   }

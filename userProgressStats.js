@@ -49,7 +49,7 @@
       return this.recentCorrectLetters.includes(cyrillicLetter);
     }
 
-    getStats() {
+    getDisplayStats() {
       const total = this.successCounter + this.failCounter;
       const ratio = total === 0 ? 0 : (this.successCounter / total) * 100;
 

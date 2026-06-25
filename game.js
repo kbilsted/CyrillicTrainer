@@ -37,7 +37,7 @@
     return data.letterTransliterations.some((item) => item.cyrillic === letter);
   }
 
-  function getQuestionLetterVariants(letter) {
+  function getTrainableCaseVariants(letter) {
     const lowerLetter = letter.toLowerCase();
     const upperLetter = letter.toUpperCase();
 
@@ -47,12 +47,12 @@
     ));
   }
 
-  function getWordLetters(word) {
+  function getTrainableWordLetters(word) {
     return Array.from(word.cyrillic).filter(isTrainableLetter);
   }
 
-  function chooseQuestionLetter(letter) {
-    const variants = getQuestionLetterVariants(letter);
+  function chooseQuestionLetterVariant(letter) {
+    const variants = getTrainableCaseVariants(letter);
     const availableVariants = variants.filter((variant) => !userProgressStats.wasRecentlyCorrect(variant));
 
     return random.choose(
@@ -68,16 +68,16 @@
     });
   }
 
-  function getStats() {
+  function getDisplayStats() {
     return {
-      ...userProgressStats.getStats(),
+      ...userProgressStats.getDisplayStats(),
       roundCounter: gameState.roundCounter
     };
   }
 
   function isWordAskable(word) {
-    return getWordLetters(word)
-      .flatMap(getQuestionLetterVariants)
+    return getTrainableWordLetters(word)
+      .flatMap(getTrainableCaseVariants)
       .some((letter) => !userProgressStats.wasRecentlyCorrect(letter));
   }
 
@@ -102,15 +102,15 @@
     return null;
   }
 
-  function chooseOptions(letterTransliteration) {
+  function chooseAnswerOptions(letterTransliteration) {
     if (gameContext.gameModeId === LATIN_TO_CYRILIC_MODE_ID) {
       return chooseCyrillicOptions(letterTransliteration);
     }
 
-    return chooseLatinOptions(letterTransliteration);
+    return chooseLatinAnswerOptions(letterTransliteration);
   }
 
-  function chooseLatinOptions(letterTransliteration) {
+  function chooseLatinAnswerOptions(letterTransliteration) {
     const correctAnswer = letterTransliteration.latin;
     const isUppercaseLetter = letterTransliteration.cyrillic === letterTransliteration.cyrillic.toUpperCase();
     const letterOptions = data.letterOptions.map((option) => (
@@ -172,10 +172,10 @@
       : letterTransliteration.latin;
   }
 
-  function continueCurrentWordRound() {
+  function advanceCurrentWordRound() {
     if (!currentWordState.skipRecentlyCorrectLetters(userProgressStats)) {
       ui.showRoundDone(currentWordState.word, { retryWord: gameState.currentWordHadWrongAnswer });
-      ui.renderStats(getStats(), gameContext.seed);
+      ui.renderStats(getDisplayStats(), gameContext.seed);
       return;
     }
 
@@ -185,26 +185,26 @@
   function showCurrentQuestion() {
     const currentLetter = currentWordState.getCurrentLetter();
     const letterTransliteration = getTransliterationForLetter(currentLetter);
-    currentWordState.startQuestion(getCorrectAnswer(letterTransliteration));
+    currentWordState.setCurrentQuestionAnswer(getCorrectAnswer(letterTransliteration));
     ui.showLetterGuess(
       GAME_MODES.find((mode) => mode.id === gameContext.gameModeId).title,
       getQuestionPrompt(letterTransliteration),
-      chooseOptions(letterTransliteration)
+      chooseAnswerOptions(letterTransliteration)
     );
-    ui.renderStats(getStats(), gameContext.seed);
+    ui.renderStats(getDisplayStats(), gameContext.seed);
   }
 
   function showGameOver() {
     gameState.gameOver = true;
     saveAppState();
-    ui.showGameOver(getStats(), userProgressStats.getLetterErrorCounts());
-    ui.renderStats(getStats(), gameContext.seed);
+    ui.showGameOver(getDisplayStats(), userProgressStats.getLetterErrorCounts());
+    ui.renderStats(getDisplayStats(), gameContext.seed);
   }
 
-  function startRound() {
+  function startCurrentWordRound() {
     if (gameState.gameOver) {
-      ui.showGameOver(getStats(), userProgressStats.getLetterErrorCounts());
-      ui.renderStats(getStats(), gameContext.seed);
+      ui.showGameOver(getDisplayStats(), userProgressStats.getLetterErrorCounts());
+      ui.renderStats(getDisplayStats(), gameContext.seed);
       return;
     }
 
@@ -220,9 +220,9 @@
     const word = gameContext.selectedDataSet.wordSource[gameState.currentWordIndex];
     nextRandom = random.createSeededRandom(`${gameContext.seed}:${gameContext.dataSetId}:${gameContext.gameModeId}:${gameState.roundCounter}:${gameState.currentWordIndex}`);
     gameState.currentWordHadWrongAnswer = false;
-    currentWordState = new CurrentWordState(word, getWordLetters(word).map(chooseQuestionLetter));
+    currentWordState = new CurrentWordState(word, getTrainableWordLetters(word).map(chooseQuestionLetterVariant));
     saveAppState();
-    continueCurrentWordRound();
+    advanceCurrentWordRound();
   }
 
   function clearProgressAndGoToFrontPage() {
@@ -230,7 +230,7 @@
     urlSettings.goToFrontPage();
   }
 
-  function handleHomeStart(settings) {
+  function handleStartGameFromFrontPage(settings) {
     storage.clear();
     urlSettings.startGame(settings);
   }
@@ -240,7 +240,7 @@
       gameState.roundCounter += 1;
       gameState.currentWordHadWrongAnswer = false;
       saveAppState();
-      startRound();
+      startCurrentWordRound();
       return;
     }
 
@@ -252,7 +252,7 @@
 
     gameState.roundCounter += 1;
     saveAppState();
-    startRound();
+    startCurrentWordRound();
   }
 
   function handleAnswer(selectedAnswer) {
@@ -274,26 +274,26 @@
     saveAppState();
     ui.showAnswerFeedback(selectedAnswer, currentWordState.getCorrectAnswer(), {
       autoNext: isCorrectAnswer,
-      onAutoNext: handleLetterNext
+      onAutoNext: handleQuestionNext
     });
-    ui.renderStats(getStats(), gameContext.seed);
+    ui.renderStats(getDisplayStats(), gameContext.seed);
   }
 
-  function handleLetterNext() {
+  function handleQuestionNext() {
     if (!currentWordState.hasAnsweredQuestion()) {
       return;
     }
 
-    currentWordState.advanceLetter();
-    continueCurrentWordRound();
+    currentWordState.advanceToNextLetter();
+    advanceCurrentWordRound();
   }
 
   function init() {
     ui.init({
       onAnswer: handleAnswer,
-      onLetterNext: handleLetterNext,
+      onLetterNext: handleQuestionNext,
       onRoundNext: handleRoundNext,
-      onHomeStart: handleHomeStart,
+      onHomeStart: handleStartGameFromFrontPage,
       onHomeRandomGame: urlSettings.createSeed,
       onShowProgress: () => ui.showProgress(userProgressStats.getLetterErrorCounts()),
       onNewGame: clearProgressAndGoToFrontPage
@@ -304,7 +304,7 @@
         ? DEFAULT_FRONT_PAGE_DATA_SET_ID
         : data.datasets[0].id;
 
-      ui.renderHome(data.datasets, GAME_MODES, {
+      ui.renderFrontPageControls(data.datasets, GAME_MODES, {
         seed: urlSettings.createSeed(),
         dataSetId: defaultFrontPageDataSet,
         gameModeId: CYRILIC_TO_LATIN_MODE_ID
@@ -313,7 +313,7 @@
       return;
     }
 
-    const settings = urlSettings.ensureUrlSettings(
+    const settings = urlSettings.normalizeGameUrlSettings(
       data.datasets[0].id,
       data.datasets.map((dataset) => dataset.id),
       CYRILIC_TO_LATIN_MODE_ID,
@@ -332,7 +332,7 @@
     gameState.setWordOrder(createWordOrder(), gameContext.selectedDataSet.wordSource.length);
     saveAppState();
     ui.showGameShell();
-    startRound();
+    startCurrentWordRound();
   }
 
   window.CyrillicGame = {

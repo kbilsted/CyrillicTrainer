@@ -132,7 +132,7 @@
     $("#roundCounter").text(stats.roundCounter);
   }
 
-  function renderHome(datasets, gameModes, settings) {
+  function renderFrontPageControls(datasets, gameModes, settings) {
     const options = datasets.map((dataset) => (
       $("<option>")
         .attr("value", dataset.id)
@@ -277,7 +277,7 @@
     showFrontPage,
     showGameShell,
     renderStats,
-    renderHome,
+    renderFrontPageControls,
     showLetterGuess,
     showAnswerFeedback,
     showProgress,
