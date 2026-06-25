@@ -228,80 +228,85 @@ Each letter transliteration entry in JavaScript uses explicit fields:
 
 * `cyrillic`
 * `latin`
-* `mustAsk`
+* `cyrillicToLatinMustAsk`
+* `latinToCyrillicMustAsk`
 
 The letter transliteration list in `data.js` must be named `LETTER_TRANSLITERATIONS`.
 
-`mustAsk` is a list of up to four Latin answer options that must be shown as wrong choices when they are not the correct answer.
-Use `mustAsk` for answer options that visually or phonetically resemble the Cyrillic letter.
-For uppercase Cyrillic letters, `latin` and `mustAsk` values are uppercase Latin strings.
-Uppercase Cyrillic letters have their own `mustAsk` choices when their visual shape differs from the lowercase Cyrillic letter.
+`cyrillicToLatinMustAsk` is a list of up to four Latin answer options that must be shown as wrong choices in `Cyrilic -> Latin` mode when they are not the correct answer.
+Use `cyrillicToLatinMustAsk` for Latin answer options that visually or phonetically resemble the Cyrillic letter.
 
-The `mustAsk` values are fixed training requirements.
+`latinToCyrillicMustAsk` is a list of up to four Cyrillic answer options that must be shown as wrong choices in `Latin -> Cyrilic` mode when they are not the correct answer.
+Use `latinToCyrillicMustAsk` for Cyrillic answer options that visually resemble the Latin prompt or are likely reverse-translation confusions.
+
+For uppercase Cyrillic letters, `latin`, `cyrillicToLatinMustAsk`, and `latinToCyrillicMustAsk` values use uppercase strings.
+Uppercase Cyrillic letters have their own must-ask choices when their visual shape differs from the lowercase Cyrillic letter.
+
+The `cyrillicToLatinMustAsk` and `latinToCyrillicMustAsk` values are fixed training requirements.
 They must not be changed, removed, reordered, or regenerated unless this requirements file is explicitly updated.
 
-| Cyrillic | Latin | mustAsk |
-|---|---|---|
-| а | a | o, e, u |
-| б | b | v, d, g |
-| в | v | b, w, f |
-| г | g | r, h, k |
-| д | d | g, a, t, l |
-| е | e | i, y, a |
-| ж | zh | sh, ch, z, j |
-| з | z | s, e, zh |
-| и | i | n, u, y |
-| й | y | i, u, j |
-| к | k | x, h, q |
-| л | l | r, m, n |
-| м | m | n, h, l |
-| н | n | h, m, u |
-| о | o | a, e, u |
-| п | p | n, u, r, b |
-| р | r | p, b, l |
-| с | s | c, z, k |
-| т | t | m, d, n |
-| у | u | y, v, w |
-| ф | f | o, p, v |
-| х | h | x, k, ch |
-| ц | ts | c, s, ch |
-| ч | ch | sh, ts, c |
-| ш | sh | ch, sht, s |
-| щ | sht | sh, ch, ts |
-| ъ | a | u, y, o |
-| ь | y | b, i, u |
-| ю | yu | u, ya, y |
-| я | ya | r, a, yu |
-| А | A | O, E, U |
-| Б | B | V, D, G |
-| В | V | B, W, F |
-| Г | G | L, T, K |
-| Д | D | A, L, G, T |
-| Е | E | I, Y, A |
-| Ж | ZH | SH, CH, Z, J |
-| З | Z | S, E, ZH |
-| И | I | N, U, Y |
-| Й | Y | I, N, U |
-| К | K | X, H, Q |
-| Л | L | A, M, N |
-| М | M | N, H, L |
-| Н | N | H, M, U |
-| О | O | A, E, U |
-| П | P | N, U, R, B |
-| Р | R | P, B, L |
-| С | S | C, Z, K |
-| Т | T | M, D, N |
-| У | U | Y, V, W |
-| Ф | F | O, P, V |
-| Х | H | X, K, CH |
-| Ц | TS | C, S, CH, U |
-| Ч | CH | SH, TS, C |
-| Ш | SH | W, CH, SHT, S |
-| Щ | SHT | W, SH, CH, TS |
-| Ъ | A | B, U, Y, O |
-| Ь | Y | B, I, U |
-| Ю | YU | U, YA, Y, O |
-| Я | YA | R, A, YU |
+| Cyrillic | Latin | cyrillicToLatinMustAsk | latinToCyrillicMustAsk |
+|---|---|---|---|
+| а | a | o, e, u | ъ, о, е, у |
+| б | b | v, d, g | в, д, г |
+| в | v | b, w, f | б, ъ, ь, ф |
+| г | g | r, h, k | р, х, к |
+| д | d | g, a, t, l | г, а, ъ, т |
+| е | e | i, y, a | и, й, ь, а |
+| ж | zh | sh, ch, z, j | ш, ч, з |
+| з | z | s, e, zh | с, е, ж |
+| и | i | n, u, y | н, у, й, ь |
+| й | y | i, u, j | ь, и, у |
+| к | k | x, h, q | х |
+| л | l | r, m, n | р, м, н |
+| м | m | n, h, l | н, х, л |
+| н | n | h, m, u | х, м, у |
+| о | o | a, e, u | а, ъ, е, у |
+| п | p | n, u, r, b | н, у, р, б |
+| р | r | p, b, l | п, б, л |
+| с | s | c, z, k | з, к |
+| т | t | m, d, n | м, д, н |
+| у | u | y, v, w | й, ь, в |
+| ф | f | o, p, v | о, п, в |
+| х | h | x, k, ch | к, ч |
+| ц | ts | c, s, ch | с, ч |
+| ч | ch | sh, ts, c | ш, ц |
+| ш | sh | ch, sht, s | ч, щ, с |
+| щ | sht | sh, ch, ts | ш, ч, ц |
+| ъ | a | u, y, o | а, у, й, ь |
+| ь | y | b, i, u | й, б, и, у |
+| ю | yu | u, ya, y | у, я, й, ь |
+| я | ya | r, a, yu | р, а, ъ, ю |
+| А | A | O, E, U | Ъ, О, Е, У |
+| Б | B | V, D, G | В, Д, Г |
+| В | V | B, W, F | Б, Ъ, Ь, Ф |
+| Г | G | L, T, K | Л, Т, К |
+| Д | D | A, L, G, T | А, Ъ, Л, Г |
+| Е | E | I, Y, A | И, Й, Ь, А |
+| Ж | ZH | SH, CH, Z, J | Ш, Ч, З |
+| З | Z | S, E, ZH | С, Е, Ж |
+| И | I | N, U, Y | Н, У, Й, Ь |
+| Й | Y | I, N, U | Ь, И, Н, У |
+| К | K | X, H, Q | Х |
+| Л | L | A, M, N | А, Ъ, М, Н |
+| М | M | N, H, L | Н, Х, Л |
+| Н | N | H, M, U | Х, М, У |
+| О | O | A, E, U | А, Ъ, Е, У |
+| П | P | N, U, R, B | Н, У, Р, Б |
+| Р | R | P, B, L | П, Б, Л |
+| С | S | C, Z, K | З, К |
+| Т | T | M, D, N | М, Д, Н |
+| У | U | Y, V, W | Й, Ь, В |
+| Ф | F | O, P, V | О, П, В |
+| Х | H | X, K, CH | К, Ч |
+| Ц | TS | C, S, CH, U | С, Ч, У |
+| Ч | CH | SH, TS, C | Ш, Ц |
+| Ш | SH | W, CH, SHT, S | Ч, Щ, С |
+| Щ | SHT | W, SH, CH, TS | Ш, Ч, Ц |
+| Ъ | A | B, U, Y, O | А, Б, У, Й |
+| Ь | Y | B, I, U | Й, Б, И, У |
+| Ю | YU | U, YA, Y, O | У, Я, Й, Ь |
+| Я | YA | R, A, YU | Р, А, Ъ, Ю |
 
 Examples:
 
@@ -372,7 +377,7 @@ The dropdown options are:
 If a Cyrillic letter translates to several Latin letters, that letter combination is one available option.
 
 Wrong choices are selected randomly from a list of letters and letter combinations.
-If the current Cyrillic letter has `mustAsk` options, those wrong choices are included before random wrong choices are added.
+If the current Cyrillic letter has must-ask options for the active mode, those wrong choices are included before random wrong choices are added.
 After the six answer options have been selected, shuffle the full option list.
 
 In `Cyrilic -> Latin` mode, the option list consists of:
@@ -381,16 +386,16 @@ In `Cyrilic -> Latin` mode, the option list consists of:
 * all Latin letters `a` through `z`
 
 In `Latin -> Cyrilic` mode, the option list consists of all Cyrillic letters from `LETTER_TRANSLITERATIONS` that match the current question casing.
-Wrong Cyrillic options are derived by reading `LETTER_TRANSLITERATIONS` backwards.
-If the current Cyrillic letter has `mustAsk` Latin values, map those Latin values back to Cyrillic letters and include them as wrong choices when they are not the correct answer.
+Wrong Cyrillic options are selected from `latinToCyrillicMustAsk` first, then random Cyrillic choices are added.
 
 For example, `zh` is a letter option because it is used when translating `ж`.
 
 Examples:
 
-* `г` has `r` in `mustAsk` because it visually resembles Latin `r`
-* `ж` has `sh` and `ch` in `mustAsk` because they are phonetically close
-* `н` has `h` in `mustAsk` because it visually resembles Latin `h`
+* `г` has `r` in `cyrillicToLatinMustAsk` because it visually resembles Latin `r`
+* `ж` has `sh` and `ch` in `cyrillicToLatinMustAsk` because they are phonetically close
+* `н` has `h` in `cyrillicToLatinMustAsk` because it visually resembles Latin `h`
+* `в` has `б`, `ъ`, `ь`, and `ф` in `latinToCyrillicMustAsk` because those Cyrillic choices are likely visual confusions for the reverse direction
 
 
 

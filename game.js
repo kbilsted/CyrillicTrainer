@@ -132,7 +132,7 @@
     const letterOptions = data.letterOptions.map((option) => (
       isUppercaseLetter ? option.toUpperCase() : option
     ));
-    const mustAskChoices = (letterTransliteration.mustAsk || [])
+    const mustAskChoices = (letterTransliteration.cyrillicToLatinMustAsk || [])
       .filter((option, index, options) => (
         option !== correctAnswer
         && letterOptions.includes(option)
@@ -159,17 +159,12 @@
           : entry.cyrillic === entry.cyrillic.toLowerCase()
       ))
       .map((entry) => entry.cyrillic);
-    const mustAskChoices = (letterTransliteration.mustAsk || [])
-      .map((latinOption) => data.letterTransliterations.find((entry) => (
-        entry.latin === latinOption
-        && cyrillicOptions.includes(entry.cyrillic)
-      )))
-      .filter((entry, index, entries) => (
-        entry
-        && entry.cyrillic !== correctAnswer
-        && entries.findIndex((item) => item && item.cyrillic === entry.cyrillic) === index
+    const mustAskChoices = (letterTransliteration.latinToCyrillicMustAsk || [])
+      .filter((option, index, options) => (
+        option !== correctAnswer
+        && cyrillicOptions.includes(option)
+        && options.indexOf(option) === index
       ))
-      .map((entry) => entry.cyrillic)
       .slice(0, 4);
     const wrongChoices = cyrillicOptions.filter((option) => option !== correctAnswer);
     const extraWrongChoices = wrongChoices.filter((option) => !mustAskChoices.includes(option));
