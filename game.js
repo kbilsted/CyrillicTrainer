@@ -228,6 +228,13 @@
     startRound();
   }
 
+  function handleGameModeChange(nextGameModeId) {
+    userProgressStats.reset();
+    roundCounter = 0;
+    saveGameState();
+    random.switchGameMode(nextGameModeId);
+  }
+
   function handleAnswer(selectedAnswer) {
     if (isCurrentQuestionAnswered) {
       return;
@@ -282,7 +289,7 @@
       onRoundNext: startRound,
       onDataSetChange: random.switchDataSet,
       onSeedChange: random.switchSeed,
-      onGameModeChange: random.switchGameMode,
+      onGameModeChange: handleGameModeChange,
       onShowProgress: () => ui.showProgress(userProgressStats.getLetterErrorCounts()),
       onReset: handleReset
     });

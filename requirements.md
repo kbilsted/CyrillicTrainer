@@ -97,7 +97,7 @@ After each answer:
 
 The UI has a red reset button.
 When pressed, show a confirmation alert asking whether the user wants to reset all data.
-If the user confirms, clear `successCounter`, `failCounter`, `roundCounter`, the last 10 correctly answered Cyrillic letters, and the Cyrillic letter error counts from `localStorage`.
+If the user confirms, call `UserProgressStats.reset()`, set `roundCounter` to `0`, and save the reset state.
 If the user cancels, do not reset anything.
 After reset, the game starts a fresh round.
 
@@ -212,7 +212,10 @@ If `gameMode` is missing or invalid, URL normalization inserts `gameMode=1`.
 
 The UI must have a compact game mode switcher near the question area, above the large question card.
 Use a Google Translate-style direction selector: two visible mode buttons, with the active mode visually selected.
-Changing mode updates the URL `gameMode` value and reloads using that game mode.
+Clicking the active game mode does nothing.
+Clicking a different game mode shows a confirmation dialog warning that all progress will be reset.
+If the user cancels, do not reset progress and do not change game mode.
+If the user confirms, call `UserProgressStats.reset()`, set `roundCounter` to `0`, save the reset state, update the URL `gameMode` value, and reload using that game mode.
 
 ## URL Normalization
 

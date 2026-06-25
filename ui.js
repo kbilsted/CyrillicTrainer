@@ -63,8 +63,17 @@
     });
 
     $("#gameModeSwitcher").on("click", ".game-mode-button", function () {
-      if (callbacks.onGameModeChange) {
-        callbacks.onGameModeChange($(this).data("value"));
+      const button = $(this);
+
+      if (button.attr("aria-pressed") === "true") {
+        return;
+      }
+
+      if (
+        callbacks.onGameModeChange
+        && window.confirm("Changing game mode resets all progress. Continue?")
+      ) {
+        callbacks.onGameModeChange(button.data("value"));
       }
     });
 
