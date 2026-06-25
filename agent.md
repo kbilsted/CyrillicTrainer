@@ -29,6 +29,10 @@ Keep functions at a practical size. Do not extract tiny one-line or one-use help
 
 In all JavaScript files, use comments sparingly. Comments should explain non-obvious rules or tradeoffs, not restate function names or list the single call site of a function.
 
+In CSS and HTML, use explicit class names for semantic UI parts that are styled directly.
+Do not style important UI elements by DOM position selectors such as `:first-child`, `:last-child`, or `:nth-child()` when a named class would express the intent.
+For example, use `.front-field-label` instead of `.front-field > span:first-child`.
+
 Use domain classes for cohesive app state instead of spreading many mutable fields through `game.js`.
 `UserProgressStats` owns learning progress, `GameState` owns game-flow progress, and `CurrentWordState` owns runtime progress inside the active word round.
 Use a plain `gameContext` object in `game.js` for URL-selected page-load context such as seed, dataset, game mode, and selected dataset.
