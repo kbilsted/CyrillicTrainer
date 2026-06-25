@@ -3,6 +3,7 @@
 
   const data = window.CYRILLIC_TRAINER_DATA;
   const random = window.CyrillicRandom;
+  const urlSettings = window.CyrillicUrlSettings;
   const storage = window.CyrillicStorage;
   const ui = window.CyrillicUI;
   const WRONG_ANSWER_OPTION_COUNT = 5;
@@ -230,7 +231,7 @@
     userProgressStats.reset();
     roundCounter = 1;
     saveGameState();
-    random.switchGameMode(nextGameModeId);
+    urlSettings.switchGameMode(nextGameModeId);
   }
 
   function handleRoundNext() {
@@ -271,7 +272,7 @@
   }
 
   function init() {
-    const settings = random.ensureUrlSettings(
+    const settings = urlSettings.ensureUrlSettings(
       data.datasets[0].id,
       data.datasets.map((dataset) => dataset.id),
       CYRILIC_TO_LATIN_MODE_ID,
@@ -292,8 +293,8 @@
       onAnswer: handleAnswer,
       onLetterNext: handleLetterNext,
       onRoundNext: handleRoundNext,
-      onDataSetChange: random.switchDataSet,
-      onSeedChange: random.switchSeed,
+      onDataSetChange: urlSettings.switchDataSet,
+      onSeedChange: urlSettings.switchSeed,
       onGameModeChange: handleGameModeChange,
       onShowProgress: () => ui.showProgress(userProgressStats.getLetterErrorCounts()),
       onReset: handleReset
