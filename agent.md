@@ -1,5 +1,11 @@
 # Agent instructions
 
+## Ownership
+
+This file owns implementation guidance: file layout, script order, technology choices, code organization, design constraints, and coding style.
+Keep this file detailed enough that the project structure can be recreated from the markdown files.
+Do not put product rules, game rules, dataset contents, scoring rules, URL behavior, or UI behavior details here; those belong in `requirements.md`.
+
 ## Implementation Stack
 
 Build the program as completely static HTML and JavaScript files.
@@ -29,7 +35,8 @@ Use this file layout:
 * `styles.css`: mobile-first layout and visual styling for the top line, centered letter card, button row, feedback states, and round-done view.
 * `data.js`: data only. The exact data requirements are defined in `requirements.md`.
 * `random.js`: URL and random helper functions used by the game.
-* `storage.js`: `localStorage` handling for `successCounter`, `failCounter`, `roundCounter`, and success ratio.
+* `userProgressStats.js`: user progress class. The exact class requirements are defined in `requirements.md`.
+* `storage.js`: `localStorage` load/save handling only. The exact persistence requirements are defined in `requirements.md`.
 * `game.js`: game state and rules. Starts rounds, chooses words, moves through letters, chooses answer options, handles answers, and handles next.
 * `ui.js`: DOM rendering and DOM event binding. Renders score, letter guess view, button colors, bottom line, and round-done view.
 * `app.js`: small bootstrap file that initializes the modules in the correct order.
@@ -39,6 +46,7 @@ Load local scripts in this order:
 ```html
 <script src="data.js"></script>
 <script src="random.js"></script>
+<script src="userProgressStats.js"></script>
 <script src="storage.js"></script>
 <script src="ui.js"></script>
 <script src="game.js"></script>

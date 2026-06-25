@@ -1,7 +1,10 @@
 # Product requirements
 
-This is the single authoritative file for product and dataset requirements.
-Do not duplicate dataset requirements in `agent.md` or other files.
+## Ownership
+
+This file owns product behavior: game rules, domain model, data model, scoring and progress rules, URL behavior, dataset requirements, and UI behavior.
+Keep this file detailed enough that the product can be recreated from the markdown files.
+Do not put implementation stack, file layout, script order, or coding style here; those belong in `agent.md`.
 
 ## Goal
 
@@ -40,19 +43,50 @@ Use these names consistently for the core entities:
 
 * `LETTER_TRANSLITERATIONS`: the authoritative Cyrillic-to-Latin transliteration table
 * `gameMode`: the URL parameter and product concept for choosing translation direction
+* `UserProgressStats`: the JavaScript class that owns the user's learning progress fields and derived stats
 * `recentCorrectLetters`: the last 10 correctly answered exact Cyrillic characters
 * `letterErrorCounts`: the persisted dictionary of exact Cyrillic character error counts
 
 ## Scoring
 
+User progress must be represented by a `UserProgressStats` class.
+The class must be defined in `userProgressStats.js`.
+The class must not be defined in `storage.js`.
+`game.js` owns the active `UserProgressStats` instance and calls its methods directly.
+`storage.js` must only persist and load app state.
+`storage.js` must expose a `load()` method and a `save(state)` method.
+`save(state)` stores all persisted app state, including `UserProgressStats` data and `roundCounter`.
+After changing any persisted state, call `save(state)`.
+The storage format does not need to be backward compatible with older versions.
+
+`UserProgressStats` owns these fields:
+
+* `successCounter`
+* `failCounter`
+* `recentCorrectLetters`
+* `letterErrorCounts`
+
+`UserProgressStats` owns these methods:
+
+* `recordCorrectLetter(cyrillicLetter)`
+* `recordWrongLetter(cyrillicLetter)`
+* `wasRecentlyCorrect(cyrillicLetter)`
+* `getStats()`
+* `getLetterErrorCounts()`
+* `reset()`
+* `toJSON()`
+* `fromJSON(raw)`
+
+`roundCounter` is not part of `UserProgressStats`.
+`roundCounter` is stored separately because it describes game flow, not the user's answer progress.
+
 If the user selects the correct answer:
 
-* increment `successCounter`
+* call `recordCorrectLetter(cyrillicLetter)`, which increments `successCounter` and updates `recentCorrectLetters`
 
 If the user selects a wrong answer:
 
-* increment `failCounter`
-* increment the error count for the exact Cyrillic character that was asked
+* call `recordWrongLetter(cyrillicLetter)`, which increments `failCounter` and increments the error count for the exact Cyrillic character that was asked
 
 After each answer:
 

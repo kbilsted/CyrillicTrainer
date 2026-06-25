@@ -6,7 +6,6 @@
   const storage = window.CyrillicStorage;
   const ui = window.CyrillicUI;
   const WRONG_ANSWER_OPTION_COUNT = 5;
-  const RECENT_CORRECT_LETTER_LIMIT = 10;
   const GAME_MODES = [
     { id: "1", title: "Cyrilic -> Latin" },
     { id: "2", title: "Latin -> Cyrilic" }
@@ -24,8 +23,9 @@
   let currentLetterIndex = 0;
   let currentCorrectAnswer = null;
   let isCurrentQuestionAnswered = false;
-  let recentCorrectLetters = [];
   let lastWrongAnswer = null;
+  let userProgressStats = null;
+  let roundCounter = 0;
 
   function getTransliterationForLetter(cyrillicLetter) {
     const match = data.letterTransliterations.find((letter) => letter.cyrillic === cyrillicLetter);
@@ -57,7 +57,7 @@
 
   function chooseQuestionLetter(letter) {
     const variants = getQuestionLetterVariants(letter);
-    const availableVariants = variants.filter((variant) => !wasRecentlyCorrect(variant));
+    const availableVariants = variants.filter((variant) => !userProgressStats.wasRecentlyCorrect(variant));
 
     return random.choose(
       nextRandom,
@@ -65,25 +65,25 @@
     );
   }
 
-  function wasRecentlyCorrect(letter) {
-    return recentCorrectLetters.includes(letter);
+  function saveGameState() {
+    storage.save({
+      userProgressStats,
+      roundCounter
+    });
   }
 
-  function rememberCorrectLetter(letter) {
-    recentCorrectLetters.push(letter);
-
-    if (recentCorrectLetters.length > RECENT_CORRECT_LETTER_LIMIT) {
-      recentCorrectLetters = recentCorrectLetters.slice(-RECENT_CORRECT_LETTER_LIMIT);
-    }
-
-    storage.setRecentCorrectLetters(recentCorrectLetters);
+  function getStats() {
+    return {
+      ...userProgressStats.getStats(),
+      roundCounter
+    };
   }
 
   function getRoundCandidateWords() {
     const wordsWithAskableLetters = currentDataSet.wordSource.filter((word) => (
       getWordLetters(word)
         .flatMap(getQuestionLetterVariants)
-        .some((letter) => !wasRecentlyCorrect(letter))
+        .some((letter) => !userProgressStats.wasRecentlyCorrect(letter))
     ));
 
     return wordsWithAskableLetters.length > 0 ? wordsWithAskableLetters : currentDataSet.wordSource;
@@ -182,7 +182,7 @@
   function moveToNextAvailableLetter() {
     while (
       currentLetterIndex < currentLetters.length
-      && wasRecentlyCorrect(currentLetters[currentLetterIndex])
+      && userProgressStats.wasRecentlyCorrect(currentLetters[currentLetterIndex])
     ) {
       currentLetterIndex += 1;
     }
@@ -193,7 +193,7 @@
   function showCurrentLetter() {
     if (!moveToNextAvailableLetter()) {
       ui.showRoundDone(currentWord);
-      ui.renderStats(storage.getStats(), seed);
+      ui.renderStats(getStats(), seed);
       return;
     }
 
@@ -206,11 +206,12 @@
       getQuestionPrompt(letterTransliteration),
       chooseOptions(letterTransliteration)
     );
-    ui.renderStats(storage.getStats(), seed);
+    ui.renderStats(getStats(), seed);
   }
 
   function startRound() {
-    storage.incrementRound();
+    roundCounter += 1;
+    saveGameState();
     const preferredLetter = lastWrongAnswer;
     currentWord = chooseRoundWord(preferredLetter);
     lastWrongAnswer = null;
@@ -220,14 +221,11 @@
   }
 
   function handleReset() {
-    storage.resetProgress();
-    recentCorrectLetters = [];
+    userProgressStats.reset();
+    roundCounter = 0;
+    saveGameState();
     lastWrongAnswer = null;
     startRound();
-  }
-
-  function handleShowProgress() {
-    ui.showProgress(storage.getLetterErrorCounts());
   }
 
   function handleAnswer(selectedAnswer) {
@@ -238,19 +236,18 @@
     isCurrentQuestionAnswered = true;
 
     if (selectedAnswer === currentCorrectAnswer) {
-      rememberCorrectLetter(currentLetters[currentLetterIndex]);
-      storage.incrementSuccess();
+      userProgressStats.recordCorrectLetter(currentLetters[currentLetterIndex]);
     } else {
       lastWrongAnswer = currentLetters[currentLetterIndex];
-      storage.incrementFail();
-      storage.incrementLetterError(currentLetters[currentLetterIndex]);
+      userProgressStats.recordWrongLetter(currentLetters[currentLetterIndex]);
     }
 
+    saveGameState();
     ui.showAnswerFeedback(selectedAnswer, currentCorrectAnswer, {
       autoNext: selectedAnswer === currentCorrectAnswer,
       onAutoNext: handleLetterNext
     });
-    ui.renderStats(storage.getStats(), seed);
+    ui.renderStats(getStats(), seed);
   }
 
   function handleLetterNext() {
@@ -275,7 +272,9 @@
     gameModeId = settings.gameModeId;
     currentDataSet = data.datasets.find((dataset) => dataset.id === dataSetId);
     nextRandom = random.createSeededRandom(seed);
-    recentCorrectLetters = storage.getRecentCorrectLetters().slice(-RECENT_CORRECT_LETTER_LIMIT);
+    const persistedState = storage.load();
+    userProgressStats = persistedState.userProgressStats;
+    roundCounter = persistedState.roundCounter;
 
     ui.init({
       onAnswer: handleAnswer,
@@ -284,7 +283,7 @@
       onDataSetChange: random.switchDataSet,
       onSeedChange: random.switchSeed,
       onGameModeChange: random.switchGameMode,
-      onShowProgress: handleShowProgress,
+      onShowProgress: () => ui.showProgress(userProgressStats.getLetterErrorCounts()),
       onReset: handleReset
     });
 
