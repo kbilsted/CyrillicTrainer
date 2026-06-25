@@ -61,8 +61,10 @@ After each answer:
 * persist scores in `localStorage`
 * round counter is incremented with the start of new words, so first round is 1
 
-The UI has a reset button.
-When pressed, it clears `successCounter`, `failCounter`, `roundCounter`, the last 10 correctly answered Cyrillic letters, and the Cyrillic letter error counts from `localStorage`.
+The UI has a red reset button.
+When pressed, show a confirmation alert asking whether the user wants to reset all data.
+If the user confirms, clear `successCounter`, `failCounter`, `roundCounter`, the last 10 correctly answered Cyrillic letters, and the Cyrillic letter error counts from `localStorage`.
+If the user cancels, do not reset anything.
 After reset, the game starts a fresh round.
 
 The game stores a persisted dictionary of Cyrillic letter error counts in `localStorage`.

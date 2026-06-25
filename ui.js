@@ -67,7 +67,10 @@
     });
 
     $("#resetButton").on("click", function () {
-      if (callbacks.onReset) {
+      if (
+        callbacks.onReset
+        && window.confirm("Reset all data? This clears scores, recent correct letters, and error progress.")
+      ) {
         callbacks.onReset();
       }
     });
