@@ -17,7 +17,7 @@
   let seed = null;
   let dataSetId = null;
   let gameModeId = null;
-  let currentDataSet = null;
+  let selectedDataSet = null;
   let nextRandom = null;
   let currentWord = null;
   let currentLetters = [];
@@ -86,7 +86,7 @@
   }
 
   function createWordOrder() {
-    const wordIndexes = currentDataSet.wordSource.map((_, index) => index);
+    const wordIndexes = selectedDataSet.wordSource.map((_, index) => index);
     return random.shuffleSeeded(
       random.createSeededRandom(`${seed}:${dataSetId}:wordOrder`),
       wordIndexes
@@ -98,7 +98,7 @@
       const nextWordIndex = gameState.wordOrder[gameState.wordCursor];
       gameState.wordCursor += 1;
 
-      if (isWordAskable(currentDataSet.wordSource[nextWordIndex])) {
+      if (isWordAskable(selectedDataSet.wordSource[nextWordIndex])) {
         return nextWordIndex;
       }
     }
@@ -229,7 +229,7 @@
       return;
     }
 
-    currentWord = currentDataSet.wordSource[gameState.currentWordIndex];
+    currentWord = selectedDataSet.wordSource[gameState.currentWordIndex];
     nextRandom = random.createSeededRandom(`${seed}:${dataSetId}:${gameModeId}:${gameState.roundCounter}:${gameState.currentWordIndex}`);
     gameState.currentWordHadWrongAnswer = false;
     currentLetters = getWordLetters(currentWord).map(chooseQuestionLetter);
@@ -331,11 +331,11 @@
     seed = settings.seed;
     dataSetId = settings.dataSetId;
     gameModeId = settings.gameModeId;
-    currentDataSet = data.datasets.find((dataset) => dataset.id === dataSetId);
+    selectedDataSet = data.datasets.find((dataset) => dataset.id === dataSetId);
     const persistedState = storage.load();
     userProgressStats = persistedState.userProgressStats;
     gameState = persistedState.gameState;
-    gameState.setWordOrder(createWordOrder(), currentDataSet.wordSource.length);
+    gameState.setWordOrder(createWordOrder(), selectedDataSet.wordSource.length);
     saveAppState();
 
     ui.init({
