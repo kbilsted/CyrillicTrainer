@@ -44,11 +44,40 @@ Use these names consistently for the core entities:
 * `LETTER_TRANSLITERATIONS`: the authoritative Cyrillic-to-Latin transliteration table
 * `gameMode`: the URL parameter and product concept for choosing translation direction
 * `UserProgressStats`: the JavaScript class that owns the user's learning progress fields and derived stats
+* `GameState`: the JavaScript class that owns persisted game-flow fields and the runtime seeded word order
 * `recentCorrectLetters`: the last 10 correctly answered exact Cyrillic characters
 * `letterErrorCounts`: the persisted dictionary of exact Cyrillic character error counts
 * `wordCursor`: the persisted index of the next word to consider in the seeded word order
 * `currentWordIndex`: the persisted index of the word currently being asked
 * `currentWordHadWrongAnswer`: the persisted flag that decides whether the current word must repeat
+
+## Game Flow State
+
+Game flow state must be represented by a `GameState` class.
+`GameState` owns these fields:
+
+* `roundCounter`
+* `wordOrder`
+* `wordCursor`
+* `currentWordIndex`
+* `currentWordHadWrongAnswer`
+* `gameOver`
+
+`wordOrder` is generated from the URL `game` value and selected dataset.
+It may be stored only at runtime because it can be recreated deterministically from the current URL and dataset.
+
+`GameState` owns these methods:
+
+* `setWordOrder(wordOrder, wordSourceLength)`
+* `reset()`
+* `toJSON()`
+* `fromJSON(raw)`
+
+When all game-flow state must be reset, call `GameState.reset()` instead of listing every game-flow field at the call site.
+
+The active question state is not part of `GameState`.
+Fields such as `currentWord`, `currentLetters`, `currentLetterIndex`, `currentCorrectAnswer`, and `isCurrentQuestionAnswered` describe the current rendered question or current round.
+They may later move into a separate `CurrentWordState` or similar object if that makes `game.js` simpler.
 
 ## Scoring
 
@@ -58,7 +87,7 @@ The class must not be defined in `storage.js`.
 `game.js` owns the active `UserProgressStats` instance and calls its methods directly.
 `storage.js` must only persist and load app state.
 `storage.js` must expose a `load()` method and a `save(state)` method.
-`save(state)` stores all persisted app state, including `UserProgressStats` data, `roundCounter`, `wordCursor`, `currentWordIndex`, `currentWordHadWrongAnswer`, and `gameOver`.
+`save(state)` stores all persisted app state, including `UserProgressStats` data and `GameState` data.
 After changing any persisted state, call `save(state)`.
 The storage format does not need to be backward compatible with older versions.
 
@@ -81,7 +110,7 @@ The storage format does not need to be backward compatible with older versions.
 * `fromJSON(raw)`
 
 `roundCounter` is not part of `UserProgressStats`.
-`roundCounter` is stored separately because it describes game flow, not the user's answer progress.
+`roundCounter` is part of `GameState` because it describes game flow, not the user's answer progress.
 
 If the user selects the correct answer:
 
@@ -99,7 +128,7 @@ After each answer:
 
 The UI has a red reset button.
 When pressed, show a confirmation alert asking whether the user wants to reset all data.
-If the user confirms, call `UserProgressStats.reset()`, set `roundCounter` to `1`, set `wordCursor` to `0`, set `currentWordIndex` to `null`, set `currentWordHadWrongAnswer` to `false`, set `gameOver` to `false`, and save the reset state.
+If the user confirms, call `UserProgressStats.reset()`, call `GameState.reset()`, and save the reset state.
 If the user cancels, do not reset anything.
 After reset, the game starts a fresh round.
 
@@ -185,11 +214,7 @@ When the game is over:
 When the `new game` button is pressed:
 
 * call `UserProgressStats.reset()`
-* set `roundCounter` to `1`
-* set `wordCursor` to `0`
-* set `currentWordIndex` to `null`
-* set `currentWordHadWrongAnswer` to `false`
-* set `gameOver` to `false`
+* call `GameState.reset()`
 * save the reset state
 * generate a new URL `game` value and reload with that new game value
 
@@ -243,7 +268,7 @@ Use a Google Translate-style direction selector: two visible mode buttons, with 
 Clicking the active game mode does nothing.
 Clicking a different game mode shows a confirmation dialog warning that all progress will be reset.
 If the user cancels, do not reset progress and do not change game mode.
-If the user confirms, call `UserProgressStats.reset()`, set `roundCounter` to `1`, set `wordCursor` to `0`, set `currentWordIndex` to `null`, set `currentWordHadWrongAnswer` to `false`, set `gameOver` to `false`, save the reset state, update the URL `gameMode` value, and reload using that game mode.
+If the user confirms, call `UserProgressStats.reset()`, call `GameState.reset()`, save the reset state, update the URL `gameMode` value, and reload using that game mode.
 
 ## URL Normalization
 

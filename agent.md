@@ -29,6 +29,10 @@ Keep functions at a practical size. Do not extract tiny one-line or one-use help
 
 In all JavaScript files, use comments sparingly. Comments should explain non-obvious rules or tradeoffs, not restate function names or list the single call site of a function.
 
+Use domain classes for cohesive app state instead of spreading many mutable fields through `game.js`.
+`UserProgressStats` owns learning progress, and `GameState` owns game-flow progress.
+If the active round/question fields grow further, prefer a later `CurrentWordState`-style split over adding more top-level mutable variables to `game.js`.
+
 Use this file layout:
 
 * `index.html`: HTML structure only. Contains the score line with round counter, letter card, answer buttons, round-done view, game-over view, bottom settings line, and credit footer. Loads Bootstrap, jQuery, and local JavaScript files.
@@ -37,8 +41,9 @@ Use this file layout:
 * `random.js`: deterministic random helper functions used by the game. Contains seeded random, choose, and seeded shuffle logic only.
 * `urlSettings.js`: URL parameter normalization and navigation. Contains `game`, `data`, `gameMode`, new-game seed creation, and legacy `seed` URL handling.
 * `userProgressStats.js`: user progress class. The exact class requirements are defined in `requirements.md`.
-* `storage.js`: `localStorage` load/save handling only. The exact persistence requirements are defined in `requirements.md`.
-* `game.js`: game state and rules. Starts rounds, chooses words, moves through letters, chooses answer options, handles answers, and handles next.
+* `gameState.js`: game-flow state class. The exact class requirements are defined in `requirements.md`.
+* `storage.js`: `localStorage` load/save handling only. It loads and saves `UserProgressStats` and `GameState`; the exact persistence requirements are defined in `requirements.md`.
+* `game.js`: game rules and runtime question state. Starts rounds, chooses words, moves through letters, chooses answer options, handles answers, and handles next.
 * `ui.js`: DOM rendering and DOM event binding. Renders score, letter guess view, button colors, bottom line, and round-done view.
 * `app.js`: small bootstrap file that initializes the modules in the correct order.
 
@@ -49,6 +54,7 @@ Load local scripts in this order:
 <script src="random.js"></script>
 <script src="urlSettings.js"></script>
 <script src="userProgressStats.js"></script>
+<script src="gameState.js"></script>
 <script src="storage.js"></script>
 <script src="ui.js"></script>
 <script src="game.js"></script>
