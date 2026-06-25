@@ -5,8 +5,6 @@
     onAnswer: null,
     onLetterNext: null,
     onRoundNext: null,
-    onHomeStart: null,
-    onHomeRandomGame: null,
     onShowProgress: null,
     onNewGame: null
   };
@@ -56,41 +54,7 @@
       }
     });
 
-    $("#homeGameModeSwitcher").on("click", ".game-mode-button", function () {
-      const selectedValue = $(this).data("value");
-
-      $("#homeGameModeSwitcher .game-mode-button").each(function () {
-        const button = $(this);
-        const isActive = button.data("value") === selectedValue;
-
-        button
-          .toggleClass("btn-dark", isActive)
-          .toggleClass("btn-outline-dark", !isActive)
-          .attr("aria-pressed", isActive ? "true" : "false");
-      });
-    });
-
-    $("#homeRandomGameButton").on("click", function () {
-      if (callbacks.onHomeRandomGame) {
-        $("#homeGameInput").val(callbacks.onHomeRandomGame());
-      }
-    });
-
-    $("#startGameForm").on("submit", function (event) {
-      event.preventDefault();
-
-      const selectedModeButton = $("#homeGameModeSwitcher .game-mode-button[aria-pressed='true']");
-
-      if (callbacks.onHomeStart) {
-        callbacks.onHomeStart({
-          seed: $("#homeGameInput").val(),
-          dataSetId: $("#homeDatasetSelect").val(),
-          gameModeId: selectedModeButton.data("value")
-        });
-      }
-    });
-
-    $("#gameNewGameButton").on("click", function () {
+    $("#gameNewGameButton, #newGameButton").on("click", function () {
       if (
         callbacks.onNewGame
         && window.confirm("Start a new game? This clears scores, recent correct letters, and error progress.")
@@ -98,31 +62,6 @@
         callbacks.onNewGame();
       }
     });
-
-    $("#newGameButton").on("click", function () {
-      if (
-        callbacks.onNewGame
-        && window.confirm("Start a new game? This clears scores, recent correct letters, and error progress.")
-      ) {
-        callbacks.onNewGame();
-      }
-    });
-  }
-
-  function showFrontPage() {
-    clearAutoNextTimer();
-    $("#frontPageView").removeClass("d-none");
-    $(".score-line").addClass("d-none");
-    $(".bottom-line").addClass("d-none");
-    $("#letterGuessView").addClass("d-none");
-    $("#roundDoneView").addClass("d-none");
-    $("#gameOverView").addClass("d-none");
-  }
-
-  function showGameShell() {
-    $("#frontPageView").addClass("d-none");
-    $(".score-line").removeClass("d-none");
-    $(".bottom-line").removeClass("d-none");
   }
 
   function renderStats(stats) {
@@ -130,31 +69,6 @@
     $("#failCounter").text(stats.failCounter);
     $("#successRatio").text(stats.successRatio);
     $("#roundCounter").text(stats.roundCounter);
-  }
-
-  function renderFrontPageControls(datasets, gameModes, settings) {
-    const options = datasets.map((dataset) => (
-      $("<option>")
-        .attr("value", dataset.id)
-        .text(dataset.label)
-    ));
-
-    $("#homeDatasetSelect").empty().append(options).val(settings.dataSetId);
-    $("#homeGameInput").val(settings.seed);
-    renderGameModeButtons($("#homeGameModeSwitcher"), gameModes, settings.gameModeId);
-  }
-
-  function renderGameModeButtons(container, gameModes, activeGameModeId) {
-    const buttons = gameModes.map((mode) => (
-      $("<button>")
-        .attr("type", "button")
-        .addClass(`btn btn-sm game-mode-button ${mode.id === activeGameModeId ? "btn-dark" : "btn-outline-dark"}`)
-        .attr("aria-pressed", mode.id === activeGameModeId ? "true" : "false")
-        .data("value", mode.id)
-        .text(mode.title)
-    ));
-
-    container.empty().append(buttons);
   }
 
   function revealRoundDoneDetails() {
@@ -272,12 +186,9 @@
     renderErrorHistogram($("#gameOverProgressPanel"), letterErrorCounts);
   }
 
-  window.CyrillicUI = {
+  window.CyrillicGameUI = {
     init,
-    showFrontPage,
-    showGameShell,
     renderStats,
-    renderFrontPageControls,
     showLetterGuess,
     showAnswerFeedback,
     showProgress,

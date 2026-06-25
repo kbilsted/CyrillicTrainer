@@ -50,9 +50,22 @@ Use this file layout:
 * `wordScheduler.js`: stateless word scheduling. Creates the seeded word order and advances `GameState.wordCursor` to the next askable word.
 * `questionFactory.js`: stateless question construction. Builds prompts, correct answers, and answer options from game mode, transliteration data, and seeded random.
 * `storage.js`: `localStorage` load/save handling only. It loads and saves `UserProgressStats` and `GameState`; the exact persistence requirements are defined in `requirements.md`.
+* `frontPageUi.js`: front-page DOM rendering and event binding only.
+* `frontPage.js`: front-page controller. Renders the initial controls, clears persisted progress on start, and navigates to `game.html`.
+* `gameUi.js`: game-screen DOM rendering and event binding only. Renders score, letter guess view, button colors, bottom line, round-done view, progress, and game-over view.
 * `game.js`: game controller. Starts rounds, chooses words, moves through letters, delegates question construction, handles answers, and handles next.
-* `ui.js`: DOM rendering and DOM event binding. Renders the front page, score, letter guess view, button colors, bottom line, and round-done view.
-* `app.js`: small bootstrap file that initializes the modules in the correct order.
+* `app.js`: small bootstrap file that initializes either `frontPage.js` or `game.js`, depending on which page loaded.
+
+Load local front-page scripts in this order:
+
+```html
+<script src="data.js"></script>
+<script src="urlSettings.js"></script>
+<script src="storage.js"></script>
+<script src="frontPageUi.js"></script>
+<script src="frontPage.js"></script>
+<script src="app.js"></script>
+```
 
 Load local game-page scripts in this order:
 
@@ -67,7 +80,7 @@ Load local game-page scripts in this order:
 <script src="wordScheduler.js"></script>
 <script src="questionFactory.js"></script>
 <script src="storage.js"></script>
-<script src="ui.js"></script>
+<script src="gameUi.js"></script>
 <script src="game.js"></script>
 <script src="app.js"></script>
 ```

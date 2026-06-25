@@ -57,10 +57,6 @@
     return { seed, dataSetId, gameModeId };
   }
 
-  function isFrontPage() {
-    return !new URL(window.location.href).pathname.endsWith(GAME_PAGE_FILE);
-  }
-
   function startGame(settings) {
     const url = new URL(GAME_PAGE_FILE, window.location.href);
     url.searchParams.set(GAME_PARAM, normalizeSeed(settings.seed));
@@ -78,7 +74,6 @@
   window.CyrillicUrlSettings = {
     createSeed,
     normalizeGameUrlSettings,
-    isFrontPage,
     startGame,
     goToFrontPage
   };

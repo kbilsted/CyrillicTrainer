@@ -2,6 +2,12 @@
   "use strict";
 
   window.jQuery(function () {
-    window.CyrillicGame.init();
+    const app = window.CyrillicFrontPage || window.CyrillicGame;
+
+    if (!app) {
+      throw new Error("Missing Cyrillic app module");
+    }
+
+    app.init();
   });
 }());
