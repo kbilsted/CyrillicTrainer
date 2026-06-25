@@ -31,6 +31,7 @@ In all JavaScript files, use comments sparingly. Comments should explain non-obv
 
 Use domain classes for cohesive app state instead of spreading many mutable fields through `game.js`.
 `UserProgressStats` owns learning progress, and `GameState` owns game-flow progress.
+Use a plain `gameContext` object in `game.js` for URL-selected page-load context such as seed, dataset, game mode, and selected dataset.
 If the active round/question fields grow further, prefer a later `CurrentWordState`-style split over adding more top-level mutable variables to `game.js`.
 
 Use this file layout:

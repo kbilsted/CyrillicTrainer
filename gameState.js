@@ -1,6 +1,7 @@
 (function () {
   "use strict";
 
+  // GameState owns persisted game-flow progress; it is rehydrated from storage and reset for a new game.
   class GameState {
     constructor(values) {
       const nextValues = values || {};
