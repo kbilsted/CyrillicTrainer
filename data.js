@@ -445,36 +445,7 @@
   ];
 
   const ALPHABET_WORD_SOURCE = [
-    { rank: 1, cyrillic: "а", latin: "a", phonetic: "a", englishMeaning: "Cyrillic letter а" },
-    { rank: 2, cyrillic: "б", latin: "b", phonetic: "b", englishMeaning: "Cyrillic letter б" },
-    { rank: 3, cyrillic: "в", latin: "v", phonetic: "v", englishMeaning: "Cyrillic letter в" },
-    { rank: 4, cyrillic: "г", latin: "g", phonetic: "g", englishMeaning: "Cyrillic letter г" },
-    { rank: 5, cyrillic: "д", latin: "d", phonetic: "d", englishMeaning: "Cyrillic letter д" },
-    { rank: 6, cyrillic: "е", latin: "e", phonetic: "eh", englishMeaning: "Cyrillic letter е" },
-    { rank: 7, cyrillic: "ж", latin: "zh", phonetic: "zh", englishMeaning: "Cyrillic letter ж" },
-    { rank: 8, cyrillic: "з", latin: "z", phonetic: "z", englishMeaning: "Cyrillic letter з" },
-    { rank: 9, cyrillic: "и", latin: "i", phonetic: "ee", englishMeaning: "Cyrillic letter и" },
-    { rank: 10, cyrillic: "й", latin: "y", phonetic: "y", englishMeaning: "Cyrillic letter й" },
-    { rank: 11, cyrillic: "к", latin: "k", phonetic: "k", englishMeaning: "Cyrillic letter к" },
-    { rank: 12, cyrillic: "л", latin: "l", phonetic: "l", englishMeaning: "Cyrillic letter л" },
-    { rank: 13, cyrillic: "м", latin: "m", phonetic: "m", englishMeaning: "Cyrillic letter м" },
-    { rank: 14, cyrillic: "н", latin: "n", phonetic: "n", englishMeaning: "Cyrillic letter н" },
-    { rank: 15, cyrillic: "о", latin: "o", phonetic: "o", englishMeaning: "Cyrillic letter о" },
-    { rank: 16, cyrillic: "п", latin: "p", phonetic: "p", englishMeaning: "Cyrillic letter п" },
-    { rank: 17, cyrillic: "р", latin: "r", phonetic: "r", englishMeaning: "Cyrillic letter р" },
-    { rank: 18, cyrillic: "с", latin: "s", phonetic: "s", englishMeaning: "Cyrillic letter с" },
-    { rank: 19, cyrillic: "т", latin: "t", phonetic: "t", englishMeaning: "Cyrillic letter т" },
-    { rank: 20, cyrillic: "у", latin: "u", phonetic: "oo", englishMeaning: "Cyrillic letter у" },
-    { rank: 21, cyrillic: "ф", latin: "f", phonetic: "f", englishMeaning: "Cyrillic letter ф" },
-    { rank: 22, cyrillic: "х", latin: "h", phonetic: "kh", englishMeaning: "Cyrillic letter х" },
-    { rank: 23, cyrillic: "ц", latin: "ts", phonetic: "ts", englishMeaning: "Cyrillic letter ц" },
-    { rank: 24, cyrillic: "ч", latin: "ch", phonetic: "ch", englishMeaning: "Cyrillic letter ч" },
-    { rank: 25, cyrillic: "ш", latin: "sh", phonetic: "sh", englishMeaning: "Cyrillic letter ш" },
-    { rank: 26, cyrillic: "щ", latin: "sht", phonetic: "sht", englishMeaning: "Cyrillic letter щ" },
-    { rank: 27, cyrillic: "ъ", latin: "a", phonetic: "uh", englishMeaning: "Cyrillic letter ъ" },
-    { rank: 28, cyrillic: "ь", latin: "y", phonetic: "y", englishMeaning: "Cyrillic letter ь" },
-    { rank: 29, cyrillic: "ю", latin: "yu", phonetic: "yu", englishMeaning: "Cyrillic letter ю" },
-    { rank: 30, cyrillic: "я", latin: "ya", phonetic: "ya", englishMeaning: "Cyrillic letter я" }
+    { rank: 1, cyrillic: "абвгдежзийклмнопрстуфхцчшщъьюя", latin: "abvgdezhziklmnoprstufhtschshshtayyuya", phonetic: "abvgdezhziklmnoprstufhtschshshtayyuya", englishMeaning: "abvgdezhziklmnoprstufhtschshshtayyuya" }
   ];
 
   window.CYRILLIC_TRAINER_DATA = {
@@ -487,9 +458,9 @@
     letterOptions: LETTER_OPTIONS,
     wordSource: WORD_SOURCE,
     datasets: [
-      { id: "1", label: "top 250 words", wordSource: WORD_SOURCE },
+      { id: "1", label: "Top 250 used Bulgarian words", wordSource: WORD_SOURCE },
       { id: "2", label: "Hiking E3 Kom-Emine words", wordSource: HIKING_WORD_SOURCE },
-      { id: "3", label: "alphabet letters", wordSource: ALPHABET_WORD_SOURCE }
+      { id: "3", label: "All alphabet letters", wordSource: ALPHABET_WORD_SOURCE }
     ]
   };
 }());
