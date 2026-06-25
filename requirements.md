@@ -45,6 +45,7 @@ Use these names consistently for the core entities:
 * `gameMode`: the URL parameter and product concept for choosing translation direction
 * `UserProgressStats`: the JavaScript class that owns the user's learning progress fields and derived stats
 * `GameState`: the JavaScript class that owns persisted game-flow fields and the runtime seeded word order
+* `CurrentWordState`: the JavaScript class that owns runtime progress inside the active word round
 * `recentCorrectLetters`: the last 10 correctly answered exact Cyrillic characters
 * `letterErrorCounts`: the persisted dictionary of exact Cyrillic character error counts
 * `wordCursor`: the persisted index of the next word to consider in the seeded word order
@@ -76,8 +77,29 @@ It may be stored only at runtime because it can be recreated deterministically f
 When all game-flow state must be reset, call `GameState.reset()` instead of listing every game-flow field at the call site.
 
 The active question state is not part of `GameState`.
-Fields such as `currentWord`, `currentLetters`, `currentLetterIndex`, `currentCorrectAnswer`, and `isCurrentQuestionAnswered` describe the current rendered question or current round.
-They may later move into a separate `CurrentWordState` or similar object if that makes `game.js` simpler.
+Active word-round state must be represented by a `CurrentWordState` class.
+`CurrentWordState` owns these fields:
+
+* `word`
+* `letters`
+* `letterIndex`
+* `correctAnswer`
+* `isQuestionAnswered`
+
+`CurrentWordState` owns these methods:
+
+* `moveToNextAvailableLetter(userProgressStats)`
+* `hasCurrentLetter()`
+* `getCurrentLetter()`
+* `startQuestion(correctAnswer)`
+* `markQuestionAnswered()`
+* `hasAnsweredQuestion()`
+* `getCorrectAnswer()`
+* `isAnswerCorrect(answer)`
+* `advanceLetter()`
+
+`CurrentWordState` is runtime-only.
+It is recreated for each started word and must not be persisted.
 
 ## Scoring
 

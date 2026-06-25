@@ -6,6 +6,7 @@
   const urlSettings = window.CyrillicUrlSettings;
   const storage = window.CyrillicStorage;
   const ui = window.CyrillicUI;
+  const CurrentWordState = window.CurrentWordState;
   const WRONG_ANSWER_OPTION_COUNT = 5;
   const GAME_MODES = [
     { id: "1", title: "Cyrilic → Latin" },
@@ -17,11 +18,7 @@
   // Game context is the URL-selected setup for this page load; it is recreated on navigation and not persisted.
   let gameContext = null;
   let nextRandom = null;
-  let currentWord = null;
-  let currentLetters = [];
-  let currentLetterIndex = 0;
-  let currentCorrectAnswer = null;
-  let isCurrentQuestionAnswered = false;
+  let currentWordState = null;
   let userProgressStats = null;
   let gameState = null;
 
@@ -174,28 +171,16 @@
       : letterTransliteration.latin;
   }
 
-  function moveToNextAvailableLetter() {
-    while (
-      currentLetterIndex < currentLetters.length
-      && userProgressStats.wasRecentlyCorrect(currentLetters[currentLetterIndex])
-    ) {
-      currentLetterIndex += 1;
-    }
-
-    return currentLetterIndex < currentLetters.length;
-  }
-
   function showCurrentLetter() {
-    if (!moveToNextAvailableLetter()) {
-      ui.showRoundDone(currentWord, { retryWord: gameState.currentWordHadWrongAnswer });
+    if (!currentWordState.moveToNextAvailableLetter(userProgressStats)) {
+      ui.showRoundDone(currentWordState.word, { retryWord: gameState.currentWordHadWrongAnswer });
       ui.renderStats(getStats(), gameContext.seed);
       return;
     }
 
-    const currentLetter = currentLetters[currentLetterIndex];
+    const currentLetter = currentWordState.getCurrentLetter();
     const letterTransliteration = getTransliterationForLetter(currentLetter);
-    currentCorrectAnswer = getCorrectAnswer(letterTransliteration);
-    isCurrentQuestionAnswered = false;
+    currentWordState.startQuestion(getCorrectAnswer(letterTransliteration));
     ui.showLetterGuess(
       GAME_MODES.find((mode) => mode.id === gameContext.gameModeId).title,
       getQuestionPrompt(letterTransliteration),
@@ -227,11 +212,10 @@
       return;
     }
 
-    currentWord = gameContext.selectedDataSet.wordSource[gameState.currentWordIndex];
+    const word = gameContext.selectedDataSet.wordSource[gameState.currentWordIndex];
     nextRandom = random.createSeededRandom(`${gameContext.seed}:${gameContext.dataSetId}:${gameContext.gameModeId}:${gameState.roundCounter}:${gameState.currentWordIndex}`);
     gameState.currentWordHadWrongAnswer = false;
-    currentLetters = getWordLetters(currentWord).map(chooseQuestionLetter);
-    currentLetterIndex = 0;
+    currentWordState = new CurrentWordState(word, getWordLetters(word).map(chooseQuestionLetter));
     saveAppState();
     showCurrentLetter();
   }
@@ -288,33 +272,35 @@
   }
 
   function handleAnswer(selectedAnswer) {
-    if (isCurrentQuestionAnswered) {
+    if (currentWordState.hasAnsweredQuestion()) {
       return;
     }
 
-    isCurrentQuestionAnswered = true;
+    currentWordState.markQuestionAnswered();
+    const currentLetter = currentWordState.getCurrentLetter();
+    const isCorrectAnswer = currentWordState.isAnswerCorrect(selectedAnswer);
 
-    if (selectedAnswer === currentCorrectAnswer) {
-      userProgressStats.recordCorrectLetter(currentLetters[currentLetterIndex]);
+    if (isCorrectAnswer) {
+      userProgressStats.recordCorrectLetter(currentLetter);
     } else {
       gameState.currentWordHadWrongAnswer = true;
-      userProgressStats.recordWrongLetter(currentLetters[currentLetterIndex]);
+      userProgressStats.recordWrongLetter(currentLetter);
     }
 
     saveAppState();
-    ui.showAnswerFeedback(selectedAnswer, currentCorrectAnswer, {
-      autoNext: selectedAnswer === currentCorrectAnswer,
+    ui.showAnswerFeedback(selectedAnswer, currentWordState.getCorrectAnswer(), {
+      autoNext: isCorrectAnswer,
       onAutoNext: handleLetterNext
     });
     ui.renderStats(getStats(), gameContext.seed);
   }
 
   function handleLetterNext() {
-    if (!isCurrentQuestionAnswered) {
+    if (!currentWordState.hasAnsweredQuestion()) {
       return;
     }
 
-    currentLetterIndex += 1;
+    currentWordState.advanceLetter();
     showCurrentLetter();
   }
 
