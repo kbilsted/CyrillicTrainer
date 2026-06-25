@@ -8,6 +8,7 @@
   const ui = window.CyrillicUI;
   const questionFactory = window.CyrillicQuestionFactory;
   const trainingLetters = window.CyrillicTrainingLetters;
+  const wordScheduler = window.CyrillicWordScheduler;
   const CurrentWordState = window.CurrentWordState;
   const GAME_MODES = [
     { id: "1", title: "Cyrilic → Latin" },
@@ -36,33 +37,6 @@
       ...userProgressStats.getDisplayStats(),
       roundCounter: gameState.roundCounter
     };
-  }
-
-  function isWordAskable(word) {
-    return trainingLetters.getTrainableWordLetters(data.letterTransliterations, word)
-      .flatMap((letter) => trainingLetters.getTrainableCaseVariants(data.letterTransliterations, letter))
-      .some((letter) => !userProgressStats.wasRecentlyCorrect(letter));
-  }
-
-  function createWordOrder() {
-    const wordIndexes = gameContext.selectedDataSet.wordSource.map((_, index) => index);
-    return random.shuffleSeeded(
-      random.createSeededRandom(`${gameContext.seed}:${gameContext.dataSetId}:wordOrder`),
-      wordIndexes
-    );
-  }
-
-  function findNextWordIndex() {
-    while (gameState.wordCursor < gameState.wordOrder.length) {
-      const nextWordIndex = gameState.wordOrder[gameState.wordCursor];
-      gameState.wordCursor += 1;
-
-      if (isWordAskable(gameContext.selectedDataSet.wordSource[nextWordIndex])) {
-        return nextWordIndex;
-      }
-    }
-
-    return null;
   }
 
   function advanceCurrentWordRound() {
@@ -112,7 +86,12 @@
     }
 
     if (gameState.currentWordIndex === null) {
-      gameState.currentWordIndex = findNextWordIndex();
+      gameState.currentWordIndex = wordScheduler.findNextWordIndex({
+        gameState,
+        wordSource: gameContext.selectedDataSet.wordSource,
+        letterTransliterations: data.letterTransliterations,
+        userProgressStats
+      });
     }
 
     if (gameState.currentWordIndex === null) {
@@ -157,7 +136,12 @@
       return;
     }
 
-    gameState.currentWordIndex = findNextWordIndex();
+    gameState.currentWordIndex = wordScheduler.findNextWordIndex({
+      gameState,
+      wordSource: gameContext.selectedDataSet.wordSource,
+      letterTransliterations: data.letterTransliterations,
+      userProgressStats
+    });
     if (gameState.currentWordIndex === null) {
       showGameOver();
       return;
@@ -242,7 +226,15 @@
     const persistedState = storage.load();
     userProgressStats = persistedState.userProgressStats;
     gameState = persistedState.gameState;
-    gameState.setWordOrder(createWordOrder(), gameContext.selectedDataSet.wordSource.length);
+    gameState.setWordOrder(
+      wordScheduler.createWordOrder({
+        random,
+        seed: gameContext.seed,
+        dataSetId: gameContext.dataSetId,
+        wordSource: gameContext.selectedDataSet.wordSource
+      }),
+      gameContext.selectedDataSet.wordSource.length
+    );
     saveAppState();
     ui.showGameShell();
     startCurrentWordRound();

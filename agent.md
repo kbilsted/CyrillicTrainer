@@ -44,6 +44,7 @@ Use this file layout:
 * `gameState.js`: game-flow state class. The exact class requirements are defined in `requirements.md`.
 * `currentWordState.js`: active word-round runtime state class. The exact class requirements are defined in `requirements.md`.
 * `trainingLetters.js`: stateless trainable-letter rules. Filters Cyrillic letters, derives case variants, and chooses the exact case variant to ask.
+* `wordScheduler.js`: stateless word scheduling. Creates the seeded word order and advances `GameState.wordCursor` to the next askable word.
 * `questionFactory.js`: stateless question construction. Builds prompts, correct answers, and answer options from game mode, transliteration data, and seeded random.
 * `storage.js`: `localStorage` load/save handling only. It loads and saves `UserProgressStats` and `GameState`; the exact persistence requirements are defined in `requirements.md`.
 * `game.js`: game controller. Starts rounds, chooses words, moves through letters, delegates question construction, handles answers, and handles next.
@@ -60,6 +61,7 @@ Load local scripts in this order:
 <script src="gameState.js"></script>
 <script src="currentWordState.js"></script>
 <script src="trainingLetters.js"></script>
+<script src="wordScheduler.js"></script>
 <script src="questionFactory.js"></script>
 <script src="storage.js"></script>
 <script src="ui.js"></script>
