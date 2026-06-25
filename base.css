@@ -1,0 +1,44 @@
+:root {
+  --app-bg: #f6f7f9;
+  --app-text: #1d232a;
+  --muted-text: #5f6b76;
+  --surface: #ffffff;
+  --border: #cfd6dd;
+  --correct: #157347;
+  --wrong: #bb2d3b;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--app-bg);
+  color: var(--app-text);
+  font-family: "Cascadia Mono", Consolas, "Lucida Console", monospace;
+  font-variant-ligatures: none;
+}
+
+.app-shell {
+  width: min(100%, 560px);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 16px;
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  gap: 16px;
+}
+
+.credit-line {
+  color: var(--muted-text);
+  font-size: 0.8rem;
+  text-align: center;
+}

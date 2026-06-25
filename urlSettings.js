@@ -5,6 +5,8 @@
   const DATA_PARAM = "data";
   const GAME_MODE_PARAM = "gameMode";
   const LEGACY_SEED_PARAM = "seed";
+  const FRONT_PAGE_FILE = "index.html";
+  const GAME_PAGE_FILE = "game.html";
 
   function createSeed() {
     return String(Math.floor(Math.random() * 900000000) + 100000000);
@@ -56,11 +58,11 @@
   }
 
   function isFrontPage() {
-    return new URL(window.location.href).search === "";
+    return !new URL(window.location.href).pathname.endsWith(GAME_PAGE_FILE);
   }
 
   function startGame(settings) {
-    const url = new URL(window.location.href);
+    const url = new URL(GAME_PAGE_FILE, window.location.href);
     url.searchParams.set(GAME_PARAM, normalizeSeed(settings.seed));
     url.searchParams.set(DATA_PARAM, settings.dataSetId);
     url.searchParams.set(GAME_MODE_PARAM, settings.gameModeId);
@@ -69,8 +71,7 @@
   }
 
   function goToFrontPage() {
-    const url = new URL(window.location.href);
-    url.search = "";
+    const url = new URL(FRONT_PAGE_FILE, window.location.href);
     window.location.assign(url.toString());
   }
 

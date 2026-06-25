@@ -35,8 +35,11 @@ Use a plain `gameContext` object in `game.js` for URL-selected page-load context
 
 Use this file layout:
 
-* `index.html`: HTML structure only. Contains the front page, score line with round counter, letter card, answer buttons, round-done view, game-over view, bottom new-game line, and credit footer. Loads Bootstrap, jQuery, and local JavaScript files.
-* `styles.css`: mobile-first layout and visual styling for the top line, centered letter card, button row, feedback states, and round-done view.
+* `index.html`: front-page HTML structure only. Contains the logo, dataset selector, game-mode direction selector, game input, start button, and credit footer.
+* `game.html`: game-screen HTML structure only. Contains the score line with round counter, letter card, answer buttons, round-done view, game-over view, bottom new-game line, and credit footer.
+* `base.css`: shared mobile-first base layout, theme variables, typography, shell sizing, and credit footer.
+* `frontPage.css`: front-page-only layout and controls.
+* `game.css`: game-screen-only layout and controls.
 * `data.js`: data only. The exact data requirements are defined in `requirements.md`.
 * `random.js`: deterministic random helper functions used by the game. Contains seeded random, choose, and seeded shuffle logic only.
 * `urlSettings.js`: URL parameter normalization and navigation. Contains `game`, `data`, `gameMode`, new-game seed creation, and legacy `seed` URL handling.
@@ -51,7 +54,7 @@ Use this file layout:
 * `ui.js`: DOM rendering and DOM event binding. Renders the front page, score, letter guess view, button colors, bottom line, and round-done view.
 * `app.js`: small bootstrap file that initializes the modules in the correct order.
 
-Load local scripts in this order:
+Load local game-page scripts in this order:
 
 ```html
 <script src="data.js"></script>

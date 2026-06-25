@@ -261,7 +261,7 @@ The game value determines:
 
 The `game` value is chosen on the front page before starting the game.
 The front page has a retry-arrow button next to the `game` input that generates a new random game value.
-Starting a game from the front page clears persisted progress and navigates to a URL containing the chosen `game`, `data`, and `gameMode` values.
+Starting a game from the front page clears persisted progress and navigates to `game.html` with a URL containing the chosen `game`, `data`, and `gameMode` values.
 
 ## Game Mode
 
@@ -287,9 +287,11 @@ The active game mode title is shown above the large question card during the gam
 
 ## URL Normalization
 
-A URL with no query parameters is the front page and must not redirect.
+`index.html` is the front page.
+The front page with no query parameters must not redirect.
 
-A game URL must contain valid values for:
+`game.html` is the game screen.
+A `game.html` URL must contain valid values for:
 
 * `game`
 * `data`
@@ -303,7 +305,7 @@ If `game` is missing or invalid:
 If `data` is missing or invalid, insert `data=1`.
 If `gameMode` is missing or invalid, insert `gameMode=1`.
 
-If more than one URL value is missing or invalid on a game URL, update all missing or invalid values before redirecting.
+If more than one URL value is missing or invalid on a `game.html` URL, update all missing or invalid values before redirecting.
 URL normalization must perform at most one redirect for one game page load.
 
 ## Data Model
@@ -530,7 +532,8 @@ Use this dataset when the URL contains:
 ?data=3
 ```
 
-The front page is shown when the URL has no query parameters.
+The front page is `index.html`.
+The game screen is `game.html`.
 The front page must show the game logo.
 The front page logo uses `cyrillic_trainer_logo.svg`.
 The logo already contains the text `Cyrillic trainer`, so do not render a separate text title next to or below it.
@@ -546,10 +549,10 @@ The front page defaults to the `Hiking E3 Kom-Emine words` dataset.
 The front page game-mode direction control uses two equal-width buttons that fill the available control width.
 The `game` field has a retry-arrow button next to it that generates a new random game value.
 The front page has a `start game` button.
-When pressed, it clears persisted progress and redirects to the same path with `game`, `data`, and `gameMode` query parameters.
+When pressed, it clears persisted progress and redirects to `game.html` with `game`, `data`, and `gameMode` query parameters.
 
 The round counter must be shown in the top score line during the game.
-The game screen bottom line must have a `new game` button that navigates to the front page URL with no query parameters.
+The game screen bottom line must have a `new game` button that navigates to `index.html`.
 The UI must show `A game by Kasper B. Graversen` as a small line at the bottom below the controls.
 
 The dropdown options are:
