@@ -7,6 +7,7 @@
   const storage = window.CyrillicStorage;
   const ui = window.CyrillicUI;
   const questionFactory = window.CyrillicQuestionFactory;
+  const trainingLetters = window.CyrillicTrainingLetters;
   const CurrentWordState = window.CurrentWordState;
   const GAME_MODES = [
     { id: "1", title: "Cyrilic → Latin" },
@@ -23,34 +24,6 @@
   let userProgressStats = null;
   let gameState = null;
 
-  function isTrainableLetter(letter) {
-    return data.letterTransliterations.some((item) => item.cyrillic === letter);
-  }
-
-  function getTrainableCaseVariants(letter) {
-    const lowerLetter = letter.toLowerCase();
-    const upperLetter = letter.toUpperCase();
-
-    return [lowerLetter, upperLetter].filter((variant, index, variants) => (
-      isTrainableLetter(variant)
-      && variants.indexOf(variant) === index
-    ));
-  }
-
-  function getTrainableWordLetters(word) {
-    return Array.from(word.cyrillic).filter(isTrainableLetter);
-  }
-
-  function chooseQuestionLetterVariant(letter) {
-    const variants = getTrainableCaseVariants(letter);
-    const availableVariants = variants.filter((variant) => !userProgressStats.wasRecentlyCorrect(variant));
-
-    return random.choose(
-      nextRandom,
-      availableVariants.length > 0 ? availableVariants : variants
-    );
-  }
-
   function saveAppState() {
     storage.save({
       userProgressStats,
@@ -66,8 +39,8 @@
   }
 
   function isWordAskable(word) {
-    return getTrainableWordLetters(word)
-      .flatMap(getTrainableCaseVariants)
+    return trainingLetters.getTrainableWordLetters(data.letterTransliterations, word)
+      .flatMap((letter) => trainingLetters.getTrainableCaseVariants(data.letterTransliterations, letter))
       .some((letter) => !userProgressStats.wasRecentlyCorrect(letter));
   }
 
@@ -150,7 +123,17 @@
     const word = gameContext.selectedDataSet.wordSource[gameState.currentWordIndex];
     nextRandom = random.createSeededRandom(`${gameContext.seed}:${gameContext.dataSetId}:${gameContext.gameModeId}:${gameState.roundCounter}:${gameState.currentWordIndex}`);
     gameState.currentWordHadWrongAnswer = false;
-    currentWordState = new CurrentWordState(word, getTrainableWordLetters(word).map(chooseQuestionLetterVariant));
+    currentWordState = new CurrentWordState(
+      word,
+      trainingLetters.getTrainableWordLetters(data.letterTransliterations, word)
+        .map((letter) => trainingLetters.chooseQuestionLetterVariant({
+          letterTransliterations: data.letterTransliterations,
+          userProgressStats,
+          random,
+          nextRandom,
+          letter
+        }))
+    );
     saveAppState();
     advanceCurrentWordRound();
   }
