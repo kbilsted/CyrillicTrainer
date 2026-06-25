@@ -440,7 +440,8 @@
     { rank: 84, cyrillic: "чешма", latin: "cheshma", phonetic: "chehshma", englishMeaning: "water source" },
     { rank: 85, cyrillic: "искам нощувка", latin: "iskam noshtuvka", phonetic: "eeskam noshtoovka", englishMeaning: "I want a place to sleep" },
     { rank: 86, cyrillic: "стръмно", latin: "stramno", phonetic: "'struhm-no", englishMeaning: "steep, steeply" },
-    { rank: 87, cyrillic: "обрасло", latin: "obraslo", phonetic: "obraslo", englishMeaning: "overgrown" }
+    { rank: 87, cyrillic: "обрасло", latin: "obraslo", phonetic: "obraslo", englishMeaning: "overgrown" },
+    { rank: 88, cyrillic: "въже", latin: "vazhe", phonetic: "va-zhe", englishMeaning: "rope or wire (to support dangerous spot)" }
   ];
 
   const ALPHABET_WORD_SOURCE = [
