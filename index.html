@@ -14,6 +14,7 @@
       <div><span>correct:</span> <strong id="successCounter">0</strong></div>
       <div><span>wrong:</span> <strong id="failCounter">0</strong></div>
       <div><span>ratio:</span> <strong id="successRatio">0.0%</strong></div>
+      <div><span>round:</span> <strong id="roundCounter">0</strong></div>
     </section>
 
     <section id="letterGuessView" class="game-view" aria-label="Letter guess">
@@ -53,8 +54,7 @@
       <section id="progressPanel" class="progress-panel d-none" aria-label="Progress"></section>
     </section>
 
-    <section class="bottom-line" aria-label="Round and game">
-      <div><span>round:</span> <strong id="roundCounter">0</strong></div>
+    <section class="bottom-line" aria-label="Game settings">
       <form id="gameForm" class="game-form">
         <label class="game-input-label" for="gameInput">game:</label>
         <input id="gameInput" class="form-control form-control-sm game-input" type="text" inputmode="numeric" autocomplete="off">
@@ -66,6 +66,7 @@
       </label>
       <button id="resetButton" class="btn btn-danger btn-sm reset-button" type="button">reset</button>
     </section>
+    <footer class="credit-line">A game by Kasper B. Graversen</footer>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>

@@ -403,7 +403,10 @@ Use this dataset when the URL contains:
 The UI must have a game input field with an OK button at the bottom.
 When the OK button is pressed, update the URL `game` value and reload using that game value.
 
+The round counter must be shown in the top score line.
 The UI must have a dataset dropdown at the bottom next to the game input.
+The dataset dropdown should be wide enough to show the full selected dataset label when viewport space allows.
+The UI must show `A game by Kasper B. Graversen` as a small line at the bottom below the controls.
 
 The dropdown options are:
 
@@ -443,7 +446,7 @@ Examples:
 ## gui for letter guess 
 
 ```
- correct:  2     wrong: 55    ratio: 0.4%    
+ correct:  2     wrong: 55    ratio: 0.4%    round: 22
  
       [Cyrilic → Latin] [Latin → Cyrilic]
       
@@ -462,14 +465,15 @@ Examples:
               | next |
  
  
- round: 22     game: [1234] [OK]     data: [top 250 words v]
+ game: [1234] [OK]     data: [top 250 words v]
+          A game by Kasper B. Graversen
 
 ```
 
 ## gui for letter guess - Latin → Cyrilic
 
 ```
- correct:  2     wrong: 55    ratio: 0.4%    
+ correct:  2     wrong: 55    ratio: 0.4%    round: 22
  
       [Cyrilic → Latin] [Latin → Cyrilic]
       
@@ -488,14 +492,15 @@ Examples:
               | next |
  
  
- round: 22     game: [1234] [OK]     data: [top 250 words v]
+ game: [1234] [OK]     data: [top 250 words v]
+          A game by Kasper B. Graversen
 
 ```
 
 ## gui for round done 1
 
 ```
- correct:  2     wrong: 55    ratio: 0.4%    
+ correct:  2     wrong: 55    ratio: 0.4%    round: 22
  
  
         ROUND DONE
@@ -508,7 +513,8 @@ Examples:
     | show progress |    | next |
  
  
- round: 22     game: [1234] [OK]     data: [top 250 words v]
+ game: [1234] [OK]     data: [top 250 words v]
+          A game by Kasper B. Graversen
 
 ```
 
@@ -517,7 +523,7 @@ Both `show` buttons reveal both hidden fields: the Latin spelling and the Englis
 ### gui for round done - click done
 
 ```
- correct:  2     wrong: 55    ratio: 0.4%    
+ correct:  2     wrong: 55    ratio: 0.4%    round: 22
  
  
         ROUND DONE
@@ -530,6 +536,7 @@ Both `show` buttons reveal both hidden fields: the Latin spelling and the Englis
     | show progress |    | next |
  
  
- round: 22     game: [1234] [OK]     data: [top 250 words v]
+ game: [1234] [OK]     data: [top 250 words v]
+          A game by Kasper B. Graversen
 
 ```
