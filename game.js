@@ -210,8 +210,6 @@
   }
 
   function startRound() {
-    roundCounter += 1;
-    saveGameState();
     const preferredLetter = lastWrongAnswer;
     currentWord = chooseRoundWord(preferredLetter);
     lastWrongAnswer = null;
@@ -222,7 +220,7 @@
 
   function handleReset() {
     userProgressStats.reset();
-    roundCounter = 0;
+    roundCounter = 1;
     saveGameState();
     lastWrongAnswer = null;
     startRound();
@@ -230,9 +228,15 @@
 
   function handleGameModeChange(nextGameModeId) {
     userProgressStats.reset();
-    roundCounter = 0;
+    roundCounter = 1;
     saveGameState();
     random.switchGameMode(nextGameModeId);
+  }
+
+  function handleRoundNext() {
+    roundCounter += 1;
+    saveGameState();
+    startRound();
   }
 
   function handleAnswer(selectedAnswer) {
@@ -281,12 +285,13 @@
     nextRandom = random.createSeededRandom(seed);
     const persistedState = storage.load();
     userProgressStats = persistedState.userProgressStats;
-    roundCounter = persistedState.roundCounter;
+    roundCounter = persistedState.roundCounter || 1;
+    saveGameState();
 
     ui.init({
       onAnswer: handleAnswer,
       onLetterNext: handleLetterNext,
-      onRoundNext: startRound,
+      onRoundNext: handleRoundNext,
       onDataSetChange: random.switchDataSet,
       onSeedChange: random.switchSeed,
       onGameModeChange: handleGameModeChange,

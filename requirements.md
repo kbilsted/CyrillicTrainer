@@ -93,11 +93,10 @@ After each answer:
 * calculate the success ratio using % and 1 digit after the dot (precision)
 * display `successCounter`, `failCounter`, success ratio, and round counter at the top
 * persist scores in `localStorage`
-* round counter is incremented with the start of new words, so first round is 1
 
 The UI has a red reset button.
 When pressed, show a confirmation alert asking whether the user wants to reset all data.
-If the user confirms, call `UserProgressStats.reset()`, set `roundCounter` to `0`, and save the reset state.
+If the user confirms, call `UserProgressStats.reset()`, set `roundCounter` to `1`, and save the reset state.
 If the user cancels, do not reset anything.
 After reset, the game starts a fresh round.
 
@@ -113,6 +112,10 @@ Lowercase and uppercase Cyrillic characters are tracked separately.
 ## Rounds
 
 The game consists of rounds.
+
+The first round is `1`.
+Reloading the page must not increment `roundCounter`.
+`roundCounter` is incremented only when the user presses the round-done `next` button to start the next round.
 
 At the start of each round:
 
@@ -166,8 +169,9 @@ When the `show progress` button is pressed:
 * keep the histogram mobile-friendly when many letters have errors by allowing horizontal scrolling instead of shrinking bars until labels become unreadable
 * if there are no errors, show an empty progress message
 
-When the next  button is pressed:
+When the next button is pressed:
 
+* increment `roundCounter`
 * start a new round
 
 ## Randomness
@@ -215,7 +219,7 @@ Use a Google Translate-style direction selector: two visible mode buttons, with 
 Clicking the active game mode does nothing.
 Clicking a different game mode shows a confirmation dialog warning that all progress will be reset.
 If the user cancels, do not reset progress and do not change game mode.
-If the user confirms, call `UserProgressStats.reset()`, set `roundCounter` to `0`, save the reset state, update the URL `gameMode` value, and reload using that game mode.
+If the user confirms, call `UserProgressStats.reset()`, set `roundCounter` to `1`, save the reset state, update the URL `gameMode` value, and reload using that game mode.
 
 ## URL Normalization
 
