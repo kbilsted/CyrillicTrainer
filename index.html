@@ -26,13 +26,18 @@
     </section>
 
     <section id="roundDoneView" class="game-view round-done d-none" aria-label="Round done">
-      <h1>ROUND DONE</h1>
+      <h1>Round done</h1>
+      <p class="round-done-subtitle">now try reading the word aloud...</p>
       <dl class="word-summary">
         <div>
           <dt>WORD:</dt>
+          <dd id="doneCyrillic"></dd>
+        </div>
+        <div>
+          <dt>phonetic:</dt>
           <dd>
-            <span id="doneCyrillic"></span>
-            <span id="donePhonetic" class="word-phonetic"></span>
+            <button class="btn btn-outline-dark show-button reveal-word-button" type="button">show</button>
+            <span id="donePhonetic" class="word-phonetic d-none"></span>
           </dd>
         </div>
         <div>
@@ -55,6 +60,26 @@
         <button id="roundNextButton" class="btn btn-dark next-button" type="button">next</button>
       </div>
       <section id="progressPanel" class="progress-panel d-none" aria-label="Progress"></section>
+    </section>
+
+    <section id="gameOverView" class="game-view game-over d-none" aria-label="Game done">
+      <h1>GAME DONE</h1>
+      <dl class="word-summary">
+        <div>
+          <dt>Correct:</dt>
+          <dd id="gameOverCorrect">0</dd>
+        </div>
+        <div>
+          <dt>Wrong:</dt>
+          <dd id="gameOverWrong">0</dd>
+        </div>
+        <div>
+          <dt>Ratio:</dt>
+          <dd id="gameOverRatio">0.0%</dd>
+        </div>
+      </dl>
+      <section id="gameOverProgressPanel" class="progress-panel" aria-label="Final progress"></section>
+      <button id="newGameButton" class="btn btn-dark next-button" type="button">new game</button>
     </section>
 
     <section class="bottom-line" aria-label="Game settings">

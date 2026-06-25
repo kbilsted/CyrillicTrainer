@@ -167,16 +167,25 @@ body {
   text-transform: lowercase;
 }
 
-.round-done {
+.round-done,
+.game-over {
   text-align: center;
   gap: 24px;
 }
 
-.round-done h1 {
+.round-done h1,
+.game-over h1 {
   margin: 0;
   font-size: 1.4rem;
   font-weight: 800;
   letter-spacing: 0;
+}
+
+.round-done-subtitle {
+  margin: -12px 0 0;
+  color: var(--muted-text);
+  font-size: 0.95rem;
+  text-align: center;
 }
 
 .word-summary {

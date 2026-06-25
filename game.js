@@ -24,9 +24,13 @@
   let currentLetterIndex = 0;
   let currentCorrectAnswer = null;
   let isCurrentQuestionAnswered = false;
-  let lastWrongAnswer = null;
   let userProgressStats = null;
   let roundCounter = 0;
+  let wordOrder = [];
+  let wordCursor = 0;
+  let currentWordIndex = null;
+  let currentWordHadWrongAnswer = false;
+  let gameOver = false;
 
   function getTransliterationForLetter(cyrillicLetter) {
     const match = data.letterTransliterations.find((letter) => letter.cyrillic === cyrillicLetter);
@@ -69,7 +73,11 @@
   function saveGameState() {
     storage.save({
       userProgressStats,
-      roundCounter
+      roundCounter,
+      wordCursor,
+      currentWordIndex,
+      currentWordHadWrongAnswer,
+      gameOver
     });
   }
 
@@ -80,34 +88,31 @@
     };
   }
 
-  function getRoundCandidateWords() {
-    const wordsWithAskableLetters = currentDataSet.wordSource.filter((word) => (
-      getWordLetters(word)
-        .flatMap(getQuestionLetterVariants)
-        .some((letter) => !userProgressStats.wasRecentlyCorrect(letter))
-    ));
-
-    return wordsWithAskableLetters.length > 0 ? wordsWithAskableLetters : currentDataSet.wordSource;
+  function isWordAskable(word) {
+    return getWordLetters(word)
+      .flatMap(getQuestionLetterVariants)
+      .some((letter) => !userProgressStats.wasRecentlyCorrect(letter));
   }
 
-  function chooseRoundWord(preferredLetter) {
-    const candidateWords = getRoundCandidateWords();
+  function createWordOrder() {
+    const wordIndexes = currentDataSet.wordSource.map((_, index) => index);
+    return random.shuffleSeeded(
+      random.createSeededRandom(`${seed}:${dataSetId}:wordOrder`),
+      wordIndexes
+    );
+  }
 
-    if (preferredLetter !== null) {
-      const normalizedPreferredLetter = preferredLetter.toLowerCase();
-      const preferredWords = candidateWords.filter((word) => (
-        getWordLetters(word).some((letter) => letter.toLowerCase() === normalizedPreferredLetter)
-      ));
+  function findNextWordIndex() {
+    while (wordCursor < wordOrder.length) {
+      const nextWordIndex = wordOrder[wordCursor];
+      wordCursor += 1;
 
-      if (preferredWords.length > 0) {
-        return random.choose(nextRandom, preferredWords);
+      if (isWordAskable(currentDataSet.wordSource[nextWordIndex])) {
+        return nextWordIndex;
       }
     }
 
-    return random.choose(
-      nextRandom,
-      candidateWords
-    );
+    return null;
   }
 
   function chooseOptions(letterTransliteration) {
@@ -193,7 +198,7 @@
 
   function showCurrentLetter() {
     if (!moveToNextAvailableLetter()) {
-      ui.showRoundDone(currentWord);
+      ui.showRoundDone(currentWord, { retryWord: currentWordHadWrongAnswer });
       ui.renderStats(getStats(), seed);
       return;
     }
@@ -210,31 +215,88 @@
     ui.renderStats(getStats(), seed);
   }
 
+  function showGameOver() {
+    gameOver = true;
+    saveGameState();
+    ui.showGameOver(getStats(), userProgressStats.getLetterErrorCounts());
+    ui.renderStats(getStats(), seed);
+  }
+
   function startRound() {
-    const preferredLetter = lastWrongAnswer;
-    currentWord = chooseRoundWord(preferredLetter);
-    lastWrongAnswer = null;
+    if (gameOver) {
+      ui.showGameOver(getStats(), userProgressStats.getLetterErrorCounts());
+      ui.renderStats(getStats(), seed);
+      return;
+    }
+
+    if (currentWordIndex === null) {
+      currentWordIndex = findNextWordIndex();
+    }
+
+    if (currentWordIndex === null) {
+      showGameOver();
+      return;
+    }
+
+    currentWord = currentDataSet.wordSource[currentWordIndex];
+    nextRandom = random.createSeededRandom(`${seed}:${dataSetId}:${gameModeId}:${roundCounter}:${currentWordIndex}`);
+    currentWordHadWrongAnswer = false;
     currentLetters = getWordLetters(currentWord).map(chooseQuestionLetter);
     currentLetterIndex = 0;
+    saveGameState();
     showCurrentLetter();
   }
 
   function handleReset() {
-    userProgressStats.reset();
-    roundCounter = 1;
-    saveGameState();
-    lastWrongAnswer = null;
+    resetGameFlow();
     startRound();
   }
 
   function handleGameModeChange(nextGameModeId) {
-    userProgressStats.reset();
-    roundCounter = 1;
-    saveGameState();
+    resetGameFlow();
     urlSettings.switchGameMode(nextGameModeId);
   }
 
+  function resetGameFlow() {
+    userProgressStats.reset();
+    roundCounter = 1;
+    wordCursor = 0;
+    currentWordIndex = null;
+    currentWordHadWrongAnswer = false;
+    gameOver = false;
+    saveGameState();
+  }
+
+  function handleDataSetChange(nextDataSetId) {
+    resetGameFlow();
+    urlSettings.switchDataSet(nextDataSetId);
+  }
+
+  function handleSeedChange(nextSeed) {
+    resetGameFlow();
+    urlSettings.switchSeed(nextSeed);
+  }
+
+  function handleNewGame() {
+    resetGameFlow();
+    urlSettings.startNewGame();
+  }
+
   function handleRoundNext() {
+    if (currentWordHadWrongAnswer) {
+      roundCounter += 1;
+      currentWordHadWrongAnswer = false;
+      saveGameState();
+      startRound();
+      return;
+    }
+
+    currentWordIndex = findNextWordIndex();
+    if (currentWordIndex === null) {
+      showGameOver();
+      return;
+    }
+
     roundCounter += 1;
     saveGameState();
     startRound();
@@ -250,7 +312,7 @@
     if (selectedAnswer === currentCorrectAnswer) {
       userProgressStats.recordCorrectLetter(currentLetters[currentLetterIndex]);
     } else {
-      lastWrongAnswer = currentLetters[currentLetterIndex];
+      currentWordHadWrongAnswer = true;
       userProgressStats.recordWrongLetter(currentLetters[currentLetterIndex]);
     }
 
@@ -283,21 +345,30 @@
     dataSetId = settings.dataSetId;
     gameModeId = settings.gameModeId;
     currentDataSet = data.datasets.find((dataset) => dataset.id === dataSetId);
-    nextRandom = random.createSeededRandom(seed);
+    wordOrder = createWordOrder();
     const persistedState = storage.load();
     userProgressStats = persistedState.userProgressStats;
     roundCounter = persistedState.roundCounter || 1;
+    wordCursor = Math.min(persistedState.wordCursor || 0, wordOrder.length);
+    currentWordIndex = (
+      Number.isInteger(persistedState.currentWordIndex)
+      && persistedState.currentWordIndex >= 0
+      && persistedState.currentWordIndex < currentDataSet.wordSource.length
+    ) ? persistedState.currentWordIndex : null;
+    currentWordHadWrongAnswer = persistedState.currentWordHadWrongAnswer;
+    gameOver = persistedState.gameOver;
     saveGameState();
 
     ui.init({
       onAnswer: handleAnswer,
       onLetterNext: handleLetterNext,
       onRoundNext: handleRoundNext,
-      onDataSetChange: urlSettings.switchDataSet,
-      onSeedChange: urlSettings.switchSeed,
+      onDataSetChange: handleDataSetChange,
+      onSeedChange: handleSeedChange,
       onGameModeChange: handleGameModeChange,
       onShowProgress: () => ui.showProgress(userProgressStats.getLetterErrorCounts()),
-      onReset: handleReset
+      onReset: handleReset,
+      onNewGame: handleNewGame
     });
 
     ui.renderDataSetSwitcher(data.datasets, dataSetId);

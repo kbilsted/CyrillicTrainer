@@ -74,10 +74,18 @@
     window.location.assign(url.toString());
   }
 
+  function startNewGame() {
+    const url = new URL(window.location.href);
+    url.searchParams.set(GAME_PARAM, createSeed());
+    url.searchParams.delete(LEGACY_SEED_PARAM);
+    window.location.assign(url.toString());
+  }
+
   window.CyrillicUrlSettings = {
     ensureUrlSettings,
     switchDataSet,
     switchSeed,
-    switchGameMode
+    switchGameMode,
+    startNewGame
   };
 }());

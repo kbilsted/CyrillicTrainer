@@ -46,6 +46,9 @@ Use these names consistently for the core entities:
 * `UserProgressStats`: the JavaScript class that owns the user's learning progress fields and derived stats
 * `recentCorrectLetters`: the last 10 correctly answered exact Cyrillic characters
 * `letterErrorCounts`: the persisted dictionary of exact Cyrillic character error counts
+* `wordCursor`: the persisted index of the next word to consider in the seeded word order
+* `currentWordIndex`: the persisted index of the word currently being asked
+* `currentWordHadWrongAnswer`: the persisted flag that decides whether the current word must repeat
 
 ## Scoring
 
@@ -55,7 +58,7 @@ The class must not be defined in `storage.js`.
 `game.js` owns the active `UserProgressStats` instance and calls its methods directly.
 `storage.js` must only persist and load app state.
 `storage.js` must expose a `load()` method and a `save(state)` method.
-`save(state)` stores all persisted app state, including `UserProgressStats` data and `roundCounter`.
+`save(state)` stores all persisted app state, including `UserProgressStats` data, `roundCounter`, `wordCursor`, `currentWordIndex`, `currentWordHadWrongAnswer`, and `gameOver`.
 After changing any persisted state, call `save(state)`.
 The storage format does not need to be backward compatible with older versions.
 
@@ -96,7 +99,7 @@ After each answer:
 
 The UI has a red reset button.
 When pressed, show a confirmation alert asking whether the user wants to reset all data.
-If the user confirms, call `UserProgressStats.reset()`, set `roundCounter` to `1`, and save the reset state.
+If the user confirms, call `UserProgressStats.reset()`, set `roundCounter` to `1`, set `wordCursor` to `0`, set `currentWordIndex` to `null`, set `currentWordHadWrongAnswer` to `false`, set `gameOver` to `false`, and save the reset state.
 If the user cancels, do not reset anything.
 After reset, the game starts a fresh round.
 
@@ -119,10 +122,14 @@ Reloading the page must not increment `roundCounter`.
 
 At the start of each round:
 
-* choose a random word from the dictionary
-* prefer words that contain at least one Cyrillic letter variant that is not in the last 10 correctly answered letters
+* create one seeded shuffled order of all words in the current dataset
+* use `wordCursor` to walk through that seeded word order
+* choose the next word in the seeded order that contains at least one Cyrillic letter variant that is not in the last 10 correctly answered letters
 * do not exclude a word just because it also contains one or more letters from the last 10 correctly answered letters
-* if every word would be fully skipped by the last-10 rule, choose from the full dictionary instead
+* if a word has no askable letters because all its letter variants are in the last 10 correctly answered letters, skip that word permanently for the current game and increment `wordCursor`
+* if the previous round for the current word had one or more wrong answers, repeat the same word instead of advancing `wordCursor`
+* repeat the same word until the user completes a round for that word without wrong answers
+* if `wordCursor` reaches the end of the seeded word order and there is no repeated word, the game is over
 
 For each Cyrillic letter in the word:
 
@@ -141,26 +148,18 @@ For example, the word letter `г` creates a question for either `г` or `Г`, no
 
 The game stores the last 10 Cyrillic letters that were answered correctly in `localStorage`.
 Letters answered incorrectly are not remembered for this skip rule.
-
-The game keeps a runtime-only `lastWrongAnswer` value.
-When the user answers incorrectly, set `lastWrongAnswer` to the exact Cyrillic character that was asked, including uppercase/lowercase.
-When a round ends and `lastWrongAnswer` has a value, the next round must use it for word selection:
-
-* choose a random word from the current round candidate words that contains the same Cyrillic letter, using case-insensitive matching
-* if no candidate word contains that letter, choose a random word from the current round candidate words
-* do not force a specific matching letter position or casing in that word
-* set `lastWrongAnswer` to `null` after the next word has been selected
-
-When `lastWrongAnswer` is `null`, choose a random word from the current round candidate words.
+Wrong answers only affect word selection by causing the current word to repeat until a later round for the same word has no wrong answers.
 
 When all letters in a word have been processed:
 
 * show the whole word in Cyrillic
-* show the phonetic spelling in parentheses after the Cyrillic word
+* show a subtitle: `now try reading the word aloud...`
+* show the phonetic spelling on its own `phonetic:` row, hidden behind a `show` button
 * show the Latin spelling
 * show the English translation
 * show a `show progress` button
-* show a next button
+* show a `next` button if the word was completed without wrong answers
+* show a `retry word` button if the word had one or more wrong answers and will repeat
 
 When the `show progress` button is pressed:
 
@@ -170,10 +169,29 @@ When the `show progress` button is pressed:
 * keep the histogram mobile-friendly when many letters have errors by allowing horizontal scrolling instead of shrinking bars until labels become unreadable
 * if there are no errors, show an empty progress message
 
-When the next button is pressed:
+When the round-done `next` or `retry word` button is pressed:
 
-* increment `roundCounter`
-* start a new round
+* if a new round can start, increment `roundCounter` and start that new round
+* if no new round can start because the seeded word order is exhausted, keep `roundCounter` unchanged and show the game-over view
+
+When the game is over:
+
+* hide the letter question view and round-done view
+* show a dedicated `GAME DONE` view
+* show the final `successCounter`, `failCounter`, and success ratio
+* show the error-count histogram
+* show a `new game` button
+
+When the `new game` button is pressed:
+
+* call `UserProgressStats.reset()`
+* set `roundCounter` to `1`
+* set `wordCursor` to `0`
+* set `currentWordIndex` to `null`
+* set `currentWordHadWrongAnswer` to `false`
+* set `gameOver` to `false`
+* save the reset state
+* generate a new URL `game` value and reload with that new game value
 
 ## Randomness
 
@@ -194,6 +212,11 @@ The game value determines:
 * lowercase/uppercase question variant choices
 * wrong-answer choices
 * the displayed order of answer options, including the position of the correct answer
+
+If the user changes the `game` value through the UI input, reset all persisted progress and flow state before loading the new game value.
+Changing the `game` value manually starts a new deterministic game.
+
+If the user changes the dataset through the UI, reset all persisted progress and flow state before loading the new dataset.
 
 ## Game Mode
 
@@ -220,7 +243,7 @@ Use a Google Translate-style direction selector: two visible mode buttons, with 
 Clicking the active game mode does nothing.
 Clicking a different game mode shows a confirmation dialog warning that all progress will be reset.
 If the user cancels, do not reset progress and do not change game mode.
-If the user confirms, call `UserProgressStats.reset()`, set `roundCounter` to `1`, save the reset state, update the URL `gameMode` value, and reload using that game mode.
+If the user confirms, call `UserProgressStats.reset()`, set `roundCounter` to `1`, set `wordCursor` to `0`, set `currentWordIndex` to `null`, set `currentWordHadWrongAnswer` to `false`, set `gameOver` to `false`, save the reset state, update the URL `gameMode` value, and reload using that game mode.
 
 ## URL Normalization
 
@@ -262,9 +285,13 @@ Each dictionary entry in JavaScript uses explicit fields:
 * `cyrillic`
 * `latin`
 * `phonetic`
-* `englishmeaning`
+* `englishMeaning`
 
-The `phonetic` field is an ASCII, English-style pronunciation helper shown in parentheses after the Cyrillic word in the round-done view.
+
+
+### Phonetic field
+
+The `phonetic` field is an ASCII, English-style pronunciation helper shown on its own `phonetic:` row in the round-done view.
 It must be generated from the Cyrillic spelling, not copied from the `latin` field.
 It may include syllable separators and stress markers.
 
@@ -316,6 +343,7 @@ Use this phonetic mapping:
 
 Uppercase Cyrillic letters use the same mapping with an uppercase first Latin letter.
 
+### Other data
 Each dataset entry in JavaScript uses explicit fields:
 
 * `id`
@@ -432,6 +460,8 @@ It includes:
 * words such as train, bus, delay, emergency, thunder, bad weather, feet, tired, well rested, fresh, water, mountain, trail, snake, sheep dog, horse, and mountain peak
 * hiking-relevant coverage words such as flashlight, thermal underwear, southern slope, cave, overnight stay, water filter, sun protection, canyon, southern wind, driver, kettle, southern route, southeastern slope, emergency thermal blanket, fleece jacket, canyoning, mountain guide, water source, I want a place to sleep, steep or steeply, and overgrown
 * all hut and shelter names on Kom-Emine E3, such as Vezhen hut, Eho hut, and the rest of the route huts
+
+For hut, shelter, and other trail accommodation name entries in dataset 2, the `englishMeaning` value includes the suffix ` on trail E3 Kom-Emine`.
 
 For hut entries, omit the generic Bulgarian `хижа` / Latin `hizha` prefix from roughly 89% of hut entries to avoid overtraining the same letters from repeated prefixes.
 
@@ -562,9 +592,11 @@ Examples:
  correct:  2     wrong: 55    ratio: 0.4%    round: 22
  
  
-        ROUND DONE
+        Round done
+        now try reading the word aloud...
         
-     WORD: xxxxxx (yyyyyy)
+     WORD: xxxxxx
+     phonetic: | show |
      In Latin: | show |    
      Meaning: | show | 
          
@@ -577,7 +609,8 @@ Examples:
 
 ```
 
-Both `show` buttons reveal both hidden fields: the Latin spelling and the English meaning.
+All `show` buttons reveal all hidden fields: the phonetic spelling, the Latin spelling, and the English meaning.
+If the round had one or more wrong answers, the `next` button label is `retry word`.
 
 ### gui for round done - click done
 
@@ -585,14 +618,38 @@ Both `show` buttons reveal both hidden fields: the Latin spelling and the Englis
  correct:  2     wrong: 55    ratio: 0.4%    round: 22
  
  
-        ROUND DONE
+        Round done
+        now try reading the word aloud...
         
-     WORD: xxxxxx (yyyyyy)
+     WORD: xxxxxx
+     phonetic: pppppp
      In Latin: yyyyyy    
      Meaning: zz zz zz 
          
              
     | show progress |    | next |
+ 
+ 
+ game: [1234] [OK]     data: [top 250 words v]
+          A game by Kasper B. Graversen
+
+```
+
+### gui for game done
+
+```
+ correct:  42     wrong: 8    ratio: 84.0%    round: 31
+ 
+ 
+        GAME DONE
+        
+     Correct: 42
+     Wrong:   8
+     Ratio:   84.0%
+         
+     [error histogram]
+             
+              | new game |
  
  
  game: [1234] [OK]     data: [top 250 words v]

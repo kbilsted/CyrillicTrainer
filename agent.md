@@ -31,11 +31,11 @@ In all JavaScript files, use comments sparingly. Comments should explain non-obv
 
 Use this file layout:
 
-* `index.html`: HTML structure only. Contains the score line with round counter, letter card, answer buttons, round-done view, bottom settings line, and credit footer. Loads Bootstrap, jQuery, and local JavaScript files.
+* `index.html`: HTML structure only. Contains the score line with round counter, letter card, answer buttons, round-done view, game-over view, bottom settings line, and credit footer. Loads Bootstrap, jQuery, and local JavaScript files.
 * `styles.css`: mobile-first layout and visual styling for the top line, centered letter card, button row, feedback states, and round-done view.
 * `data.js`: data only. The exact data requirements are defined in `requirements.md`.
 * `random.js`: deterministic random helper functions used by the game. Contains seeded random, choose, and seeded shuffle logic only.
-* `urlSettings.js`: URL parameter normalization and navigation. Contains `game`, `data`, `gameMode`, and legacy `seed` URL handling.
+* `urlSettings.js`: URL parameter normalization and navigation. Contains `game`, `data`, `gameMode`, new-game seed creation, and legacy `seed` URL handling.
 * `userProgressStats.js`: user progress class. The exact class requirements are defined in `requirements.md`.
 * `storage.js`: `localStorage` load/save handling only. The exact persistence requirements are defined in `requirements.md`.
 * `game.js`: game state and rules. Starts rounds, chooses words, moves through letters, chooses answer options, handles answers, and handles next.

@@ -9,11 +9,13 @@
     onSeedChange: null,
     onGameModeChange: null,
     onShowProgress: null,
-    onReset: null
+    onReset: null,
+    onNewGame: null
   };
 
   const CORRECT_ANSWER_AUTO_NEXT_DELAY_MS = 500;
 
+  let hiddenPhoneticValue = "";
   let hiddenLatinValue = "";
   let hiddenMeaningValue = "";
   let autoNextTimer = null;
@@ -93,6 +95,12 @@
         callbacks.onReset();
       }
     });
+
+    $("#newGameButton").on("click", function () {
+      if (callbacks.onNewGame) {
+        callbacks.onNewGame();
+      }
+    });
   }
 
   function renderStats(stats, seed) {
@@ -130,6 +138,7 @@
   }
 
   function revealRoundDoneDetails() {
+    $("#donePhonetic").text(hiddenPhoneticValue).removeClass("d-none");
     $("#doneLatin").text(hiddenLatinValue).removeClass("d-none");
     $("#doneMeaning").text(hiddenMeaningValue).removeClass("d-none");
     $(".reveal-word-button").addClass("d-none");
@@ -138,6 +147,7 @@
   function showLetterGuess(title, prompt, options) {
     clearAutoNextTimer();
     $("#roundDoneView").addClass("d-none");
+    $("#gameOverView").addClass("d-none");
     $("#letterGuessView").removeClass("d-none");
     $("#questionTitle").text(title);
     $("#letterCard").text(prompt);
@@ -179,14 +189,13 @@
     }
   }
 
-  function showProgress(letterErrorCounts) {
+  function renderErrorHistogram(container, letterErrorCounts) {
     const entries = Object.entries(letterErrorCounts)
       .filter(([, count]) => count > 0)
       .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]));
 
     if (entries.length === 0) {
-      $("#progressPanel")
-        .removeClass("d-none")
+      container
         .empty()
         .append($("<p>").addClass("progress-empty").text("No errors yet."));
       return;
@@ -205,24 +214,42 @@
         )
     ));
 
-    $("#progressPanel")
-      .removeClass("d-none")
+    container
       .empty()
       .append($("<div>").addClass("error-histogram").append(bars));
   }
 
-  function showRoundDone(word) {
+  function showProgress(letterErrorCounts) {
+    $("#progressPanel").removeClass("d-none");
+    renderErrorHistogram($("#progressPanel"), letterErrorCounts);
+  }
+
+  function showRoundDone(word, options) {
     clearAutoNextTimer();
     $("#letterGuessView").addClass("d-none");
+    $("#gameOverView").addClass("d-none");
     $("#roundDoneView").removeClass("d-none");
     $("#doneCyrillic").text(word.cyrillic);
-    $("#donePhonetic").text(` (${word.phonetic})`);
+    hiddenPhoneticValue = word.phonetic;
     hiddenLatinValue = word.latin;
-    hiddenMeaningValue = word.englishmeaning;
+    hiddenMeaningValue = word.englishMeaning;
+    $("#donePhonetic").text("").addClass("d-none");
     $("#doneLatin").text("").addClass("d-none");
     $("#doneMeaning").text("").addClass("d-none");
     $("#progressPanel").addClass("d-none").empty();
+    $("#roundNextButton").text(options.retryWord ? "retry word" : "next");
     $(".reveal-word-button").removeClass("d-none");
+  }
+
+  function showGameOver(stats, letterErrorCounts) {
+    clearAutoNextTimer();
+    $("#letterGuessView").addClass("d-none");
+    $("#roundDoneView").addClass("d-none");
+    $("#gameOverView").removeClass("d-none");
+    $("#gameOverCorrect").text(stats.successCounter);
+    $("#gameOverWrong").text(stats.failCounter);
+    $("#gameOverRatio").text(stats.successRatio);
+    renderErrorHistogram($("#gameOverProgressPanel"), letterErrorCounts);
   }
 
   window.CyrillicUI = {
@@ -233,6 +260,7 @@
     showLetterGuess,
     showAnswerFeedback,
     showProgress,
-    showRoundDone
+    showRoundDone,
+    showGameOver
   };
 }(window.jQuery));
