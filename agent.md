@@ -46,7 +46,7 @@ Use this file layout:
 * `game.css`: game-screen-only layout and controls.
 * `data.js`: data only. The exact data requirements are defined in `requirements.md`.
 * `random.js`: deterministic random helper functions used by the game. Contains seeded random, choose, and seeded shuffle logic only.
-* `urlSettings.js`: URL parameter normalization and navigation. Contains `game`, `data`, `gameMode`, new-game seed creation, and legacy `seed` URL handling.
+* `urlSettings.js`: URL parameter validation and navigation. Contains `game`, `data`, `gameMode`, new-game seed creation, and legacy `seed` URL handling.
 * `userProgressStats.js`: user progress class. The exact class requirements are defined in `requirements.md`.
 * `gameState.js`: game-flow state class. The exact class requirements are defined in `requirements.md`.
 * `currentWordState.js`: active word-round runtime state class. The exact class requirements are defined in `requirements.md`.

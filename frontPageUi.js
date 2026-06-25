@@ -9,20 +9,6 @@
   function init(nextCallbacks) {
     callbacks = nextCallbacks;
 
-    $("#homeGameModeSelect").on("click", ".game-mode-button", function () {
-      const selectedValue = $(this).data("value");
-
-      $("#homeGameModeSelect .game-mode-button").each(function () {
-        const button = $(this);
-        const isActive = button.data("value") === selectedValue;
-
-        button
-          .toggleClass("btn-dark", isActive)
-          .toggleClass("btn-outline-dark", !isActive)
-          .attr("aria-pressed", isActive ? "true" : "false");
-      });
-    });
-
     $("#homeRandomGameButton").on("click", function () {
       if (callbacks.onHomeRandomGame) {
         $("#homeGameInput").val(callbacks.onHomeRandomGame());

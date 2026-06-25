@@ -180,7 +180,7 @@ At the start of each round:
 * create one seeded shuffled order of all words in the current dataset
 * use `wordCursor` to walk through that seeded word order
 * choose the next word in the seeded order that contains at least one Cyrillic letter variant that is not in `recentCorrectLetters`
-* do not exclude a word just because it also contains one or more letters from the last 10 correctly answered letters
+* do not exclude a word just because it also contains one or more letters from `recentCorrectLetters`
 * if a word has no askable letters because all its letter variants are in `recentCorrectLetters`, skip that word permanently for the current game and increment `wordCursor`
 * if the previous round for the current word had one or more wrong answers, repeat the same word instead of advancing `wordCursor`
 * repeat the same word until the user completes a round for that word without wrong answers
@@ -286,9 +286,8 @@ for `Cyrilic → Latin`.
 
 for `Latin → Cyrilic`.
 
-The front page lets the user choose the game mode before starting the game. 
-the start  mode on the front page is cyrilic->latin
-
+The front page lets the user choose the game mode before starting the game.
+The start mode on the front page is `Cyrilic → Latin`.
 
 The active game mode title is shown above the large question card during the game.
 
@@ -304,8 +303,8 @@ A `game.html` URL must contain valid values for:
 * `data`
 * `gameMode`
 
-if any value is missing redirect to the front page
-
+If any value is missing or invalid, redirect to the front page.
+Do not insert default values into a `game.html` URL.
 
 ## Data Model
 
@@ -519,9 +518,9 @@ Use this dataset when the URL contains:
 
 ### Dataset 3: alphabet letters
 
-Dataset 3 contains all lowercase Bulgarian Cyrillic alphabet letters.
+Dataset 3 contains one word with all lowercase Bulgarian Cyrillic alphabet letters.
 
-Each dictionary entry is one Cyrillic letter with its Latin spelling and phonetic spelling.
+The single dictionary entry contains the full lowercase alphabet as its Cyrillic word.
 Dataset 3 must be an explicit `ALPHABET_WORD_SOURCE` array in `data.js`, not generated from `LETTER_TRANSLITERATIONS`.
 The game asks either the lowercase or uppercase variant using the same casing selection logic as the other datasets.
 
@@ -545,7 +544,7 @@ The front page must let the user choose:
 
 The front page uses the visible label `word list:` for dataset selection.
 The front page defaults to the `Hiking E3 Kom-Emine words` dataset.
-The front page game-mode direction control uses two equal-width buttons that fill the available control width.
+The front page game-mode direction control uses a dropdown.
 The `game` field has a retry-arrow button next to it that generates a new random game value.
 The front page has a `start game` button.
 When pressed, it clears persisted progress and redirects to `game.html` with `game`, `data`, and `gameMode` query parameters.
@@ -556,9 +555,9 @@ The UI must show `A game by Kasper B. Graversen` as a small line at the bottom b
 
 The dropdown options are:
 
-* `top 250 words`
+* `Top 250 used Bulgarian words`
 * `Hiking E3 Kom-Emine words`
-* `alphabet letters`
+* `All alphabet letters`
 
 ## Option Selection
 

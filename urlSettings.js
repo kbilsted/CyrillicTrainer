@@ -17,44 +17,30 @@
     return Number.isFinite(parsed) ? String(Math.abs(parsed)) : createSeed();
   }
 
-  function normalizeGameUrlSettings(defaultDataSetId, validDataSetIds, defaultGameModeId, validGameModeIds) {
+  function readGameUrlSettings(validDataSetIds, validGameModeIds) {
     const url = new URL(window.location.href);
     const existingGame = url.searchParams.get(GAME_PARAM);
-    const legacySeed = url.searchParams.get(LEGACY_SEED_PARAM);
     const existingDataSetId = url.searchParams.get(DATA_PARAM);
     const existingGameModeId = url.searchParams.get(GAME_MODE_PARAM);
     const validIds = new Set(validDataSetIds);
     const validModeIds = new Set(validGameModeIds);
-    let changed = false;
-    let seed = existingGame || legacySeed ? normalizeSeed(existingGame || legacySeed) : createSeed();
-    let dataSetId = validIds.has(existingDataSetId) ? existingDataSetId : defaultDataSetId;
-    let gameModeId = validModeIds.has(existingGameModeId) ? existingGameModeId : defaultGameModeId;
 
-    if (seed !== existingGame) {
-      url.searchParams.set(GAME_PARAM, seed);
-      changed = true;
+    if (
+      existingGame === null
+      || existingGame !== normalizeSeed(existingGame)
+      || url.searchParams.has(LEGACY_SEED_PARAM)
+      || !validIds.has(existingDataSetId)
+      || !validModeIds.has(existingGameModeId)
+    ) {
+      window.location.replace(new URL(FRONT_PAGE_FILE, window.location.href).toString());
+      return null;
     }
 
-    if (legacySeed !== null) {
-      url.searchParams.delete(LEGACY_SEED_PARAM);
-      changed = true;
-    }
-
-    if (dataSetId !== existingDataSetId) {
-      url.searchParams.set(DATA_PARAM, dataSetId);
-      changed = true;
-    }
-
-    if (gameModeId !== existingGameModeId) {
-      url.searchParams.set(GAME_MODE_PARAM, gameModeId);
-      changed = true;
-    }
-
-    if (changed) {
-      window.location.replace(url.toString());
-    }
-
-    return { seed, dataSetId, gameModeId };
+    return {
+      seed: existingGame,
+      dataSetId: existingDataSetId,
+      gameModeId: existingGameModeId
+    };
   }
 
   function startGame(settings) {
@@ -73,7 +59,7 @@
 
   window.CyrillicUrlSettings = {
     createSeed,
-    normalizeGameUrlSettings,
+    readGameUrlSettings,
     startGame,
     goToFrontPage
   };

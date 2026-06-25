@@ -188,12 +188,14 @@
       onNewGame: clearProgressAndGoToFrontPage
     });
 
-    const settings = urlSettings.normalizeGameUrlSettings(
-      data.datasets[0].id,
+    const settings = urlSettings.readGameUrlSettings(
       data.datasets.map((dataset) => dataset.id),
-      CYRILIC_TO_LATIN_MODE_ID,
       GAME_MODES.map((mode) => mode.id)
     );
+
+    if (settings === null) {
+      return;
+    }
 
     gameContext = {
       seed: settings.seed,

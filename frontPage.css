@@ -35,29 +35,6 @@
   font-size: 0.95rem;
 }
 
-.game-mode-switcher {
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1px;
-  max-width: 100%;
-  background: var(--border);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.game-mode-button {
-  border: 0;
-  border-radius: 0;
-  min-height: 36px;
-  padding: 6px 10px;
-  font-size: 0.8rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .game-number-controls {
   display: flex;
   gap: 8px;
