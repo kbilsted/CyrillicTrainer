@@ -7,8 +7,8 @@
   const ui = window.CyrillicUI;
   const WRONG_ANSWER_OPTION_COUNT = 5;
   const GAME_MODES = [
-    { id: "1", title: "Cyrilic -> Latin" },
-    { id: "2", title: "Latin -> Cyrilic" }
+    { id: "1", title: "Cyrilic → Latin" },
+    { id: "2", title: "Latin → Cyrilic" }
   ];
   const CYRILIC_TO_LATIN_MODE_ID = "1";
   const LATIN_TO_CYRILIC_MODE_ID = "2";

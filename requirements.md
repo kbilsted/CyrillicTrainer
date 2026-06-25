@@ -12,14 +12,14 @@ Build a game that trains Cyrillic letters for people who only know the Latin alp
 
 The game has two game modes:
 
-* `Cyrilic -> Latin`
-* `Latin -> Cyrilic`
+* `Cyrilic → Latin`
+* `Latin → Cyrilic`
 
 The title of the active game mode is shown above the large question card for each question.
 
-In `Cyrilic -> Latin` mode, the game presents one Cyrillic letter at a time with six Latin options.
+In `Cyrilic → Latin` mode, the game presents one Cyrillic letter at a time with six Latin options.
 
-In `Latin -> Cyrilic` mode, the game presents one Latin letter or letter combination at a time with six Cyrillic options.
+In `Latin → Cyrilic` mode, the game presents one Latin letter or letter combination at a time with six Cyrillic options.
 The Latin question values are derived by reading `LETTER_TRANSLITERATIONS` backwards.
 For example, `sht` can be a Latin question and `щ` is the correct Cyrillic answer.
 If several Cyrillic characters share the same Latin transliteration, the current word's exact Cyrillic character determines the correct answer.
@@ -29,8 +29,8 @@ For both modes, each question has:
 * one correct option
 * five wrong options
 
-The options are Latin letters or letter combinations in `Cyrilic -> Latin` mode.
-The options are Cyrillic letters in `Latin -> Cyrilic` mode.
+The options are Latin letters or letter combinations in `Cyrilic → Latin` mode.
+The options are Cyrillic letters in `Latin → Cyrilic` mode.
 
 the ui language is english
 
@@ -124,8 +124,8 @@ At the start of each round:
 For each Cyrillic letter in the word:
 
 * if the Cyrillic letter is in the last 10 correctly answered letters, skip it and go to the next Cyrillic letter
-* in `Cyrilic -> Latin` mode, ask the user what the Cyrillic letter is in Latin
-* in `Latin -> Cyrilic` mode, show the Latin transliteration and ask the user which Cyrillic letter it represents
+* in `Cyrilic → Latin` mode, ask the user what the Cyrillic letter is in Latin
+* in `Latin → Cyrilic` mode, show the Latin transliteration and ask the user which Cyrillic letter it represents
 * show the active game mode title above the large question card
 * show six clickable option buttons
 * if the user selects a wrong answer, show the correct choice so the player learns
@@ -200,13 +200,13 @@ Use these URL values:
 ?gameMode=1
 ```
 
-for `Cyrilic -> Latin`.
+for `Cyrilic → Latin`.
 
 ```text
 ?gameMode=2
 ```
 
-for `Latin -> Cyrilic`.
+for `Latin → Cyrilic`.
 
 If `gameMode` is missing or invalid, URL normalization inserts `gameMode=1`.
 
@@ -269,10 +269,10 @@ Each letter transliteration entry in JavaScript uses explicit fields:
 
 The letter transliteration list in `data.js` must be named `LETTER_TRANSLITERATIONS`.
 
-`cyrillicToLatinMustAsk` is a list of up to four Latin answer options that must be shown as wrong choices in `Cyrilic -> Latin` mode when they are not the correct answer.
+`cyrillicToLatinMustAsk` is a list of up to four Latin answer options that must be shown as wrong choices in `Cyrilic → Latin` mode when they are not the correct answer.
 Use `cyrillicToLatinMustAsk` for Latin answer options that visually or phonetically resemble the Cyrillic letter.
 
-`latinToCyrillicMustAsk` is a list of up to four Cyrillic answer options that must be shown as wrong choices in `Latin -> Cyrilic` mode when they are not the correct answer.
+`latinToCyrillicMustAsk` is a list of up to four Cyrillic answer options that must be shown as wrong choices in `Latin → Cyrilic` mode when they are not the correct answer.
 Use `latinToCyrillicMustAsk` for Cyrillic answer options that visually resemble the Latin prompt or are likely reverse-translation confusions.
 
 For uppercase Cyrillic letters, `latin`, `cyrillicToLatinMustAsk`, and `latinToCyrillicMustAsk` values use uppercase strings.
@@ -416,12 +416,12 @@ Wrong choices are selected randomly from a list of letters and letter combinatio
 If the current Cyrillic letter has must-ask options for the active mode, those wrong choices are included before random wrong choices are added.
 After the six answer options have been selected, shuffle the full option list.
 
-In `Cyrilic -> Latin` mode, the option list consists of:
+In `Cyrilic → Latin` mode, the option list consists of:
 
 * all possible Cyrillic-to-Latin letter combinations
 * all Latin letters `a` through `z`
 
-In `Latin -> Cyrilic` mode, the option list consists of all Cyrillic letters from `LETTER_TRANSLITERATIONS` that match the current question casing.
+In `Latin → Cyrilic` mode, the option list consists of all Cyrillic letters from `LETTER_TRANSLITERATIONS` that match the current question casing.
 Wrong Cyrillic options are selected from `latinToCyrillicMustAsk` first, then random Cyrillic choices are added.
 
 For example, `zh` is a letter option because it is used when translating `ж`.
@@ -442,9 +442,9 @@ Examples:
 ```
  correct:  2     wrong: 55    ratio: 0.4%    
  
-      [Cyrilic -> Latin] [Latin -> Cyrilic]
+      [Cyrilic → Latin] [Latin → Cyrilic]
       
-             Cyrilic -> Latin
+             Cyrilic → Latin
  
              +------------+
              |            |
@@ -463,14 +463,14 @@ Examples:
 
 ```
 
-## gui for letter guess - Latin -> Cyrilic
+## gui for letter guess - Latin → Cyrilic
 
 ```
  correct:  2     wrong: 55    ratio: 0.4%    
  
-      [Cyrilic -> Latin] [Latin -> Cyrilic]
+      [Cyrilic → Latin] [Latin → Cyrilic]
       
-             Latin -> Cyrilic
+             Latin → Cyrilic
  
              +------------+
              |            |
