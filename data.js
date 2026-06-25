@@ -438,7 +438,9 @@
     { rank: 82, cyrillic: "каньонинг", latin: "kanyoning", phonetic: "kanyoneeng", englishmeaning: "canyoning" },
     { rank: 83, cyrillic: "планински водач", latin: "planinski vodach", phonetic: "planeenskee vodach", englishmeaning: "mountain guide" },
     { rank: 84, cyrillic: "чешма", latin: "cheshma", phonetic: "chehshma", englishmeaning: "water source" },
-    { rank: 85, cyrillic: "искам нощувка", latin: "iskam noshtuvka", phonetic: "eeskam noshtoovka", englishmeaning: "I want a place to sleep" }
+    { rank: 85, cyrillic: "искам нощувка", latin: "iskam noshtuvka", phonetic: "eeskam noshtoovka", englishmeaning: "I want a place to sleep" },
+    { rank: 86, cyrillic: "стръмно", latin: "stramno", phonetic: "'struhm-no", englishmeaning: "steep, steeply" },
+    { rank: 87, cyrillic: "обрасло", latin: "obraslo", phonetic: "obraslo", englishmeaning: "overgrown" }
   ];
 
   const ALPHABET_WORD_SOURCE = [
