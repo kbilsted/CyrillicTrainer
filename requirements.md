@@ -7,17 +7,41 @@ Do not duplicate dataset requirements in `agent.md` or other files.
 
 Build a game that trains Cyrillic letters for people who only know the Latin alphabet.
 
-The game presents one Cyrillic letter at a time with six Latin options:
+The game has two game modes:
+
+* `Cyrilic -> Latin`
+* `Latin -> Cyrilic`
+
+The title of the active game mode is shown above the large question card for each question.
+
+In `Cyrilic -> Latin` mode, the game presents one Cyrillic letter at a time with six Latin options.
+
+In `Latin -> Cyrilic` mode, the game presents one Latin letter or letter combination at a time with six Cyrillic options.
+The Latin question values are derived by reading `LETTER_TRANSLITERATIONS` backwards.
+For example, `sht` can be a Latin question and `щ` is the correct Cyrillic answer.
+If several Cyrillic characters share the same Latin transliteration, the current word's exact Cyrillic character determines the correct answer.
+
+For both modes, each question has:
 
 * one correct option
 * five wrong options
 
-The options are Latin letters or letter combinations that correspond to Cyrillic letters.
+The options are Latin letters or letter combinations in `Cyrilic -> Latin` mode.
+The options are Cyrillic letters in `Latin -> Cyrilic` mode.
 
 the ui language is english
 
 letters can be lowercase or uppercase Cyrillic.
 When the shown Cyrillic letter is uppercase, all Latin answer options are uppercase too.
+
+## Named Concepts
+
+Use these names consistently for the core entities:
+
+* `LETTER_TRANSLITERATIONS`: the authoritative Cyrillic-to-Latin transliteration table
+* `gameMode`: the URL parameter and product concept for choosing translation direction
+* `recentCorrectLetters`: the last 10 correctly answered exact Cyrillic characters
+* `letterErrorCounts`: the persisted dictionary of exact Cyrillic character error counts
 
 ## Scoring
 
@@ -64,8 +88,10 @@ At the start of each round:
 For each Cyrillic letter in the word:
 
 * if the Cyrillic letter is in the last 10 correctly answered letters, skip it and go to the next Cyrillic letter
-* ask the user what the Cyrillic letter is in Latin
-* show six clickable option buttons with values of latin letter/letters
+* in `Cyrilic -> Latin` mode, ask the user what the Cyrillic letter is in Latin
+* in `Latin -> Cyrilic` mode, show the Latin transliteration and ask the user which Cyrillic letter it represents
+* show the active game mode title above the large question card
+* show six clickable option buttons
 * if the user selects a wrong answer, show the correct choice so the player learns
 * if the user selects the correct answer, show that it was correct
 * the color of the button is red or green. red if wrong. green if correct. if the button turns red, then also make the correct choice green.
@@ -118,11 +144,6 @@ Use a game value from the URL:
 ?game=1234
 ```
 
-If no game value is found in the URL:
-
-* randomize a game value
-* redirect to the same page with the game value added to the URL
-
 In code, this value may be named `seed`.
 After a valid URL game value exists, use it for all game random number operations.
 
@@ -132,6 +153,50 @@ The game value determines:
 * lowercase/uppercase question variant choices
 * wrong-answer choices
 * the displayed order of answer options, including the position of the correct answer
+
+## Game Mode
+
+The game mode is controlled by the URL parameter `gameMode`.
+
+Use these URL values:
+
+```text
+?gameMode=1
+```
+
+for `Cyrilic -> Latin`.
+
+```text
+?gameMode=2
+```
+
+for `Latin -> Cyrilic`.
+
+If `gameMode` is missing or invalid, URL normalization inserts `gameMode=1`.
+
+The UI must have a compact game mode switcher near the question area, above the large question card.
+Use a Google Translate-style direction selector: two visible mode buttons, with the active mode visually selected.
+Changing mode updates the URL `gameMode` value and reloads using that game mode.
+
+## URL Normalization
+
+The URL must contain valid values for:
+
+* `game`
+* `data`
+* `gameMode`
+
+If `game` is missing or invalid:
+
+* randomize a game value
+* insert it as `game`
+
+If `data` is missing or invalid, insert `data=1`.
+If `gameMode` is missing or invalid, insert `gameMode=1`.
+
+If more than one URL value is missing or invalid, update all missing or invalid values before redirecting.
+URL normalization must perform at most one redirect for one page load.
+For example, a URL with no query string redirects once to a URL containing `game`, `data=1`, and `gameMode=1`.
 
 ## Data Model
 
@@ -291,8 +356,6 @@ Use this dataset when the URL contains:
 ?data=3
 ```
 
-If `data` is missing from the URL, redirect to the same page with `data=1`.
-
 The UI must have a game input field with an OK button at the bottom.
 When the OK button is pressed, update the URL `game` value and reload using that game value.
 
@@ -312,10 +375,14 @@ Wrong choices are selected randomly from a list of letters and letter combinatio
 If the current Cyrillic letter has `mustAsk` options, those wrong choices are included before random wrong choices are added.
 After the six answer options have been selected, shuffle the full option list.
 
-The option list consists of:
+In `Cyrilic -> Latin` mode, the option list consists of:
 
 * all possible Cyrillic-to-Latin letter combinations
 * all Latin letters `a` through `z`
+
+In `Latin -> Cyrilic` mode, the option list consists of all Cyrillic letters from `LETTER_TRANSLITERATIONS` that match the current question casing.
+Wrong Cyrillic options are derived by reading `LETTER_TRANSLITERATIONS` backwards.
+If the current Cyrillic letter has `mustAsk` Latin values, map those Latin values back to Cyrillic letters and include them as wrong choices when they are not the correct answer.
 
 For example, `zh` is a letter option because it is used when translating `ж`.
 
@@ -334,6 +401,10 @@ Examples:
 ```
  correct:  2     wrong: 55    ratio: 0.4%    
  
+      [Cyrilic -> Latin] [Latin -> Cyrilic]
+      
+             Cyrilic -> Latin
+ 
              +------------+
              |            |
              |     з      |
@@ -342,6 +413,32 @@ Examples:
 
     +---+  +---+  +---+  +---+  +---+  +---+   
     | s |  | k |  | l |  | n |  | p |  | r |
+    +---+  +---+  +---+  +---+  +---+  +---+ 
+
+              | next |
+ 
+ 
+ round: 22     game: [1234] [OK]     data: [top 250 words v]
+
+```
+
+## gui for letter guess - Latin -> Cyrilic
+
+```
+ correct:  2     wrong: 55    ratio: 0.4%    
+ 
+      [Cyrilic -> Latin] [Latin -> Cyrilic]
+      
+             Latin -> Cyrilic
+ 
+             +------------+
+             |            |
+             |    sht     |
+             |            |
+             +------------+
+
+    +---+  +---+  +---+  +---+  +---+  +---+   
+    | ш |  | ц |  | щ |  | ч |  | с |  | ж |
     +---+  +---+  +---+  +---+  +---+  +---+ 
 
               | next |

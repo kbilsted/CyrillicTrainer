@@ -8,9 +8,16 @@
   const CORRECT_ANSWER_AUTO_NEXT_DELAY_MS = 500;
   const WRONG_ANSWER_OPTION_COUNT = 5;
   const RECENT_CORRECT_LETTER_LIMIT = 10;
+  const GAME_MODES = [
+    { id: "1", title: "Cyrilic -> Latin" },
+    { id: "2", title: "Latin -> Cyrilic" }
+  ];
+  const CYRILIC_TO_LATIN_MODE_ID = "1";
+  const LATIN_TO_CYRILIC_MODE_ID = "2";
 
   let seed = null;
   let dataSetId = null;
+  let gameModeId = null;
   let currentDataSet = null;
   let nextRandom = null;
   let currentWord = null;
@@ -112,6 +119,14 @@
   }
 
   function chooseOptions(letterTransliteration) {
+    if (gameModeId === LATIN_TO_CYRILIC_MODE_ID) {
+      return chooseCyrillicOptions(letterTransliteration);
+    }
+
+    return chooseLatinOptions(letterTransliteration);
+  }
+
+  function chooseLatinOptions(letterTransliteration) {
     const correctAnswer = letterTransliteration.latin;
     const isUppercaseLetter = letterTransliteration.cyrillic === letterTransliteration.cyrillic.toUpperCase();
     const letterOptions = data.letterOptions.map((option) => (
@@ -132,6 +147,50 @@
       .slice(0, WRONG_ANSWER_OPTION_COUNT);
 
     return random.shuffleSeeded(nextRandom, selectedWrongChoices.concat(correctAnswer));
+  }
+
+  function chooseCyrillicOptions(letterTransliteration) {
+    const correctAnswer = letterTransliteration.cyrillic;
+    const isUppercaseLetter = letterTransliteration.cyrillic === letterTransliteration.cyrillic.toUpperCase();
+    const cyrillicOptions = data.letterTransliterations
+      .filter((entry) => (
+        isUppercaseLetter
+          ? entry.cyrillic === entry.cyrillic.toUpperCase()
+          : entry.cyrillic === entry.cyrillic.toLowerCase()
+      ))
+      .map((entry) => entry.cyrillic);
+    const mustAskChoices = (letterTransliteration.mustAsk || [])
+      .map((latinOption) => data.letterTransliterations.find((entry) => (
+        entry.latin === latinOption
+        && cyrillicOptions.includes(entry.cyrillic)
+      )))
+      .filter((entry, index, entries) => (
+        entry
+        && entry.cyrillic !== correctAnswer
+        && entries.findIndex((item) => item && item.cyrillic === entry.cyrillic) === index
+      ))
+      .map((entry) => entry.cyrillic)
+      .slice(0, 4);
+    const wrongChoices = cyrillicOptions.filter((option) => option !== correctAnswer);
+    const extraWrongChoices = wrongChoices.filter((option) => !mustAskChoices.includes(option));
+    const shuffledExtraWrongChoices = random.shuffleSeeded(nextRandom, extraWrongChoices);
+    const selectedWrongChoices = mustAskChoices
+      .concat(shuffledExtraWrongChoices)
+      .slice(0, WRONG_ANSWER_OPTION_COUNT);
+
+    return random.shuffleSeeded(nextRandom, selectedWrongChoices.concat(correctAnswer));
+  }
+
+  function getQuestionPrompt(letterTransliteration) {
+    return gameModeId === LATIN_TO_CYRILIC_MODE_ID
+      ? letterTransliteration.latin
+      : letterTransliteration.cyrillic;
+  }
+
+  function getCorrectAnswer(letterTransliteration) {
+    return gameModeId === LATIN_TO_CYRILIC_MODE_ID
+      ? letterTransliteration.cyrillic
+      : letterTransliteration.latin;
   }
 
   function moveToNextAvailableLetter() {
@@ -156,9 +215,13 @@
 
     const currentLetter = currentLetters[currentLetterIndex];
     const letterTransliteration = getTransliterationForLetter(currentLetter);
-    currentCorrectAnswer = letterTransliteration.latin;
+    currentCorrectAnswer = getCorrectAnswer(letterTransliteration);
     hasAnswered = false;
-    ui.showLetterGuess(currentLetter, chooseOptions(letterTransliteration));
+    ui.showLetterGuess(
+      GAME_MODES.find((mode) => mode.id === gameModeId).title,
+      getQuestionPrompt(letterTransliteration),
+      chooseOptions(letterTransliteration)
+    );
     ui.renderStats(storage.getStats(), seed);
   }
 
@@ -222,11 +285,14 @@
   function init() {
     const settings = random.ensureUrlSettings(
       data.datasets[0].id,
-      data.datasets.map((dataset) => dataset.id)
+      data.datasets.map((dataset) => dataset.id),
+      CYRILIC_TO_LATIN_MODE_ID,
+      GAME_MODES.map((mode) => mode.id)
     );
 
     seed = settings.seed;
     dataSetId = settings.dataSetId;
+    gameModeId = settings.gameModeId;
     currentDataSet = data.datasets.find((dataset) => dataset.id === dataSetId);
     nextRandom = random.createSeededRandom(seed);
     recentCorrectLetters = storage.getRecentCorrectLetters().slice(-RECENT_CORRECT_LETTER_LIMIT);
@@ -237,11 +303,13 @@
       onRoundNext: startRound,
       onDataSetChange: random.switchDataSet,
       onSeedChange: random.switchSeed,
+      onGameModeChange: random.switchGameMode,
       onShowProgress: handleShowProgress,
       onReset: handleReset
     });
 
     ui.renderDataSetSwitcher(data.datasets, dataSetId);
+    ui.renderGameModeSwitcher(GAME_MODES, gameModeId);
     startRound();
   }
 

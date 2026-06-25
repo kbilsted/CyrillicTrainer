@@ -2,6 +2,8 @@
   "use strict";
 
   const GAME_PARAM = "game";
+  const DATA_PARAM = "data";
+  const GAME_MODE_PARAM = "gameMode";
   const LEGACY_SEED_PARAM = "seed";
 
   function createSeed() {
@@ -13,15 +15,18 @@
     return Number.isFinite(parsed) ? String(Math.abs(parsed)) : createSeed();
   }
 
-  function ensureUrlSettings(defaultDataSetId, validDataSetIds) {
+  function ensureUrlSettings(defaultDataSetId, validDataSetIds, defaultGameModeId, validGameModeIds) {
     const url = new URL(window.location.href);
     const existingGame = url.searchParams.get(GAME_PARAM);
     const legacySeed = url.searchParams.get(LEGACY_SEED_PARAM);
-    const existingDataSetId = url.searchParams.get("data");
+    const existingDataSetId = url.searchParams.get(DATA_PARAM);
+    const existingGameModeId = url.searchParams.get(GAME_MODE_PARAM);
     const validIds = new Set(validDataSetIds);
+    const validModeIds = new Set(validGameModeIds);
     let changed = false;
     let seed = existingGame || legacySeed ? normalizeSeed(existingGame || legacySeed) : createSeed();
     let dataSetId = validIds.has(existingDataSetId) ? existingDataSetId : defaultDataSetId;
+    let gameModeId = validModeIds.has(existingGameModeId) ? existingGameModeId : defaultGameModeId;
 
     if (seed !== existingGame) {
       url.searchParams.set(GAME_PARAM, seed);
@@ -34,7 +39,12 @@
     }
 
     if (dataSetId !== existingDataSetId) {
-      url.searchParams.set("data", dataSetId);
+      url.searchParams.set(DATA_PARAM, dataSetId);
+      changed = true;
+    }
+
+    if (gameModeId !== existingGameModeId) {
+      url.searchParams.set(GAME_MODE_PARAM, gameModeId);
       changed = true;
     }
 
@@ -42,16 +52,16 @@
       window.location.replace(url.toString());
     }
 
-    return { seed, dataSetId };
+    return { seed, dataSetId, gameModeId };
   }
 
   function ensureSeed() {
-    return ensureUrlSettings("1", ["1"]).seed;
+    return ensureUrlSettings("1", ["1"], "1", ["1"]).seed;
   }
 
   function switchDataSet(dataSetId) {
     const url = new URL(window.location.href);
-    url.searchParams.set("data", dataSetId);
+    url.searchParams.set(DATA_PARAM, dataSetId);
     window.location.assign(url.toString());
   }
 
@@ -59,6 +69,12 @@
     const url = new URL(window.location.href);
     url.searchParams.set(GAME_PARAM, normalizeSeed(seedValue));
     url.searchParams.delete(LEGACY_SEED_PARAM);
+    window.location.assign(url.toString());
+  }
+
+  function switchGameMode(gameModeId) {
+    const url = new URL(window.location.href);
+    url.searchParams.set(GAME_MODE_PARAM, gameModeId);
     window.location.assign(url.toString());
   }
 
@@ -112,6 +128,7 @@
     ensureSeed,
     switchDataSet,
     switchSeed,
+    switchGameMode,
     createSeededRandom,
     choose,
     shuffleSeeded

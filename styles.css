@@ -58,7 +58,35 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 28px;
+  gap: 20px;
+}
+
+.game-mode-switcher {
+  display: inline-flex;
+  max-width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.game-mode-button {
+  border: 0;
+  border-radius: 0;
+  min-height: 36px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.game-mode-button + .game-mode-button {
+  border-left: 1px solid var(--border);
+}
+
+.question-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0;
 }
 
 .letter-card {

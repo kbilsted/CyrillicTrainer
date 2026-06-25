@@ -7,6 +7,7 @@
     onRoundNext: null,
     onDataSetChange: null,
     onSeedChange: null,
+    onGameModeChange: null,
     onShowProgress: null,
     onReset: null
   };
@@ -51,6 +52,12 @@
       }
     });
 
+    $("#gameModeSwitcher").on("click", ".game-mode-button", function () {
+      if (callbacks.onGameModeChange) {
+        callbacks.onGameModeChange($(this).data("value"));
+      }
+    });
+
     $("#gameForm").on("submit", function (event) {
       event.preventDefault();
 
@@ -87,16 +94,30 @@
     $("#datasetSelect").empty().append(options).val(activeDataSetId);
   }
 
+  function renderGameModeSwitcher(gameModes, activeGameModeId) {
+    const buttons = gameModes.map((mode) => (
+      $("<button>")
+        .attr("type", "button")
+        .addClass(`btn btn-sm game-mode-button ${mode.id === activeGameModeId ? "btn-dark" : "btn-outline-dark"}`)
+        .attr("aria-pressed", mode.id === activeGameModeId ? "true" : "false")
+        .data("value", mode.id)
+        .text(mode.title)
+    ));
+
+    $("#gameModeSwitcher").empty().append(buttons);
+  }
+
   function revealRoundDoneDetails() {
     $("#doneLatin").text(hiddenLatinValue).removeClass("d-none");
     $("#doneMeaning").text(hiddenMeaningValue).removeClass("d-none");
     $(".reveal-word-button").addClass("d-none");
   }
 
-  function showLetterGuess(letter, options) {
+  function showLetterGuess(title, prompt, options) {
     $("#roundDoneView").addClass("d-none");
     $("#letterGuessView").removeClass("d-none");
-    $("#letterCard").text(letter);
+    $("#questionTitle").text(title);
+    $("#letterCard").text(prompt);
     $("#letterNextButton").prop("disabled", true);
 
     const buttons = options.map((option) => (
@@ -174,6 +195,7 @@
     init,
     renderStats,
     renderDataSetSwitcher,
+    renderGameModeSwitcher,
     showLetterGuess,
     showAnswerFeedback,
     showProgress,
