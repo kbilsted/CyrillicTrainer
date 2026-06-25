@@ -216,6 +216,7 @@
     $("#letterGuessView").addClass("d-none");
     $("#roundDoneView").removeClass("d-none");
     $("#doneCyrillic").text(word.cyrillic);
+    $("#donePhonetic").text(` (${word.phonetic})`);
     hiddenLatinValue = word.latin;
     hiddenMeaningValue = word.englishmeaning;
     $("#doneLatin").text("").addClass("d-none");

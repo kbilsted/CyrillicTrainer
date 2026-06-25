@@ -203,6 +203,10 @@ body {
   overflow-wrap: anywhere;
 }
 
+.word-phonetic {
+  color: var(--muted-text);
+}
+
 .progress-panel {
   width: 100%;
   max-width: 100%;

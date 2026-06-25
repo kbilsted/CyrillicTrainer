@@ -156,6 +156,7 @@ When `lastWrongAnswer` is `null`, choose a random word from the current round ca
 When all letters in a word have been processed:
 
 * show the whole word in Cyrillic
+* show the phonetic spelling in parentheses after the Cyrillic word
 * show the Latin spelling
 * show the English translation
 * show a `show progress` button
@@ -247,19 +248,73 @@ The game has three datasets.
 
 The dictionary and letter lists must be generated in `data.js`, which is imported by the game.
 
-The AI must provide the lists and verify the Bulgarian words, Latin spellings, and English meanings carefully because the dataset is core to the game.
+The AI must provide the lists and verify the Bulgarian words, Latin spellings, phonetic spellings, and English meanings carefully because the dataset is core to the game.
 
 Each dictionary entry contains:
 
 * Cyrillic spelling
 * Latin spelling
+* phonetic spelling
 * English translation
 
 Each dictionary entry in JavaScript uses explicit fields:
 
 * `cyrillic`
 * `latin`
+* `phonetic`
 * `englishmeaning`
+
+The `phonetic` field is an ASCII, English-style pronunciation helper shown in parentheses after the Cyrillic word in the round-done view.
+It must be generated from the Cyrillic spelling, not copied from the `latin` field.
+It may include syllable separators and stress markers.
+
+Use `-` between syllables when that improves readability.
+Use an ASCII apostrophe directly before the stressed syllable when the Bulgarian stress has been verified:
+
+```text
+kuh-'deh
+```
+
+Do not guess Bulgarian stress from spelling. Bulgarian stress is not reliably derivable from the written word.
+If stress has not been verified, keep the phonetic spelling unmarked instead of adding a guessed apostrophe.
+Single-letter alphabet entries do not need a stress marker.
+
+Use this phonetic mapping:
+
+| Cyrillic | Phonetic |
+| --- | --- |
+| `а` | `a` |
+| `б` | `b` |
+| `в` | `v` |
+| `г` | `g` |
+| `д` | `d` |
+| `е` | `eh` |
+| `ж` | `zh` |
+| `з` | `z` |
+| `и` | `ee` |
+| `й` | `y` |
+| `к` | `k` |
+| `л` | `l` |
+| `м` | `m` |
+| `н` | `n` |
+| `о` | `o` |
+| `п` | `p` |
+| `р` | `r` |
+| `с` | `s` |
+| `т` | `t` |
+| `у` | `oo` |
+| `ф` | `f` |
+| `х` | `kh` |
+| `ц` | `ts` |
+| `ч` | `ch` |
+| `ш` | `sh` |
+| `щ` | `sht` |
+| `ъ` | `uh` |
+| `ь` | `y` |
+| `ю` | `yu` |
+| `я` | `ya` |
+
+Uppercase Cyrillic letters use the same mapping with an uppercase first Latin letter.
 
 Each dataset entry in JavaScript uses explicit fields:
 
@@ -394,7 +449,7 @@ Use this dataset when the URL contains:
 
 Dataset 3 contains all lowercase Bulgarian Cyrillic alphabet letters.
 
-Each dictionary entry is one Cyrillic letter with its Latin spelling.
+Each dictionary entry is one Cyrillic letter with its Latin spelling and phonetic spelling.
 Dataset 3 must be an explicit `ALPHABET_WORD_SOURCE` array in `data.js`, not generated from `LETTER_TRANSLITERATIONS`.
 The game asks either the lowercase or uppercase variant using the same casing selection logic as the other datasets.
 
@@ -509,7 +564,7 @@ Examples:
  
         ROUND DONE
         
-     WORD: xxxxxx
+     WORD: xxxxxx (yyyyyy)
      In Latin: | show |    
      Meaning: | show | 
          
@@ -532,7 +587,7 @@ Both `show` buttons reveal both hidden fields: the Latin spelling and the Englis
  
         ROUND DONE
         
-     WORD: xxxxxx
+     WORD: xxxxxx (yyyyyy)
      In Latin: yyyyyy    
      Meaning: zz zz zz 
          
