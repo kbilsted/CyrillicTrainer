@@ -187,6 +187,7 @@ For each Cyrillic letter in the word:
 * in `Cyrilic → Latin` mode, ask the user what the Cyrillic letter is in Latin
 * in `Latin → Cyrilic` mode, show the Latin transliteration and ask the user which Cyrillic letter it represents
 * show the active game mode title above the large question card
+* show the text `which is the correct translation` below the large question card and above the six answer options
 * show six clickable option buttons
 * if the user selects a wrong answer, show the correct choice so the player learns
 * if the user selects the correct answer, show that it was correct
@@ -542,6 +543,7 @@ The front page must let the user choose:
 
 The front page uses the visible label `word list:` for dataset selection.
 The front page defaults to the `Hiking E3 Kom-Emine words` dataset.
+The front page game-mode direction control uses two equal-width buttons that fill the available control width.
 The `game` field has a retry-arrow button next to it that generates a new random game value.
 The front page has a `start game` button.
 When pressed, it clears persisted progress and redirects to the same path with `game`, `data`, and `gameMode` query parameters.
@@ -592,7 +594,9 @@ Examples:
 
  word list: [Hiking E3 Kom-Emine words v]
 
- direction: [Cyrilic → Latin] [Latin → Cyrilic]
+ direction: +-------------------------------------------+
+            |   Cyrilic → Latin   |   Latin → Cyrilic   |
+            +-------------------------------------------+
 
  game:      [123456789] [↻]
 
@@ -613,6 +617,8 @@ Examples:
              |     з      |
              |            |
              +------------+
+
+       which is the correct translation
 
     +---+  +---+  +---+  +---+  +---+  +---+   
     | s |  | k |  | l |  | n |  | p |  | r |
@@ -638,6 +644,8 @@ Examples:
              |    sht     |
              |            |
              +------------+
+
+       which is the correct translation
 
     +---+  +---+  +---+  +---+  +---+  +---+   
     | ш |  | ц |  | щ |  | ч |  | с |  | ж |
