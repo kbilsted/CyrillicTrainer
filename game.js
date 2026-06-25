@@ -6,8 +6,8 @@
   const urlSettings = window.CyrillicUrlSettings;
   const storage = window.CyrillicStorage;
   const ui = window.CyrillicUI;
+  const questionFactory = window.CyrillicQuestionFactory;
   const CurrentWordState = window.CurrentWordState;
-  const WRONG_ANSWER_OPTION_COUNT = 5;
   const GAME_MODES = [
     { id: "1", title: "Cyrilic → Latin" },
     { id: "2", title: "Latin → Cyrilic" }
@@ -22,16 +22,6 @@
   let currentWordState = null;
   let userProgressStats = null;
   let gameState = null;
-
-  function getTransliterationForLetter(cyrillicLetter) {
-    const match = data.letterTransliterations.find((letter) => letter.cyrillic === cyrillicLetter);
-
-    if (!match) {
-      throw new Error(`Missing transliteration for ${cyrillicLetter}`);
-    }
-
-    return match;
-  }
 
   function isTrainableLetter(letter) {
     return data.letterTransliterations.some((item) => item.cyrillic === letter);
@@ -102,76 +92,6 @@
     return null;
   }
 
-  function chooseAnswerOptions(letterTransliteration) {
-    if (gameContext.gameModeId === LATIN_TO_CYRILIC_MODE_ID) {
-      return chooseCyrillicOptions(letterTransliteration);
-    }
-
-    return chooseLatinAnswerOptions(letterTransliteration);
-  }
-
-  function chooseLatinAnswerOptions(letterTransliteration) {
-    const correctAnswer = letterTransliteration.latin;
-    const isUppercaseLetter = letterTransliteration.cyrillic === letterTransliteration.cyrillic.toUpperCase();
-    const letterOptions = data.letterOptions.map((option) => (
-      isUppercaseLetter ? option.toUpperCase() : option
-    ));
-    const mustAskChoices = (letterTransliteration.cyrillicToLatinMustAsk || [])
-      .filter((option, index, options) => (
-        option !== correctAnswer
-        && letterOptions.includes(option)
-        && options.indexOf(option) === index
-      ))
-      .slice(0, 4);
-    const wrongChoices = letterOptions.filter((option) => option !== correctAnswer);
-    const extraWrongChoices = wrongChoices.filter((option) => !mustAskChoices.includes(option));
-    const shuffledExtraWrongChoices = random.shuffleSeeded(nextRandom, extraWrongChoices);
-    const selectedWrongChoices = mustAskChoices
-      .concat(shuffledExtraWrongChoices)
-      .slice(0, WRONG_ANSWER_OPTION_COUNT);
-
-    return random.shuffleSeeded(nextRandom, selectedWrongChoices.concat(correctAnswer));
-  }
-
-  function chooseCyrillicOptions(letterTransliteration) {
-    const correctAnswer = letterTransliteration.cyrillic;
-    const isUppercaseLetter = letterTransliteration.cyrillic === letterTransliteration.cyrillic.toUpperCase();
-    const cyrillicOptions = data.letterTransliterations
-      .filter((entry) => (
-        isUppercaseLetter
-          ? entry.cyrillic === entry.cyrillic.toUpperCase()
-          : entry.cyrillic === entry.cyrillic.toLowerCase()
-      ))
-      .map((entry) => entry.cyrillic);
-    const mustAskChoices = (letterTransliteration.latinToCyrillicMustAsk || [])
-      .filter((option, index, options) => (
-        option !== correctAnswer
-        && cyrillicOptions.includes(option)
-        && options.indexOf(option) === index
-      ))
-      .slice(0, 4);
-    const wrongChoices = cyrillicOptions.filter((option) => option !== correctAnswer);
-    const extraWrongChoices = wrongChoices.filter((option) => !mustAskChoices.includes(option));
-    const shuffledExtraWrongChoices = random.shuffleSeeded(nextRandom, extraWrongChoices);
-    const selectedWrongChoices = mustAskChoices
-      .concat(shuffledExtraWrongChoices)
-      .slice(0, WRONG_ANSWER_OPTION_COUNT);
-
-    return random.shuffleSeeded(nextRandom, selectedWrongChoices.concat(correctAnswer));
-  }
-
-  function getQuestionPrompt(letterTransliteration) {
-    return gameContext.gameModeId === LATIN_TO_CYRILIC_MODE_ID
-      ? letterTransliteration.latin
-      : letterTransliteration.cyrillic;
-  }
-
-  function getCorrectAnswer(letterTransliteration) {
-    return gameContext.gameModeId === LATIN_TO_CYRILIC_MODE_ID
-      ? letterTransliteration.cyrillic
-      : letterTransliteration.latin;
-  }
-
   function advanceCurrentWordRound() {
     if (!currentWordState.skipRecentlyCorrectLetters(userProgressStats)) {
       ui.showRoundDone(currentWordState.word, { retryWord: gameState.currentWordHadWrongAnswer });
@@ -184,12 +104,22 @@
 
   function showCurrentQuestion() {
     const currentLetter = currentWordState.getCurrentLetter();
-    const letterTransliteration = getTransliterationForLetter(currentLetter);
-    currentWordState.setCurrentQuestionAnswer(getCorrectAnswer(letterTransliteration));
+    const letterTransliteration = questionFactory.getTransliterationForLetter(data.letterTransliterations, currentLetter);
+    const question = questionFactory.createQuestion({
+      gameModeId: gameContext.gameModeId,
+      latinToCyrillicModeId: LATIN_TO_CYRILIC_MODE_ID,
+      letterOptions: data.letterOptions,
+      letterTransliterations: data.letterTransliterations,
+      letterTransliteration,
+      random,
+      nextRandom
+    });
+
+    currentWordState.setCurrentQuestionAnswer(question.correctAnswer);
     ui.showLetterGuess(
       GAME_MODES.find((mode) => mode.id === gameContext.gameModeId).title,
-      getQuestionPrompt(letterTransliteration),
-      chooseAnswerOptions(letterTransliteration)
+      question.prompt,
+      question.options
     );
     ui.renderStats(getDisplayStats(), gameContext.seed);
   }

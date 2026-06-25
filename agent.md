@@ -43,8 +43,9 @@ Use this file layout:
 * `userProgressStats.js`: user progress class. The exact class requirements are defined in `requirements.md`.
 * `gameState.js`: game-flow state class. The exact class requirements are defined in `requirements.md`.
 * `currentWordState.js`: active word-round runtime state class. The exact class requirements are defined in `requirements.md`.
+* `questionFactory.js`: stateless question construction. Builds prompts, correct answers, and answer options from game mode, transliteration data, and seeded random.
 * `storage.js`: `localStorage` load/save handling only. It loads and saves `UserProgressStats` and `GameState`; the exact persistence requirements are defined in `requirements.md`.
-* `game.js`: game rules and runtime question state. Starts rounds, chooses words, moves through letters, chooses answer options, handles answers, and handles next.
+* `game.js`: game controller. Starts rounds, chooses words, moves through letters, delegates question construction, handles answers, and handles next.
 * `ui.js`: DOM rendering and DOM event binding. Renders the front page, score, letter guess view, button colors, bottom line, and round-done view.
 * `app.js`: small bootstrap file that initializes the modules in the correct order.
 
@@ -57,6 +58,7 @@ Load local scripts in this order:
 <script src="userProgressStats.js"></script>
 <script src="gameState.js"></script>
 <script src="currentWordState.js"></script>
+<script src="questionFactory.js"></script>
 <script src="storage.js"></script>
 <script src="ui.js"></script>
 <script src="game.js"></script>
