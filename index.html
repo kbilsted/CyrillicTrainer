@@ -13,17 +13,17 @@
   <main class="app-shell">
     <section id="frontPageView" class="front-page" aria-label="Start game">
       <div class="brand-lockup">
-        <img class="brand-logo" src="cyrillic_trainer_logo.svg" alt="">
+        <img class="brand-logo" src="cyrillic_trainer_logo.svg" alt="logo">
       </div>
       <form id="startGameForm" class="start-game-form">
         <label class="front-field" for="homeDatasetSelect">
           <span class="front-field-label">word list:</span>
-          <select id="homeDatasetSelect" class="form-select dataset-select" aria-label="Dataset"></select>
+          <select id="homeDatasetSelect" class="form-select dataset-select" aria-label="Data set"></select>
         </label>
-        <div class="front-field">
-          <span class="front-field-label">direction:</span>
-          <div id="homeGameModeSwitcher" class="game-mode-switcher" role="group" aria-label="Game mode"></div>
-        </div>
+        <label class="front-field" for="homeGameModeSelect">
+          <span class="front-field-label">game mode:</span>
+          <select id="homeGameModeSelect" class="form-select dataset-select" aria-label="game mode"></select>
+        </label>
         <label class="front-field game-number-field" for="homeGameInput">
           <span class="front-field-label">game:</span>
           <span class="game-number-controls">
