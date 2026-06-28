@@ -13,9 +13,7 @@
   <main class="app-shell">
     <section class="score-line" aria-label="Score">
       <div><span class="score-label">correct:</span> <strong id="successCounter">0</strong></div>
-      <div><span class="score-label">wrong:</span> <strong id="failCounter">0</strong></div>
-      <div><span class="score-label">ratio:</span> <strong id="successRatio">0.0%</strong></div>
-      <div><span class="score-label">round:</span> <strong id="roundCounter">0</strong></div>
+      <div><span class="score-label">time:</span> <strong id="countdownTimer" class="countdown-timer">00:00</strong></div>
     </section>
 
     <section id="letterGuessView" class="game-view d-none" aria-label="Letter guess">
@@ -57,30 +55,15 @@
         </div>
       </dl>
       <div class="round-actions">
-        <button id="showProgressButton" class="btn btn-outline-dark progress-button" type="button">show progress</button>
+        <button id="showProgressButton" class="btn btn-outline-dark progress-button" type="button">Statistics</button>
         <button id="roundNextButton" class="btn btn-dark next-button" type="button">next</button>
       </div>
-      <section id="progressPanel" class="progress-panel d-none" aria-label="Progress"></section>
+      <section id="progressPanel" class="progress-panel d-none" aria-label="Statistics"></section>
     </section>
 
     <section id="gameOverView" class="game-view game-over d-none" aria-label="Game done">
       <h1>GAME DONE</h1>
-      <dl class="word-summary">
-        <div>
-          <dt>Correct:</dt>
-          <dd id="gameOverCorrect">0</dd>
-        </div>
-        <div>
-          <dt>Wrong:</dt>
-          <dd id="gameOverWrong">0</dd>
-        </div>
-        <div>
-          <dt>Ratio:</dt>
-          <dd id="gameOverRatio">0.0%</dd>
-        </div>
-      </dl>
-      <section id="gameOverProgressPanel" class="progress-panel" aria-label="Final progress"></section>
-      <button id="newGameButton" class="btn btn-dark next-button" type="button">new game</button>
+      <section id="gameOverProgressPanel" class="progress-panel" aria-label="Final Statistics"></section>
     </section>
 
     <section class="bottom-line" aria-label="Game settings">

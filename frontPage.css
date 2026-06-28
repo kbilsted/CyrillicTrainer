@@ -1,9 +1,16 @@
+.app-shell {
+  min-height: auto;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  grid-template-rows: auto;
+}
+
 .front-page {
-  min-height: calc(100vh - 64px);
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 28px;
+  justify-content: flex-start;
+  gap: 8px;
+  padding-top: clamp(8px, 3vh, 28px);
 }
 
 .brand-lockup {
@@ -20,7 +27,7 @@
 
 .start-game-form {
   display: grid;
-  gap: 16px;
+  gap: 10px;
 }
 
 .front-field {
@@ -31,6 +38,7 @@
 }
 
 .front-field-label {
+  margin: 0;
   color: var(--muted-text);
   font-size: 0.95rem;
 }
@@ -63,7 +71,28 @@
   font-size: 0.85rem;
 }
 
+.duration-field {
+  border: 0;
+  padding: 0;
+}
+
+.duration-buttons {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.duration-button {
+  min-width: 0;
+  min-height: 28px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-right: 6px;
+  padding-left: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
 .start-game-button {
-  min-height: 48px;
-  text-transform: lowercase;
+  min-height: 42px;
 }

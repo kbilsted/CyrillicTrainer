@@ -49,6 +49,7 @@ Use these names consistently for the core entities:
 * `CurrentWordState`: the JavaScript class that owns runtime progress inside the active word round
 * `recentCorrectLetters`: a flat list of up to 20 recently correct Cyrillic character variants. 
 * `letterErrorCounts`: the persisted dictionary of exact Cyrillic character error counts
+* `letterCorrectCounts`: the persisted dictionary of exact Cyrillic character correct-answer counts
 * `wordCursor`: the persisted index of the next word to consider in the seeded word order
 * `currentWordIndex`: the persisted index of the word currently being asked
 * `currentWordHadWrongAnswer`: the persisted flag that decides whether the current word must repeat
@@ -120,6 +121,7 @@ The storage format does not need to be backward compatible with older versions.
 * `failCounter`
 * `recentCorrectLetters`
 * `letterErrorCounts`
+* `letterCorrectCounts`
 
 `UserProgressStats` owns these methods:
 
@@ -128,6 +130,7 @@ The storage format does not need to be backward compatible with older versions.
 * `wasRecentlyCorrect(cyrillicLetter)`
 * `getDisplayStats()`
 * `getLetterErrorCounts()`
+* `getLetterCorrectCounts()`
 * `reset()`
 * `toJSON()`
 * `fromJSON(raw)`
@@ -141,7 +144,7 @@ After each correct answer, trim `recentCorrectLetters` to the newest 20 entries.
 
 If the user selects the correct answer:
 
-* call `recordCorrectLetter(cyrillicLetter)`, which increments `successCounter` and updates `recentCorrectLetters`
+* call `recordCorrectLetter(cyrillicLetter)`, which increments `successCounter`, increments the correct count for the exact Cyrillic character that was asked, and updates `recentCorrectLetters`
 
 If the user selects a wrong answer:
 
@@ -150,7 +153,7 @@ If the user selects a wrong answer:
 After each answer:
 
 * calculate the success ratio using % and 1 digit after the dot (precision)
-* display `successCounter`, `failCounter`, success ratio, and round counter at the top
+* display `successCounter` at the top
 * persist scores in `localStorage`
 
 The game screen has a centered red `new game` button at the bottom.
@@ -166,6 +169,57 @@ The dictionary maps each exact Cyrillic character to the number of wrong answers
 
 The error-count dictionary is case-sensitive.
 Lowercase and uppercase Cyrillic characters are tracked separately.
+
+The game stores a persisted dictionary of Cyrillic letter correct-answer counts in `localStorage`.
+The dictionary maps each exact Cyrillic character to the number of correct answers for that character:
+
+* key: Cyrillic character
+* value: `correctCount`
+
+The correct-count dictionary is case-sensitive.
+Lowercase and uppercase Cyrillic characters are tracked separately.
+
+## Timed games
+
+The front page must let the user choose a game duration using quick-select buttons only.
+The supported durations are:
+
+* `10 sek`
+* `2 min`
+* `5 min`
+* `10 min`
+* `15 min`
+
+The chosen duration is stored in the game URL as a `duration` query parameter in seconds.
+Valid `duration` URL values are `10`, `120`, `300`, `600`, and `900`.
+The timer's remaining time is runtime-only and must not be persisted in `localStorage`.
+Reloading the game page may restart the runtime timer from the URL duration.
+
+The game screen top line must show:
+
+* `correct`
+* countdown timer
+
+The top line must not show wrong answers, ratio, or round counter.
+Those values belong on the statistics view.
+
+The timer counts down while the player is in the quiz or round-done flow.
+When 20 seconds or less remain, the timer turns red using the same red color as wrong-answer buttons and the red `new game` button.
+When time expires, the game stops immediately.
+The player must not be advanced to the next letter, next word, or next round after time has expired.
+The game must hide the active question flow and show a dedicated time-up view.
+
+The time-up view must show:
+
+* `TIME IS UP`
+* `Congrats you have xxx correct`
+* a `Show Statistics` button
+
+When the `Show Statistics` button is pressed from the time-up view:
+
+* show the same statistics content as the normal statistics view
+* keep the timer stopped
+* keep the game over
 
 ## Rounds
 
@@ -217,33 +271,38 @@ When all letters in a word have been processed:
 * show the phonetic spelling on its own `phonetic:` row, hidden behind a `show` button
 * show the Latin spelling
 * show the English translation
-* show a `show progress` button
+* show a `Statistics` button
 * show a `next` button if the word was completed without wrong answers
 * show a `retry word` button if the word had one or more wrong answers and will repeat
 
-When the `show progress` button is pressed:
+When the `Statistics` button is pressed:
 
-* show a short explanatory text above the chart that tells the user what the histogram means
-* show a histogram of all Cyrillic letters that have at least one error
-* each histogram bar shows the Cyrillic letter and its `errorCount`
-* sort bars left to right by highest `errorCount` first
-* keep the histogram mobile-friendly when many letters have errors by allowing horizontal scrolling instead of shrinking bars until labels become unreadable
-* if there are no errors, show an empty progress message
+* pause the countdown timer while the statistics panel is visible
+* show total wrong answers, total correct answers, and success ratio above the charts, in that order
+* show a green bar chart of all Cyrillic letters that have at least one correct answer
+* show a red bar chart of all Cyrillic letters that have at least one error
+* place the green correct-answer chart above the red error chart
+* each chart bar shows the Cyrillic letter and its count
+* sort bars left to right by highest count first
+* keep charts mobile-friendly when many letters have counts by allowing horizontal scrolling instead of shrinking bars until labels become unreadable
+* if there are no values for a chart, show an empty message for that chart
 
 When the round-done `next` or `retry word` button is pressed:
 
 * if a new round can start, increment `roundCounter` and start that new round
 * if no new round can start because the seeded word order is exhausted, keep `roundCounter` unchanged and show the game-over view
+* if the statistics panel was visible, resume the timer before starting the next round or checking time expiry
 
 When the game is over:
 
 * hide the letter question view and round-done view
 * show a dedicated `GAME DONE` view
-* show the final `successCounter`, `failCounter`, and success ratio
-* show the error-count histogram
-* show a `new game` button
+* if time expired, the view may use `TIME IS UP` instead of `GAME DONE`
+* show total wrong answers, total correct answers, and success ratio, in that order
+* show the green correct-answer bar chart above the red error bar chart
+* keep the red bottom `new game` button visible
 
-When the `new game` button is pressed:
+When the red bottom `new game` button is pressed:
 
 * show a confirmation dialog warning that scores, recent correct letters, and error progress will be cleared
 * if confirmed, clear persisted progress and navigate to the front page URL with no query parameters
@@ -271,7 +330,7 @@ The game value determines:
 
 The `game` value is chosen on the front page before starting the game.
 The front page has a retry-arrow button next to the `game` input that generates a new random game value.
-Starting a game from the front page clears persisted progress and navigates to `game.html` with a URL containing the chosen `game`, `data`, and `gameMode` values.
+Starting a game from the front page clears persisted progress and navigates to `game.html` with a URL containing the chosen `game`, `data`, `gameMode`, and `duration` values.
 
 ## Game Mode
 
@@ -546,15 +605,17 @@ The front page must let the user choose:
 * dataset
 * game mode direction
 * `game`
+* game duration
 
 The front page uses the visible label `word list:` for dataset selection.
 The front page defaults to the `Hiking E3 Kom-Emine words` dataset.
 The front page game-mode direction control uses a dropdown.
 The `game` field has a retry-arrow button next to it that generates a new random game value.
+The duration control uses five separate buttons with the existing button styling: `10 sek`, `2 min`, `5 min`, `10 min`, and `15 min`.
 The front page has a `start game` button.
-When pressed, it clears persisted progress and redirects to `game.html` with `game`, `data`, and `gameMode` query parameters.
+When pressed, it clears persisted progress and redirects to `game.html` with `game`, `data`, `gameMode`, and `duration` query parameters.
 
-The round counter must be shown in the top score line during the game.
+Only correct answers and the countdown timer must be shown in the top score line during the game.
 The game screen bottom line must have a `new game` button that navigates to `index.html`.
 The UI must show `A game by Kasper B. Graversen` as a small line at the bottom below the controls.
 
@@ -600,11 +661,10 @@ Examples:
 
  word list: [Hiking E3 Kom-Emine words v]
 
- direction: +-------------------------------------------+
-            |   Cyrilic → Latin   |   Latin → Cyrilic   |
-            +-------------------------------------------+
+ game mode: [Cyrilic → Latin v]
 
  game:      [123456789] [↻]
+ time:      | 10 sek | | 2 min | | 5 min | | 10 min | | 15 min |
 
         | start game |
 
@@ -614,7 +674,7 @@ Examples:
 ## gui for letter guess 
 
 ```
- correct:  2     wrong: 55    ratio: 0.4%    round: 22
+ correct:  2     time: 04:21
  
              Cyrilic → Latin
  
@@ -641,7 +701,7 @@ Examples:
 ## gui for letter guess - Latin → Cyrilic
 
 ```
- correct:  2     wrong: 55    ratio: 0.4%    round: 22
+ correct:  2     time: 04:21
  
              Latin → Cyrilic
  
@@ -668,7 +728,7 @@ Examples:
 ## gui for round done 1
 
 ```
- correct:  2     wrong: 55    ratio: 0.4%    round: 22
+ correct:  2     time: 04:21
  
  
         Round done
@@ -680,7 +740,7 @@ Examples:
      Meaning: | show | 
          
              
-    | show progress |    | next |
+    | Statistics |    | next |
  
  
               | new game |
@@ -694,7 +754,7 @@ If the round had one or more wrong answers, the `next` button label is `retry wo
 ### gui for round done - click done
 
 ```
- correct:  2     wrong: 55    ratio: 0.4%    round: 22
+ correct:  2     time: 04:21
  
  
         Round done
@@ -706,7 +766,39 @@ If the round had one or more wrong answers, the `next` button label is `retry wo
      Meaning: zz zz zz 
          
              
-    | show progress |    | next |
+    | Statistics |    | next |
+
+### gui for Statistics
+
+```
+ correct:  2     time: 04:21
+ 
+ 
+        Round done
+        now try reading the word aloud...
+        
+     WORD: xxxxxx
+     phonetic: | show |
+     In Latin: | show |    
+     Meaning: | show | 
+         
+     Wrong:   8
+     Correct: 42
+     Ratio:   84.0%
+         
+     Most correct
+     [green correct-answer bar chart]
+
+     Most errors
+     [red error bar chart]
+             
+              | next |
+ 
+ 
+              | new game |
+          A game by Kasper B. Graversen
+
+```
  
  
               | new game |
@@ -717,16 +809,17 @@ If the round had one or more wrong answers, the `next` button label is `retry wo
 ### gui for game done
 
 ```
- correct:  42     wrong: 8    ratio: 84.0%    round: 31
+ correct:  42     time: 00:00
  
  
         GAME DONE
         
-     Correct: 42
      Wrong:   8
+     Correct: 42
      Ratio:   84.0%
          
-     [error histogram]
+     [green correct-answer bar chart]
+     [red error bar chart]
              
               | new game |
 

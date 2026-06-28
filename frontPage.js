@@ -29,7 +29,8 @@
     ui.renderFrontPageControls(data.datasets, GAME_MODES, {
       seed: urlSettings.createSeed(),
       dataSetId: defaultFrontPageDataSet,
-      gameModeId: CYRILIC_TO_LATIN_MODE_ID
+      gameModeId: CYRILIC_TO_LATIN_MODE_ID,
+      durationSeconds: 300
     });
   }
 

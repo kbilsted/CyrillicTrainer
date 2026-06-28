@@ -17,6 +17,14 @@
   color: var(--muted-text);
 }
 
+.countdown-timer {
+  color: var(--app-text);
+}
+
+.countdown-timer.is-ending {
+  color: var(--wrong);
+}
+
 .game-view {
   display: flex;
   min-height: 420px;
@@ -165,7 +173,7 @@
 }
 
 .progress-button {
-  min-width: 148px;
+  min-width: 116px;
   min-height: 44px;
 }
 
@@ -232,11 +240,41 @@
   padding-bottom: 4px;
 }
 
-.progress-description {
-  margin: 0 0 10px;
+.stats-summary {
+  margin: 0 0 18px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  text-align: center;
+}
+
+.stats-summary div {
+  display: grid;
+  gap: 2px;
+}
+
+.stats-summary dt {
   color: var(--muted-text);
-  font-size: 0.95rem;
-  line-height: 1.4;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.stats-summary dd {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.stats-chart {
+  margin-top: 18px;
+}
+
+.stats-chart-title {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-align: left;
 }
 
 .error-histogram {
@@ -262,8 +300,15 @@
 .error-bar {
   width: 100%;
   min-height: 12px;
-  background: var(--wrong);
   border-radius: 4px 4px 0 0;
+}
+
+.error-bar.is-correct {
+  background: var(--correct);
+}
+
+.error-bar.is-wrong {
+  background: var(--wrong);
 }
 
 .error-letter {

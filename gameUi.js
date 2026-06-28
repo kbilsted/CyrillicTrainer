@@ -6,6 +6,7 @@
     onLetterNext: null,
     onRoundNext: null,
     onShowProgress: null,
+    onHideProgress: null,
     onNewGame: null
   };
 
@@ -54,7 +55,7 @@
       }
     });
 
-    $("#gameNewGameButton, #newGameButton").on("click", function () {
+    $("#gameNewGameButton").on("click", function () {
       if (
         callbacks.onNewGame
         && window.confirm("Start a new game? This clears scores, recent correct letters, and error progress.")
@@ -66,9 +67,15 @@
 
   function renderStats(stats) {
     $("#successCounter").text(stats.successCounter);
-    $("#failCounter").text(stats.failCounter);
-    $("#successRatio").text(stats.successRatio);
-    $("#roundCounter").text(stats.roundCounter);
+  }
+
+  function renderTimer(timer) {
+    const minutes = Math.floor(timer.remainingSeconds / 60);
+    const seconds = timer.remainingSeconds % 60;
+
+    $("#countdownTimer")
+      .text(`${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`)
+      .toggleClass("is-ending", timer.remainingSeconds <= 20);
   }
 
   function revealRoundDoneDetails() {
@@ -137,20 +144,17 @@
     }
   }
 
-  function renderErrorHistogram(container, letterErrorCounts) {
-    const entries = Object.entries(letterErrorCounts)
+  function renderHistogram(title, emptyText, barClassName, letterCounts) {
+    const entries = Object.entries(letterCounts)
       .filter(([, count]) => count > 0)
       .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]));
 
-    container.empty().append(
-      $("<p>")
-        .addClass("progress-description")
-        .text("This chart shows the Cyrillic letters you get wrong most often.")
+    const section = $("<section>").addClass("stats-chart").append(
+      $("<h2>").addClass("stats-chart-title").text(title)
     );
 
     if (entries.length === 0) {
-      container.append($("<p>").addClass("progress-empty").text("No errors yet."));
-      return;
+      return section.append($("<p>").addClass("progress-empty").text(emptyText));
     }
 
     const maxCount = entries[0][1];
@@ -160,22 +164,38 @@
         .append(
           $("<div>").addClass("error-count").text(count),
           $("<div>")
-            .addClass("error-bar")
+            .addClass(`error-bar ${barClassName}`)
             .css("height", `${Math.max(12, Math.round((count / maxCount) * 120))}px`),
           $("<div>").addClass("error-letter").text(letter)
         )
     ));
 
-    container.append($("<div>").addClass("error-histogram").append(bars));
+    return section.append($("<div>").addClass("error-histogram").append(bars));
   }
 
-  function showProgress(letterErrorCounts) {
+  function renderStatistics(container, stats, letterCorrectCounts, letterErrorCounts) {
+    container.empty().append(
+      $("<dl>").addClass("stats-summary").append(
+        $("<div>").append($("<dt>").text("Wrong:"), $("<dd>").text(stats.failCounter)),
+        $("<div>").append($("<dt>").text("Correct:"), $("<dd>").text(stats.successCounter)),
+        $("<div>").append($("<dt>").text("Ratio:"), $("<dd>").text(stats.successRatio))
+      ),
+      renderHistogram("Most correct", "No correct answers yet.", "is-correct", letterCorrectCounts),
+      renderHistogram("Most errors", "No errors yet.", "is-wrong", letterErrorCounts)
+    );
+  }
+
+  function showProgress(stats, letterCorrectCounts, letterErrorCounts) {
     $("#progressPanel").removeClass("d-none");
-    renderErrorHistogram($("#progressPanel"), letterErrorCounts);
+    $("#showProgressButton").addClass("d-none");
+    renderStatistics($("#progressPanel"), stats, letterCorrectCounts, letterErrorCounts);
   }
 
   function showRoundDone(word, options) {
     clearAutoNextTimer();
+    if (callbacks.onHideProgress) {
+      callbacks.onHideProgress();
+    }
     $("#letterGuessView").addClass("d-none");
     $("#gameOverView").addClass("d-none");
     $("#roundDoneView").removeClass("d-none");
@@ -187,24 +207,24 @@
     $("#doneLatin").text("").addClass("d-none");
     $("#doneMeaning").text("").addClass("d-none");
     $("#progressPanel").addClass("d-none").empty();
+    $("#showProgressButton").removeClass("d-none");
     $("#roundNextButton").text(options.retryWord ? "retry word" : "next");
     $(".reveal-word-button").removeClass("d-none");
   }
 
-  function showGameOver(stats, letterErrorCounts) {
+  function showGameOver(stats, letterCorrectCounts, letterErrorCounts, options) {
     clearAutoNextTimer();
     $("#letterGuessView").addClass("d-none");
     $("#roundDoneView").addClass("d-none");
     $("#gameOverView").removeClass("d-none");
-    $("#gameOverCorrect").text(stats.successCounter);
-    $("#gameOverWrong").text(stats.failCounter);
-    $("#gameOverRatio").text(stats.successRatio);
-    renderErrorHistogram($("#gameOverProgressPanel"), letterErrorCounts);
+    $("#gameOverView h1").text(options && options.timeExpired ? "TIME IS UP" : "GAME DONE");
+    renderStatistics($("#gameOverProgressPanel"), stats, letterCorrectCounts, letterErrorCounts);
   }
 
   window.CyrillicGameUI = {
     init,
     renderStats,
+    renderTimer,
     showLetterGuess,
     showAnswerFeedback,
     showProgress,

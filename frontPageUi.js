@@ -5,6 +5,19 @@
     onHomeStart: null,
     onHomeRandomGame: null
   };
+  let selectedDurationSeconds = 300;
+
+  function renderSelectedDuration() {
+    $(".duration-button").each(function () {
+      const button = $(this);
+      const isSelected = Number(button.data("seconds")) === selectedDurationSeconds;
+
+      button
+        .toggleClass("btn-dark", isSelected)
+        .toggleClass("btn-outline-dark", !isSelected)
+        .attr("aria-pressed", String(isSelected));
+    });
+  }
 
   function init(nextCallbacks) {
     callbacks = nextCallbacks;
@@ -22,9 +35,15 @@
         callbacks.onHomeStart({
           seed: $("#homeGameInput").val(),
           dataSetId: $("#homeDatasetSelect").val(),
-          gameModeId: $("#homeGameModeSelect").val()
+          gameModeId: $("#homeGameModeSelect").val(),
+          durationSeconds: selectedDurationSeconds
         });
       }
+    });
+
+    $("#homeDurationButtons").on("click", ".duration-button", function () {
+      selectedDurationSeconds = Number($(this).data("seconds"));
+      renderSelectedDuration();
     });
   }
 
@@ -44,6 +63,8 @@
     $("#homeGameModeSelect").empty().append(optionsGameMode).val(settings.gameModeId);
 
     $("#homeGameInput").val(settings.seed);
+    selectedDurationSeconds = settings.durationSeconds;
+    renderSelectedDuration();
   }
 
   window.CyrillicFrontPageUI = {

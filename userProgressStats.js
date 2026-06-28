@@ -13,6 +13,7 @@
         ? nextValues.recentCorrectLetters.filter((letter) => typeof letter === "string").slice(-RECENT_CORRECT_LETTER_LIMIT)
         : [];
       this.letterErrorCounts = UserProgressStats.cleanLetterErrorCounts(nextValues.letterErrorCounts);
+      this.letterCorrectCounts = UserProgressStats.cleanLetterErrorCounts(nextValues.letterCorrectCounts);
     }
 
     static cleanLetterErrorCounts(letterErrorCounts) {
@@ -33,6 +34,7 @@
 
     recordCorrectLetter(cyrillicLetter) {
       this.successCounter += 1;
+      this.letterCorrectCounts[cyrillicLetter] = (this.letterCorrectCounts[cyrillicLetter] || 0) + 1;
       this.recentCorrectLetters.push(cyrillicLetter.toLowerCase());
       this.recentCorrectLetters.push(cyrillicLetter.toUpperCase());
 
@@ -65,11 +67,16 @@
       return { ...this.letterErrorCounts };
     }
 
+    getLetterCorrectCounts() {
+      return { ...this.letterCorrectCounts };
+    }
+
     reset() {
       this.successCounter = 0;
       this.failCounter = 0;
       this.recentCorrectLetters = [];
       this.letterErrorCounts = {};
+      this.letterCorrectCounts = {};
     }
 
     toJSON() {
@@ -77,7 +84,8 @@
         successCounter: this.successCounter,
         failCounter: this.failCounter,
         recentCorrectLetters: this.recentCorrectLetters.slice(),
-        letterErrorCounts: this.getLetterErrorCounts()
+        letterErrorCounts: this.getLetterErrorCounts(),
+        letterCorrectCounts: this.getLetterCorrectCounts()
       };
     }
   }
