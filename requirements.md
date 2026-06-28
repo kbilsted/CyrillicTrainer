@@ -194,8 +194,10 @@ For each Cyrillic letter in the word:
 * show the active game mode title above the large question card
 * show the text `which is the correct translation` below the large question card and above the six answer options
 * show six clickable option buttons
+* when the answer buttons appear at the start of a new round, animate them with a subtle zoom effect from left to right
 * if the user selects a wrong answer, show the correct choice so the player learns
 * if the user selects the correct answer, show that it was correct
+* if the selected answer turns red, apply a brief shake animation to that wrong button
 * the color of the button is red or green. red if wrong. green if correct. if the button turns red, then also make the correct choice green.
 * add an "next" button for the next letter to guess the translation for. the button is automatically clicked after 500 ms in case user answered correctly.
 

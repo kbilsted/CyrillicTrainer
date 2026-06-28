@@ -96,6 +96,16 @@
     ));
 
     $("#answerButtons").empty().append(buttons);
+
+    $("#answerButtons .answer-button").each(function (index) {
+      const button = $(this);
+      window.setTimeout(() => {
+        button.addClass("zoom");
+        button.one("animationend", function () {
+          button.removeClass("zoom");
+        });
+      }, index * 50);
+    });
   }
 
   function showAnswerFeedback(selectedValue, correctValue, options) {
