@@ -109,7 +109,10 @@
       if (value === correctValue) {
         button.removeClass("btn-outline-dark").addClass("is-correct");
       } else if (value === selectedValue) {
-        button.removeClass("btn-outline-dark").addClass("is-wrong");
+        button.removeClass("btn-outline-dark").addClass("is-wrong shake");
+        button.one("animationend", function () {
+          button.removeClass("shake");
+        });
       }
     });
 
