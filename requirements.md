@@ -192,13 +192,15 @@ For each Cyrillic letter in the word:
 * in `Cyrilic → Latin` mode, ask the user what the Cyrillic letter is in Latin
 * in `Latin → Cyrilic` mode, show the Latin transliteration and ask the user which Cyrillic letter it represents
 * show the active game mode title above the large question card
-* show the text `which is the correct translation` below the large question card and above the six answer options
+* show the text `Which is the correct translation` below the large question card and above the six answer options
 * show six clickable option buttons
 * when the answer buttons appear at the start of a new round, animate them with a subtle zoom effect from left to right
 * if the user selects a wrong answer, show the correct choice so the player learns
 * if the user selects the correct answer, show that it was correct
 * if the selected answer turns red, apply a brief shake animation to that wrong button
 * the color of the button is red or green. red if wrong. green if correct. if the button turns red, then also make the correct choice green.
+* hide the letter-level next button when the answer is correct, but reserve its layout space so the UI does not jump
+* show the letter-level next button only when it is clickable, such as after a wrong answer or when auto-next is not used
 * add an "next" button for the next letter to guess the translation for. the button is automatically clicked after 500 ms in case user answered correctly.
 
 For each dataset, each trainable Cyrillic letter in a word creates one question, using either the lowercase or uppercase variant.
@@ -622,7 +624,7 @@ Examples:
              |            |
              +------------+
 
-       which is the correct translation
+       Which is the correct translation
 
     +---+  +---+  +---+  +---+  +---+  +---+   
     | s |  | k |  | l |  | n |  | p |  | r |
@@ -649,7 +651,7 @@ Examples:
              |            |
              +------------+
 
-       which is the correct translation
+       Which is the correct translation
 
     +---+  +---+  +---+  +---+  +---+  +---+   
     | ш |  | ц |  | щ |  | ч |  | с |  | ж |

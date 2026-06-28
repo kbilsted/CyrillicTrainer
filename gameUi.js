@@ -85,7 +85,7 @@
     $("#letterGuessView").removeClass("d-none");
     $("#questionTitle").text(title);
     $("#letterCard").text(prompt);
-    $("#letterNextButton").prop("disabled", true);
+    $("#letterNextButton").prop("disabled", true).addClass("hidden");
 
     const buttons = options.map((option) => (
       $("<button>")
@@ -126,13 +126,14 @@
       }
     });
 
-    $("#letterNextButton").prop("disabled", false);
-
     if (options.autoNext) {
+      $("#letterNextButton").prop("disabled", true).addClass("hidden");
       autoNextTimer = window.setTimeout(() => {
         autoNextTimer = null;
         options.onAutoNext();
       }, CORRECT_ANSWER_AUTO_NEXT_DELAY_MS);
+    } else {
+      $("#letterNextButton").prop("disabled", false).removeClass("hidden");
     }
   }
 
