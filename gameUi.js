@@ -141,10 +141,14 @@
       .filter(([, count]) => count > 0)
       .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]));
 
+    container.empty().append(
+      $("<p>")
+        .addClass("progress-description")
+        .text("This chart shows the Cyrillic letters you get wrong most often.")
+    );
+
     if (entries.length === 0) {
-      container
-        .empty()
-        .append($("<p>").addClass("progress-empty").text("No errors yet."));
+      container.append($("<p>").addClass("progress-empty").text("No errors yet."));
       return;
     }
 
@@ -161,9 +165,7 @@
         )
     ));
 
-    container
-      .empty()
-      .append($("<div>").addClass("error-histogram").append(bars));
+    container.append($("<div>").addClass("error-histogram").append(bars));
   }
 
   function showProgress(letterErrorCounts) {

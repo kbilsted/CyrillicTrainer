@@ -217,6 +217,13 @@
   padding-bottom: 4px;
 }
 
+.progress-description {
+  margin: 0 0 10px;
+  color: var(--muted-text);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
 .error-histogram {
   min-height: 176px;
   display: flex;

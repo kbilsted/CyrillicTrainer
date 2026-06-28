@@ -221,6 +221,7 @@ When all letters in a word have been processed:
 
 When the `show progress` button is pressed:
 
+* show a short explanatory text above the chart that tells the user what the histogram means
 * show a histogram of all Cyrillic letters that have at least one error
 * each histogram bar shows the Cyrillic letter and its `errorCount`
 * sort bars left to right by highest `errorCount` first
