@@ -1,16 +1,17 @@
 .app-shell {
-  min-height: auto;
+  min-height: 100vh;
+  min-height: 100dvh;
   padding-top: 8px;
   padding-bottom: 8px;
-  grid-template-rows: auto;
+  grid-template-rows: minmax(0, 1fr) auto;
 }
 
 .front-page {
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 8px;
-  padding-top: clamp(8px, 3vh, 28px);
 }
 
 .brand-lockup {
@@ -21,7 +22,7 @@
 
 .brand-logo {
   width: min(100%, 540px);
-  max-height: 460px;
+  max-height: min(44dvh, 432px);
   object-fit: contain;
 }
 

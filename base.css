@@ -30,6 +30,7 @@ body {
 .app-shell {
   width: min(100%, 560px);
   min-height: 100vh;
+  min-height: 100dvh;
   margin: 0 auto;
   padding: 16px;
   display: grid;
